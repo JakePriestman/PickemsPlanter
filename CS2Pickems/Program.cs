@@ -46,5 +46,7 @@ static void ConfigureServices(IServiceCollection services)
 
 	services.AddHttpClient<ISteamAPI, SteamAPI>(opt => opt.BaseAddress = new Uri("https://api.steampowered.com"));
 
+	services.AddSingleton<IPickemsService, PickemsService>();
+
 	services.AddHostedService<CachingService>();
 }
