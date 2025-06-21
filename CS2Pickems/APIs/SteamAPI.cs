@@ -16,10 +16,10 @@ namespace CS2Pickems.APIs
 	{
 		private readonly HttpClient _httpClient = httpClient;
 		private readonly JsonSerializerOptions _serializerOptions = serializerOptions;
-		private const string API_KEY = "";
-		private const string AUTH_CODE = "";
-		private const string STEAM_ID = "";
-		private const string EVENT_ID = "";
+		private const string API_KEY = "9B3092D0A60009739111910B5BD6A0FA";
+		private const string AUTH_CODE = "8BME-SJ6H8-TAZN";
+		private const string STEAM_ID = "76561198386888450";
+		private const string EVENT_ID = "24";
 
 		public async Task<GetResponse<TournamentItems>> GetTournamentItemsAsync()
 		{
