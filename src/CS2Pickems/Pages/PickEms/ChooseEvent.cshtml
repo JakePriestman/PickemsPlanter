@@ -1,0 +1,9 @@
+﻿@page
+@model CS2Pickems.Pages.PickEms.ChooseEventModel
+@{
+    <form method="post">
+        <label for="event">Choose an event:</label>
+        <select id="SelectedEvent" asp-for="SelectedEvent" asp-items="Model.EventOptions"></select>
+        <button type="submit">Submit</button>
+    </form>
+}

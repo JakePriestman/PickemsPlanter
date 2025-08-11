@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\3dm.png" />
+    <None Include="wwwroot\Images\aura.png" />
+    <None Include="wwwroot\Images\b8.png" />
+    <None Include="wwwroot\Images\bb.png" />
+    <None Include="wwwroot\Images\chin.png" />
+    <None Include="wwwroot\Images\cplx.png" />
+    <None Include="wwwroot\Images\fal.png" />
+    <None Include="wwwroot\Images\faze.png" />
+    <None Include="wwwroot\Images\flux.png" />
+    <None Include="wwwroot\Images\fq.png" />
+    <None Include="wwwroot\Images\furi.png" />
+    <None Include="wwwroot\Images\g2.png" />
+    <None Include="wwwroot\Images\hero.png" />
+    <None Include="wwwroot\Images\imp.png" />
+    <None Include="wwwroot\Images\lgcy.png" />
+    <None Include="wwwroot\Images\liq.png" />
+    <None Include="wwwroot\Images\lynn.png" />
+    <None Include="wwwroot\Images\m80.png" />
+    <None Include="wwwroot\Images\meti.png" />
+    <None Include="wwwroot\Images\mibr.png" />
+    <None Include="wwwroot\Images\mngz.png" />
+    <None Include="wwwroot\Images\mouz.png" />
+    <None Include="wwwroot\Images\navi.png" />
+    <None Include="wwwroot\Images\nemi.png" />
+    <None Include="wwwroot\Images\nrg.png" />
+    <None Include="wwwroot\Images\og.png" />
+    <None Include="wwwroot\Images\pain.png" />
+    <None Include="wwwroot\Images\spir.png" />
+    <None Include="wwwroot\Images\tyl.png" />
+    <None Include="wwwroot\Images\vita.png" />
+    <None Include="wwwroot\Images\vp.png" />
+    <None Include="wwwroot\Images\wcrd.png" />
+    <None Include="wwwroot\navi.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.4.0" />
+    <PackageReference Include="Azure.Identity" Version="1.14.2" />
+    <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.3.0" />
+  </ItemGroup>
+
+</Project>
