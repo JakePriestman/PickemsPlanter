@@ -22,7 +22,7 @@ namespace CS2Pickems.Services
 
 			if (!_cache.TryGetValue(key, out UserPredictions? picks))
 			{
-				GetResult<UserPredictions> userPredictions = await _steamAPI.GetUserPredictionsAsync(steamId, eventId);
+				GetResult<UserPredictions> userPredictions = await _steamAPI.GetUserPredictionsAsync(steamId, eventId, authCode);
 				_cache.Set(key, userPredictions.Result, TimeSpan.FromMinutes(2));
 			}
 
@@ -33,7 +33,7 @@ namespace CS2Pickems.Services
 		{
 			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_PICKS";
 
-			GetResult<UserPredictions> userPredictions = await _steamAPI.GetUserPredictionsAsync(steamId, eventId);
+			GetResult<UserPredictions> userPredictions = await _steamAPI.GetUserPredictionsAsync(steamId, eventId, authCode);
 			_cache.Set(key, userPredictions.Result, TimeSpan.FromMinutes(2));
 		}
 	}

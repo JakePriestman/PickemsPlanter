@@ -136,7 +136,7 @@ namespace CS2Pickems.Services
 
 			List<string> imageNames = [.. JsonSerializer.Deserialize<List<string>>(droppedImagesData)!.Select(x => x.Replace(".png", ""))];
 
-			await _steamAPI.PostUserPredictionsAsync(imageNames, teams, section.SectionId, section.Groups.First().GroupId, steamId, eventId);
+			await _steamAPI.PostUserPredictionsAsync(imageNames, teams, section.SectionId, section.Groups.First().GroupId, steamId, eventId, authCode);
 
 			await _cachingService.RefreshUserPredictionsAsync(steamId, eventId, authCode);
 		}
