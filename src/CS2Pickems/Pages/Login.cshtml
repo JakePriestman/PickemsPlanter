@@ -1,0 +1,20 @@
+﻿@page
+@model CS2Pickems.Pages.LoginModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "_Layout";
+}
+
+<div>
+    <form method="post" id="saveForm">
+        <button class="save-button" type="submit" id="saveButton" asp-page-handler="Login">Login</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="/js/site.js"></script>
+
+    <script>
+
+    </script>
+}

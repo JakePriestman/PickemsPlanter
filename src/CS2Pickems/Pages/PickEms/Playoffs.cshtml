@@ -1,0 +1,101 @@
+﻿@page
+@model CS2Pickems.Pages.PickEms.PlayoffsModel
+@{
+    ViewData["Title"] = "PickEms - Playoffs";
+    Layout = "_Layout";
+}
+
+<div class="pickem-container">
+    <nav class="stage-nav">
+        <a asp-page="/PickEms/Stage1" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Stage I</a>
+        <a asp-page="/PickEms/Stage2" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Stage II</a>
+        <a asp-page="/PickEms/Stage3" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Stage III</a>
+        <a asp-page="/PickEms/Playoffs" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Playoffs</a>
+        <a asp-page="/Logout" asp-route-steamId="@Model.SteamId">Logout</a>
+    </nav>
+
+    <div class="stage-header">@Model.EventName - Playoffs</div>
+
+    <div class="playoff-bracket">
+        <aside class="playoff-column">
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team0"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team1"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team2"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team3"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team4"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team5"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team6"><br></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team7"><br></div>
+        </aside>
+
+        <!-- Quarters -->
+        <div class="round">
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick0">Make Your Pick</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick1">Make Your Pick</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick2">Make Your Pick</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick3">Make Your Pick</div>
+        </div>
+
+        <!-- Semi-Final -->
+        <div class="round">
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick4">Make Your Pick</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick5">Make Your Pick</div>
+        </div>
+
+        <!-- Final -->
+        <div class="round">
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick6">Make Your Pick</div>
+        </div>
+    </div>
+
+    <form method="post" id="saveForm">
+        <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
+        <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="/js/site.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/PickEms/Playoffs?handler=Images&eventId=@Model.EventId&steamId=@Model.SteamId")
+                .then(response => response.json())
+                .then(imageUrls => {
+                    imageUrls.forEach((url, index) => {
+                        const container = document.getElementById(`team${index}`);
+                        if (container) {
+                            const img = document.createElement("img");
+                            img.src = url;
+                            img.className = "team-img";
+                            container.appendChild(img);
+                        }
+                    });
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/PickEms/Playoffs?handler=Picks&eventId=@Model.EventId&steamId=@Model.SteamId")
+                .then(response => response.json())
+                .then(imageUrls => {
+                    console.log("Fetched image URLs:", imageUrls);
+
+                    imageUrls.forEach((url, index) => {
+                        const container = document.getElementById(`pick${index}`);
+
+                        if (container) {
+                            placeImageInDropzone(url, container, true);
+                        } else {
+                            console.warn(`Dropzone with id="pick${index}" not found`);
+                        }
+                    });
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Possibly auto-fill from server
+            checkDropzonesFilled(); // Run after populating with data
+        });
+
+    </script>
+}

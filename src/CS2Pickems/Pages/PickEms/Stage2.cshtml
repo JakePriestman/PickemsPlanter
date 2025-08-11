@@ -1,0 +1,105 @@
+﻿@page
+@model CS2Pickems.Pages.PickEms.Stage2Model
+@{
+    ViewData["Title"] = "PickEms - Stage2";
+    Layout = "_Layout";
+}
+
+<div class="pickem-container">
+    <nav class="stage-nav">
+        <a asp-page="/PickEms/Stage1" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Stage I</a>
+        <a asp-page="/PickEms/Stage2" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Stage II</a>
+        <a asp-page="/PickEms/Stage3" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Stage III</a>
+        <a asp-page="/PickEms/Playoffs" asp-route-eventId="@Model.EventId" asp-route-eventName="@Model.EventName" asp-route-steamId="@Model.SteamId">Playoffs</a>
+        <a asp-page="/Logout" asp-route-steamId="@Model.SteamId">Logout</a>
+    </nav>
+
+    <div class="stage-header">@Model.EventName - Stage II</div>
+
+    <div class="pickem-layout">
+        <aside class="teams-column">
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team0"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team1"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team2"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team3"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team4"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team5"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team6"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team7"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team8"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team9"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team10"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team11"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team12"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team13"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team14"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team15"></div>
+        </aside>
+
+        <section class="bracket">
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick0">3-0</div>
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick1">3-0</div>
+
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick2">3-1</div>
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick3">3-1</div>
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick4">3-1</div>
+
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick5">3-2</div>
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick6">3-2</div>
+            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick7">3-2</div>
+
+            <div class="match-dropzone-eliminated" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick8">0-3</div>
+            <div class="match-dropzone-eliminated" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick9">0-3</div>
+        </section>
+    </div>
+
+    <form method="post" id="saveForm">
+        <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
+        <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="/js/site.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/PickEms/Stage2?handler=Images&eventId=@Model.EventId&steamId=@Model.SteamId")
+                .then(response => response.json())
+                .then(imageUrls => {
+                    imageUrls.forEach((url, index) => {
+                        const container = document.getElementById(`team${index}`);
+                        if (container) {
+                            const img = document.createElement("img");
+                            img.src = url;
+                            img.className = "team-img";
+                            container.appendChild(img);
+                        }
+                    });
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/PickEms/Stage2?handler=Picks&eventId=@Model.EventId&steamId=@Model.SteamId")
+                .then(response => response.json())
+                .then(imageUrls => {
+                    console.log("Fetched image URLs:", imageUrls);
+
+                    imageUrls.forEach((url, index) => {
+                        const container = document.getElementById(`pick${index}`);
+
+                        if (container) {
+                            placeImageInDropzone(url, container);
+                        } else {
+                            console.warn(`Dropzone with id="pick${index}" not found`);
+                        }
+                    });
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Possibly auto-fill from server
+            checkDropzonesFilled(); // Run after populating with data
+        });
+    </script>
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "names": {
+        "value": {
+            "keyVault": "kvcs2pickems",
+            "storageAccount": "sacs2pickems",
+            "appServicePlan": "asp-cs2pickems",
+            "appService": "app-cs2pickems"
+        }
+    }
+  }
+}

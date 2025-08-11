@@ -1,0 +1,10 @@
+﻿@page
+@model CS2Pickems.Pages.PickEms.AddAuthCodeModel
+@{
+    <form method="post">
+        <label for="authCode">Enter Auth Code:</label>
+        <input type="password" id="AuthCode" asp-for="AuthCode" required />
+
+        <button type="submit">Submit</button>
+    </form>
+}
