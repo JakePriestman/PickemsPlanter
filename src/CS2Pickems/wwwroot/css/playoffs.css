@@ -1,0 +1,75 @@
+﻿.playoff-bracket {
+    position: fixed; /* Stays in the same place when scrolling */
+    top: 50%; /* Move to vertical center */
+    left: 50%; /* Move to horizontal center */
+    transform: translate(-50%, -50%); /* Perfect centering */
+
+    display: flex;
+    flex-direction: column;
+    gap: 2em; /* Space between each row (3-0, 3-1, etc.) */
+    align-items: center; /* Center rows horizontally */
+}
+
+.playoff-bracket > div {
+    display: flex;
+    justify-content: center;
+    gap: 2em; /* Horizontal spacing between items */
+    width: 100%;
+    max-width: 800px; /* Adjust for overall bracket width */
+}
+
+.champion, .sem-finals, .quarter-finals, .round-of-eight {
+    display: flex;
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
+}
+
+.champion {
+    justify-content: center;
+}
+
+.semi-finals {
+    justify-content: space-around;
+}
+
+.semi-finals .match-dropzone-advanced {
+    margin-left: 8em;
+    margin-right: 8em;
+}
+
+.quarter-finals {
+    justify-content: space-between;
+}
+
+    .quarter-finals .match-dropzone-advanced {
+        margin-left: 2.5em;
+        margin-right: 2.5em;
+    }
+
+.round-of-eight {
+    justify-content: space-between;
+}
+
+.match-dropzone-advanced, .team {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    cursor: grab;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ddd;
+    user-select: none;
+}
+
+
+.team {
+    border: 1px solid #aaa;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    cursor: grab;
+    width: 64px;
+    height: 64px;
+}

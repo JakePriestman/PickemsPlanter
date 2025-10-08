@@ -1,7 +1,11 @@
-﻿using CS2Pickems.Models.Configurations;
+﻿using CS2Pickems.Models;
+using CS2Pickems.Models.Configurations;
 using CS2Pickems.Models.Steam;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace CS2Pickems.APIs
 {
@@ -12,6 +16,7 @@ namespace CS2Pickems.APIs
 		Task<GetResult<TournamentLayout>> GetTournamentLayoutAsync(string eventId);
 		Task<GetResult<UserPredictions>> GetUserPredictionsAsync(string steamId, string eventId, string authCode);
 		Task PostUserPredictionsAsync(List<string> pickNames, List<Team> teams, int sectionId, int groupId, string steamId, string eventId, string authCode);
+		Task PostPlayoffPredictionsAsync(List<string> pickNames, List<Team> teams, IReadOnlyCollection<Section> playoffs, string steamId, string eventId, string authCode);
 	}
 
 	public class SteamAPI(HttpClient httpClient, JsonSerializerOptions serializerOptions, IOptionsMonitor<SteamConfig> config) : ISteamAPI
@@ -95,9 +100,85 @@ namespace CS2Pickems.APIs
 
 			request.Content = new FormUrlEncodedContent(formData);
 
-			var response = await _httpClient.SendAsync(request);
+			await _httpClient.SendAsync(request);
+		}
 
-			var content = await response.Content.ReadAsStringAsync();
+		public async Task PostPlayoffPredictionsAsync(List<string> pickNames, List<Team> teams, IReadOnlyCollection<Section> playoffs, string steamId, string eventId, string authCode)
+		{
+			HttpRequestMessage request = new(HttpMethod.Post, $"/ICSGOTournaments_730/UploadTournamentPredictions/v1?key={_config.WebApiKey}");
+
+			Section final = playoffs.ElementAt(2);
+
+			Dictionary<string, string> formData = HandleFinal(pickNames, teams, final, steamId, eventId, authCode);
+
+			Section semiFinals = playoffs.ElementAt(1);
+
+			formData = HandleSemis(formData, pickNames, teams, semiFinals);
+
+			Section quarterFinals = playoffs.First();
+
+			formData = HandleQuarters(formData, pickNames, teams, quarterFinals);
+
+			request.Content = new FormUrlEncodedContent(formData);
+
+			await _httpClient.SendAsync(request);
+		}
+
+		private static Dictionary<string, string> HandleQuarters(Dictionary<string, string> formData, List<string> pickNames, List<Team> teams, Section quarterFinals)
+		{
+			for (int i = 0; i < quarterFinals.Groups.Count(); i++)
+			{
+				int j = i + 3;
+				var item = teams.First(x => x.Logo == pickNames[j]);
+
+				var group = quarterFinals.Groups.ElementAt(i);
+
+				formData.Add($"sectionId{j}", $"{quarterFinals.SectionId}");
+				formData.Add($"groupId{j}", $"{group.GroupId}");
+				formData.Add($"index{j}", j.ToString());
+				formData.Add($"pickId{j}", item.TeamId.ToString());
+				formData.Add($"itemId{j}", item.ItemId.ToString());
+			}
+
+			return formData;
+		}
+
+		private static Dictionary<string, string> HandleSemis(Dictionary<string, string> formData, List<string> pickNames, List<Team> teams, Section semiFinals)
+		{
+			for (int i = 0; i < semiFinals.Groups.Count(); i++)
+			{
+				int j = i + 1;
+				var item = teams.First(x => x.Logo == pickNames[j]);
+
+				var group = semiFinals.Groups.ElementAt(i);
+
+				formData.Add($"sectionId{j}", $"{semiFinals.SectionId}");
+				formData.Add($"groupId{j}", $"{group.GroupId}");
+				formData.Add($"index{j}", j.ToString());
+				formData.Add($"pickId{j}", item.TeamId.ToString());
+				formData.Add($"itemId{j}", item.ItemId.ToString());
+			}
+
+			return formData;
+		}
+
+		private static Dictionary<string, string> HandleFinal(List<string> pickNames, List<Team> teams, Section final, string steamId, string eventId, string authCode)
+		{
+			var finalTeam = teams.First(x => x.Logo == pickNames.First());
+
+			Dictionary<string, string> formData = new()
+			{
+				{"event", eventId },
+				{"steamId", steamId },
+				{"steamIdKey", authCode },
+				{"sectionId",$"{final.SectionId}" },
+				{"groupId", $"{final.Groups.First().GroupId}" },
+				{"index", "0" },
+				{"pickId", finalTeam.TeamId.ToString() },
+				{"itemId", finalTeam.ItemId.ToString() }
+			};
+
+			return formData;
 		}
 	}
 }

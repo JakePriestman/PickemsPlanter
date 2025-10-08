@@ -8,6 +8,7 @@ namespace CS2Pickems.Services
 		Task<bool> ExistsAsync(string steamId, string eventId);
 		Task CreateEntryAsync(UserEvent userEvent);
 		Task<UserEvent?> GetEntryIfExistsAsync(string steamId, string eventId);
+		Task DeleteEntityIfExistsAsync(string steamId, string eventId);
 	}
 
 	public class TableStorageService(TableServiceClient tableServiceClient) : ITableStorageService
@@ -34,6 +35,17 @@ namespace CS2Pickems.Services
 				return response.Value;
 
 			return null;
+		}
+
+		public async Task DeleteEntityIfExistsAsync(string steamId, string eventId)
+		{
+
+			var exists = await ExistsAsync(steamId, eventId);
+
+			if (exists)
+			{
+				var response = await _client.DeleteEntityAsync(steamId, eventId);
+			}
 		}
 	}
 }

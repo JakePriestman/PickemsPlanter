@@ -1,11 +1,12 @@
+using CS2Pickems.Models;
 using CS2Pickems.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CS2Pickems.Pages.PickEms
 {
-    public class Stage1Model(IPickemsService pickemsService, IMemoryCache cache) : PageModel
+    public class StageModel(IPickemsService pickemsService, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
     {
 		[BindProperty(SupportsGet = true)]
 		public required string EventId { get; init; }
@@ -16,11 +17,21 @@ namespace CS2Pickems.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public required string SteamId { get; init; }
 
-        private string AuthCode { get; set; } = string.Empty;
+        [BindProperty(SupportsGet = true)]
+        public required Stages Stage { get; init; }
+
+        public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
+
+        public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
+
+		[BindProperty(SupportsGet = true)]
+		public string? SelectedEvent { get; init; }
+
+		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
+
+		private string AuthCode { get; set; } = string.Empty;
 
         private readonly IPickemsService _pickemsService = pickemsService;
-
-        private readonly IMemoryCache _cache = cache;
 
 		public async Task<JsonResult> OnGetImages()
         {
@@ -28,7 +39,7 @@ namespace CS2Pickems.Pages.PickEms
 
 			try
             {
-                return new JsonResult(await _pickemsService.GetTeamsInStageAsync(Models.Stages.Stage1, EventId));
+                return new JsonResult(await _pickemsService.GetTeamsInStageAsync(Stage, EventId));
             }
             catch
             {
@@ -42,7 +53,7 @@ namespace CS2Pickems.Pages.PickEms
 
 			try
             {
-                return new JsonResult(await _pickemsService.GetStagePicksAsync(Models.Stages.Stage1, SteamId, EventId, AuthCode));
+                return new JsonResult(await _pickemsService.GetStagePicksAsync(Stage, SteamId, EventId, AuthCode));
             }
             catch
             {
@@ -56,7 +67,7 @@ namespace CS2Pickems.Pages.PickEms
 
 			try
             {
-                await _pickemsService.PostStagePickemsAsync(Models.Stages.Stage1, droppedImagesData, SteamId, EventId, AuthCode);
+                await _pickemsService.PostStagePickemsAsync(Stage, droppedImagesData, SteamId, EventId, AuthCode);
             }
             catch
             {

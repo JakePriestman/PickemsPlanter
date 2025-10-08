@@ -1,0 +1,35 @@
+﻿@page
+@model CS2Pickems.Pages.Profile.OverviewModel
+@{
+}
+
+<div class="pickem-container">
+    <div class="navbar">
+        <div class="dropdown">
+            <button class="dropbtn">
+                <img src="@Model.Avatar" />
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a asp-page="Profile/Overview">@Model.PersonaName</a>
+                <a asp-page="/Profile/Logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <h1>@Model.PersonaName</h1>
+
+    <form method="post">
+        @foreach (var eventOption in Model.EventOptions)
+        {
+            <h2>@eventOption.Text</h2>
+            <input type="password" id="AuthCode" asp-for="@Model.AuthCodes[eventOption.Value]" value="@Model.AuthCodes[eventOption.Value]" />
+            <button type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="Delete">Delete Auth Code</button>
+            <button type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="ChooseEvent">Choose Event</button>
+        }
+    </form>
+</div>
+
+@section Scripts {
+
+}

@@ -26,7 +26,7 @@ function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
                 const existingFilename = existingImg.src.split('/').pop();
                 if (existingFilename === filename) {
                     zone.innerHTML = ''; // Clear it
-                    resetDropzoneStyle(zone); // 🔁 Reset styles
+                    resetDropzoneStyle(zone); // Reset styles
                 }
             }
         });
@@ -113,7 +113,11 @@ document.getElementById('saveForm').addEventListener('submit', function (e) {
     });
 
     const jsonData = JSON.stringify(imagesData);
-    document.getElementById('DroppedImagesData').value = jsonData;
+    const imageData = document.getElementById('DroppedImagesData');
+
+    if (imageData == null) return "";
+
+    imageData.value = jsonData
 });
 
 function checkDropzonesFilled() {
@@ -127,7 +131,7 @@ function checkDropzonesFilled() {
     const saveButton = document.getElementById('saveButton');
     if (saveButton) {
         saveButton.disabled = !allFilled;
-        saveButton.title = allFilled ? "" : "Please fill all dropzones to enable saving.";
+        saveButton.textContent = allFilled ? "Save All Picks" : "Please fill all dropzones to enable saving.";
     } else {
         console.warn("Save button with id 'saveButton' not found.");
     }
