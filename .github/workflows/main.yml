@@ -29,13 +29,13 @@ jobs:
         run: dotnet restore
 
       - name: Build solution
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ../../src --configuration Release --no-restore
 
       - name: Run unit tests
-        run: dotnet test --configuration Release --no-build
+        run: dotnet test ../../tests --configuration Release --no-build
 
       - name: Publish app
-        run: dotnet publish --configuration Release --output ${{ env.PACKAGE_PATH }}
+        run: dotnet publish ../../src --configuration Release --output ${{ env.PACKAGE_PATH }}
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
