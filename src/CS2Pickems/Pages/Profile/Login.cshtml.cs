@@ -12,7 +12,7 @@ namespace CS2Pickems.Pages
         public IActionResult OnPostLogin()
         {
             if (User.Identity?.IsAuthenticated is true)
-                return RedirectToPage("PickEms/ChooseEvent");
+                return RedirectToPage("/Profile/Overview");
 
 			string returnUrl = Request.GetEncodedUrl().Replace("Login", "SteamCallback");
 			string realm = $"{Request.Scheme}://{Request.Host}";

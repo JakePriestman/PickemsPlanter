@@ -1,4 +1,37 @@
 ﻿@page
 @model CS2Pickems.Pages.ErrorModel
 @{
+    ViewData["Title"] = "Error";
+    Layout = "_Layout";
+}
+
+<div class="error-container">
+    <h1>Oops! Something went wrong.</h1>
+    <p>We ran into a problem while processing your request.</p>
+    <p>Please try again later, or <a asp-page="/Index">return to the homepage</a>.</p>
+</div>
+
+@section Styles {
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+            .error-container h1 {
+                font-size: 2rem;
+                margin-bottom: 1rem;
+                color: #b00020;
+            }
+
+            .error-container p {
+                font-size: 1.2rem;
+                margin: 0.5rem 0;
+            }
+
+            .error-container a {
+                color: #007bff;
+                text-decoration: underline;
+            }
+    </style>
 }

@@ -1,0 +1,159 @@
+﻿@page
+@model CS2Pickems.Pages.PickEms.StageModel
+@{
+    ViewData["Title"] = $"CS2 PickEms - {Model.Stage}";
+    Layout = "_Layout";
+}
+
+<div class="pickem-container">
+    <div class="navbar">
+        <form method="post" class="event-select">
+            <label for="event"></label>
+            <select id="SelectedEvent" asp-for="SelectedEvent" asp-items="Model.EventOptions"></select>
+        </form>
+
+        <div class="dropdown">
+            <button class="dropbtn">
+                <img src="@Model.Avatar" />
+                <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a asp-page="/Profile/Overview">@Model.PersonaName</a>
+                <a asp-page="/Profile/Logout">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <nav class="stage-nav">
+        <a class="stage @(Model.Stage == CS2Pickems.Models.Stages.Stage1 ? "active" : "")"
+           asp-page="/PickEms/Stage"
+           asp-route-eventId="@Model.EventId"
+           asp-route-eventName="@Model.EventName"
+           asp-route-steamId="@Model.SteamId"
+           asp-route-stage="@CS2Pickems.Models.Stages.Stage1">I</a>
+
+        <a class="stage @(Model.Stage == CS2Pickems.Models.Stages.Stage2 ? "active" : "")"
+           asp-page="/PickEms/Stage"
+           asp-route-eventId="@Model.EventId"
+           asp-route-eventName="@Model.EventName"
+           asp-route-steamId="@Model.SteamId"
+           asp-route-stage="@CS2Pickems.Models.Stages.Stage2">II</a>
+
+        <a class="stage @(Model.Stage == CS2Pickems.Models.Stages.Stage3 ? "active" : "")"
+           asp-page="/PickEms/Stage"
+           asp-route-eventId="@Model.EventId"
+           asp-route-eventName="@Model.EventName"
+           asp-route-steamId="@Model.SteamId"
+           asp-route-stage="@CS2Pickems.Models.Stages.Stage3">III</a>
+
+        <a class="stage"
+           asp-page="/PickEms/Playoffs"
+           asp-route-eventId="@Model.EventId"
+           asp-route-eventName="@Model.EventName"
+           asp-route-steamId="@Model.SteamId">IV</a>
+    </nav>
+
+    <div class="pickem-layout">
+        <section class="bracket">
+            <div class="three-zero">
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick0">3-0</div>
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick1">3-0</div>
+            </div>
+            <div class="three-one">
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick2">3-1</div>
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick3">3-1</div>
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick4">3-1</div>
+            </div>
+            <div class="three-two">
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick5">3-2</div>
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick6">3-2</div>
+                <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick7">3-2</div>
+            </div>
+            <div class="zero-three">
+                <div class="match-dropzone-eliminated" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick8">0-3</div>
+                <div class="match-dropzone-eliminated" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick9">0-3</div>
+            </div>
+        </section>
+
+        <section class="teams-section">
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team0"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team1"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team2"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team3"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team4"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team5"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team6"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team7"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team8"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team9"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team10"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team11"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team12"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team13"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team14"></div>
+            <div class="team" draggable="true" ondragstart="drag(event)" id="team15"></div>
+        </section>
+    </div>
+
+    <form method="post" id="saveForm">
+        <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
+        <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/PickEms/Stage?handler=Images&eventId=@Model.EventId&steamId=@Model.SteamId&stage=@Model.Stage")
+                .then(response => response.json())
+                .then(imageUrls => {
+                    imageUrls.forEach((url, index) => {
+                        const container = document.getElementById(`team${index}`);
+                        if (container) {
+                            const img = document.createElement("img");
+                            img.src = url;
+                            img.className = "team-img";
+                            container.appendChild(img);
+                        }
+                    });
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/PickEms/Stage?handler=Picks&eventId=@Model.EventId&steamId=@Model.SteamId&stage=@Model.Stage")
+                .then(response => response.json())
+                .then(imageUrls => {
+                    console.log("Fetched image URLs:", imageUrls);
+
+                    imageUrls.forEach((url, index) => {
+                        const container = document.getElementById(`pick${index}`);
+
+                        if (container) {
+                            placeImageInDropzone(url, container);
+                        } else {
+                            console.warn(`Dropzone with id="pick${index}" not found`);
+                        }
+                    });
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Possibly auto-fill from server
+            checkDropzonesFilled(); // Run after populating with data
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+        const stages = document.querySelectorAll(".stage");
+
+        stages.forEach(stage => {
+            stage.addEventListener("click", () => {
+                // remove active class from all
+                stages.forEach(s => s.classList.remove("active"));
+                // add active class to clicked
+                stage.classList.add("active");
+                });
+            });
+        });
+    </script>
+}
+

@@ -2,6 +2,7 @@
 using CS2Pickems.Models;
 using CS2Pickems.Models.Steam;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace CS2Pickems.Services
@@ -14,7 +15,7 @@ namespace CS2Pickems.Services
 		Task<List<string>> GetStagePicksAsync(Stages stage, string steamId, string eventId, string authCode);
 		Task<List<string>> GetPlayoffPicksAsync(string steamId, string eventId, string authCode);
 		Task PostStagePickemsAsync(Stages stage, string droppedImagesData, string steamId, string eventId, string authCode);
-		Task PostPlayoffPickemsAsync(string droppedImagesData, string AuthCode);
+		Task PostPlayoffPickemsAsync(string droppedImagesData, string steamId, string eventId, string authCode);
 
 	}
 
@@ -24,6 +25,7 @@ namespace CS2Pickems.Services
 		private readonly IUserPredictionsCachingService _cachingService = cachingService;
 		private readonly ISteamAPI _steamAPI = steamAPI;
 		private readonly ITournamentCachingService _tournamentCachingService = tournamentCachingService;
+		private const string IMAGE_LOCATION = "/Images/teams";
 
 		public string GetAuthCodeFromCache(string eventId, string steamId)
 		{
@@ -41,9 +43,12 @@ namespace CS2Pickems.Services
 
 			foreach (var team in section.Groups.First().Teams)
 			{
-				var logo = teams.First(x => x.PickId == team.PickId).Logo;
+				var logo = teams.FirstOrDefault(x => x.PickId == team.PickId)?.Logo;
 
-				imageUrls.Add($"/Images/{logo}.png");
+				if (logo is null)
+					imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
+				else
+					imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
 			}
 
 			return imageUrls;
@@ -66,9 +71,9 @@ namespace CS2Pickems.Services
 					var logo = teams.FirstOrDefault(x => x.PickId == team.PickId)?.Logo;
 
 					if (logo is null)
-						imageUrls.Add($"/Images/unknown.png");
+						imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
 					else
-						imageUrls.Add($"/Images/{logo}.png");
+						imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
 				}
 			}
 			return imageUrls;
@@ -76,7 +81,7 @@ namespace CS2Pickems.Services
 
 		public async Task<List<string>> GetStagePicksAsync(Stages stage, string steamId, string eventId, string authCode)
 		{
-			List<Team> teams = (List<Team>)_cache.Get($"TOURNAMENT_{eventId}_TEAMS")!;
+			List<Team> teams = (List<Team>)_cache.Get($"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS")!;
 
 			Section section = await _tournamentCachingService.GetSectionAsync(eventId, stage);
 
@@ -92,14 +97,14 @@ namespace CS2Pickems.Services
 			{
 				var logo = teams.First(x => x.PickId == pick.Pick).Logo;
 
-				imageUrls.Add($"/Images/{logo}.png");
+				imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
 			}
 			return imageUrls;
 		}
 
 		public async Task<List<string>> GetPlayoffPicksAsync(string steamId, string eventId, string authCode)
 		{
-			IReadOnlyCollection<Team> teams = (IReadOnlyCollection<Team>)_cache.Get($"TOURNAMENT_{eventId}_TEAMS")!;
+			IReadOnlyCollection<Team> teams = (IReadOnlyCollection<Team>)_cache.Get($"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS")!;
 
 			IReadOnlyCollection<Section> playoffs = await _tournamentCachingService.GetPlayoffsAsync(eventId);
 
@@ -119,7 +124,7 @@ namespace CS2Pickems.Services
 					{
 						var logo = teams.First(x => x.PickId == pick.Pick).Logo;
 
-						imageUrls.Add($"/Images/{logo}.png");
+						imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
 					}
 				}
 			}
@@ -128,7 +133,7 @@ namespace CS2Pickems.Services
 
 		public async Task PostStagePickemsAsync(Stages stage, string droppedImagesData, string steamId, string eventId, string authCode)
 		{
-			List<Team> teams = (List<Team>)_cache.Get($"TOURNAMENT_{eventId}_TEAMS")!;
+			List<Team> teams = (List<Team>)_cache.Get($"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS")!;
 
 			Section section = await _tournamentCachingService.GetSectionAsync(eventId, stage);
 
@@ -141,10 +146,19 @@ namespace CS2Pickems.Services
 			await _cachingService.RefreshUserPredictionsAsync(steamId, eventId, authCode);
 		}
 
-		public async Task PostPlayoffPickemsAsync(string droppedImagesData, string AuthCode)
+		public async Task PostPlayoffPickemsAsync(string droppedImagesData, string steamId, string eventId, string authCode)
 		{
-			throw new NotImplementedException();
-		}
+			List<Team> teams = (List<Team>)_cache.Get($"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS")!;
+			
+			IReadOnlyCollection<Section> playoffs = await _tournamentCachingService.GetPlayoffsAsync(eventId);
 
+			//TODO: Check if picks are allowed
+
+			List<string> imageNames = [.. JsonSerializer.Deserialize<List<string>>(droppedImagesData)!.Select(x => x.Replace(".png", ""))];
+
+			await _steamAPI.PostPlayoffPredictionsAsync(imageNames, teams, playoffs, steamId, eventId, authCode);
+
+			await _cachingService.RefreshUserPredictionsAsync(steamId, eventId, authCode);
+		}
 	}
 }

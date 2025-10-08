@@ -3,10 +3,20 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/stage.css" />
+    <link rel="stylesheet" href="~/css/playoffs.css" />
+
+    <title>@ViewData["Title"]</title>
+
+    <link rel="icon" type="image/x-icon" href="~/Images/CS2.ico">
 </head>
 <body>
     <main role="main" class="container">
         @RenderBody()
+
+        <div class="github">
+            <a href="https://github.com/JakePriestman" target="_blank"><img src="~/Images/github/github-mark.png"></a>
+        </div>
     </main>
 
     @RenderSection("Scripts", required: false)

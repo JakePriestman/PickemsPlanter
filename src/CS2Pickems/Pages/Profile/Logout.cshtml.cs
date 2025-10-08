@@ -11,7 +11,7 @@ namespace CS2Pickems.Pages
         {
 			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            return Redirect("/Login");
+            return Redirect("/Profile/Login");
 		}
     }
 }

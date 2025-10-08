@@ -9,18 +9,139 @@ body {
     padding: 1em;
 }
 
-.stage-nav {
-    background-color: #c7b38a;
-    padding: 1em;
-    display: flex;
-    gap: 2em;
+.dropdown {
+    float: right;
+    overflow: hidden;
+    font-family: Arial;
 }
 
-.stage-nav a {
+    /* Dropdown button */
+    .dropdown .dropbtn {
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: white;
+        padding: 14px 16px;
+        background-color: inherit;
+        font-family: inherit; /* Important for vertical align on mobile phones */
+        margin: 0; /* Important for vertical align on mobile phones */
+    }
+
+    /* Add a red background color to navbar links on hover */
+    .navbar a:hover, .dropdown:hover .dropbtn {
+        background-color: red;
+    }
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    right: 0;
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+    /* Links inside the dropdown */
+    .dropdown-content a {
+        float: none;
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        text-align: left;
+    }
+
+        /* Add a grey background color to dropdown links on hover */
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+.navbar {
+    background-color: #c7b38a;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.event-select {
+    vertical-align: middle;
+    
+}
+
+    .event-select select {
+        appearance: none; /* Standard */
+        -webkit-appearance: none; /* Safari / Chrome */
+        -moz-appearance: none;
+        color: #FFF;
+        border: none;
+        padding: 1em;
+        background-color: #c7b38a;
+        font-size: x-large;
+    }
+
+.github {
+    position: fixed;
+    bottom: 1em; /* space from bottom */
+    right: 1em; /* space from right */
+    z-index: 1000; /* stays above other content */
+}
+
+    .github img {
+        width: 40px; /* optional size */
+        height: auto;
+    }
+
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Spread them apart */
+    padding: 0 1em; /* Optional horizontal padding */
+}
+
+.dropbtn img {
+    width: 50px;
+    height: 50px;
+}
+
+
+.stage-nav {
+    width: 1.5em;
+    height: auto;
+    position: fixed; /* Sticks to the viewport */
+    top: 50%; /* Move to the vertical middle */
+    left: 2em; /* Keep it on the left side */
+    transform: translateY(-50%);
+    display: flex; /* Arrange children in a column */
+    flex-direction: column;
+    align-items: center; /* Center horizontally inside the container */
+    gap: 5em;
+}
+
+.stage {
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 1.5em; /* Give height and width so it’s circular */
+    height: 1.5em;
+    display: flex; /* Center text inside the circle */
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
     text-decoration: none;
     font-weight: bold;
     color: black;
 }
+
+    .stage:hover {
+        transform: scale(1.2);
+    }
+
+    .stage.active {
+        transform: scale(1.5);
+    }
+
 
 .stage-header {
     margin: 1em 0;
@@ -106,7 +227,18 @@ body {
 }
 
 
-.match-dropzone-advanced,
+.match-dropzone-advanced {
+    border: 2px dashed #ccc;
+    min-height: 50px;
+    min-width: 50px;
+    padding: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
 .match-dropzone-eliminated {
     border: 2px dashed #ccc;
     min-height: 50px;
@@ -129,6 +261,7 @@ body {
     filter: grayscale(100%);
     pointer-events: none;
 }
+
 
 .playoff-bracket {
     display: flex;

@@ -45,7 +45,8 @@ namespace CS2Pickems.Pages
 			List<Claim> claims =
 			[
 				new (ClaimTypes.NameIdentifier, steamId),
-				new ("PersonaName", player.PersonaName)
+				new ("PersonaName", player.PersonaName),
+				new ("Avatar", player.AvatarFull)
 			];
 
 			ClaimsIdentity identity = new (claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -53,7 +54,7 @@ namespace CS2Pickems.Pages
 
 			await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-			return RedirectToPage("PickEms/ChooseEvent");
+			return RedirectToPage("/Profile/Overview");
 		}
 	}
 }
