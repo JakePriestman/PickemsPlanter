@@ -70,7 +70,8 @@ jobs:
             az deployment group create \
               --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
               --template-file ${{ env.BICEP_FILE }} \
-              --parameters @${{ env.PARAMETERS_FILE }}
+              --parameters @${{ env.PARAMETERS_FILE }} \
+              --debug
 
       - name: Deploy app via ZIP
         uses: azure/webapps-deploy@v3
