@@ -26,7 +26,7 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore NuGet packages
-        run: dotnet restore
+        run: dotnet restore ../../src/CS2Pickems/CS2Pickems.csproj 
 
       - name: Build solution
         run: dotnet build ../../src/CS2Pickems/CS2Pickems.csproj --configuration Release --no-restore
