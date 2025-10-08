@@ -8,8 +8,8 @@ on:
 env:
   AZURE_WEBAPP_NAME: app-cs2pickems
   AZURE_RESOURCE_GROUP: rg-cs2pickems
-  BICEP_FILE: infrastructure/deploy.bicep
-  PARAMETERS_FILE: infrastructure/parameters.json
+  BICEP_FILE: ./infrastructure/deploy.bicep
+  PARAMETERS_FILE: ./infrastructure/parameters.json
   PACKAGE_PATH: ./publish
 
 jobs:
