@@ -24,6 +24,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
   properties: {
     networkAcls: {
       defaultAction: 'Deny'
+      resourceAccessRules: [
+        {
+          resourceId: appService.id
+          tenantId: tenant().tenantId
+        }
+      ]
     }
   
   }
@@ -75,7 +81,7 @@ resource storageAccountRole 'Microsoft.Authorization/roleAssignments@2022-04-01'
   name: guid(storageAccount.id, resourceGroup().id)
   properties: {
     principalId: appService.identity.principalId
-  roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
   }
 }
 
