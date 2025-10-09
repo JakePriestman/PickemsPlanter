@@ -13,28 +13,6 @@ resource keyVault 'Microsoft.KeyVault/vaults@2024-11-01' = {
     enableRbacAuthorization: true
   }
 }
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
-  name:  names.storageAccount
-  location: location
-  kind: 'StorageV2'
-  sku: {
-    name: 'Standard_LRS'
-  }
-  properties: {
-    networkAcls: {
-      defaultAction: 'Deny'
-      resourceAccessRules: [
-        {
-          resourceId: appService.id
-          tenantId: tenant().tenantId
-        }
-      ]
-    }
-  
-  }
-}
-
 resource appServicePlan 'Microsoft.Web/serverfarms@2024-04-01' = {
   name: names.appServicePlan
   location: location
@@ -66,6 +44,27 @@ resource appService 'Microsoft.Web/sites@2024-04-01' = {
       netFrameworkVersion: 'v8.0'
     }
     keyVaultReferenceIdentity: 'SystemAssigned'
+  }
+}
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
+  name:  names.storageAccount
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+  properties: {
+    networkAcls: {
+      defaultAction: 'Deny'
+      ipRules: [
+        {
+          value: appService.properties.outboundIpAddresses
+          action: 'Allow'
+        }
+      ]
+    }
+  
   }
 }
 
