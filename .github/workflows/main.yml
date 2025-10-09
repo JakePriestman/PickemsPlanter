@@ -3,7 +3,8 @@ name: Build, Test, and Deploy .NET App to Azure
 on:
   push:
     branches:
-      - master
+      - main
+  workflow_dispatch:
 
 env:
   AZURE_WEBAPP_NAME: app-cs2pickems
