@@ -47,24 +47,12 @@ resource appService 'Microsoft.Web/sites@2024-04-01' = {
   }
 }
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2024-01-01' = {
-  name:  names.storageAccount
-  location: location
-  kind: 'StorageV2'
-  sku: {
-    name: 'Standard_LRS'
-  }
-  properties: {
-    networkAcls: {
-      defaultAction: 'Deny'
-      ipRules: [
-        {
-          value: appService.properties.outboundIpAddresses
-          action: 'Allow'
-        }
-      ]
-    }
-  
+var appServiceOutboundAddresses = split(appService.properties.outboundIpAddresses, ',')
+
+module storageAccount 'storageAccount.bicep' = {
+  params: {
+    allowedIpAddresses: appServiceOutboundAddresses
+    storageAccountName: names.storageAccount
   }
 }
 
@@ -77,7 +65,7 @@ resource keyVaultRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 
 resource storageAccountRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(storageAccount.id, resourceGroup().id)
+  name: guid(names.storageAccount, resourceGroup().id)
   properties: {
     principalId: appService.identity.principalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
