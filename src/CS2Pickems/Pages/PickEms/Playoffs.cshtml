@@ -58,17 +58,17 @@
 
     <div class="playoff-bracket">
         <div class="champion">
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick6">Champion</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick6">Champion</div>
         </div>
         <div class="semi-finals">
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick4">S1</div>
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick5">S2</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick4">S1</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick5">S2</div>
         </div>
         <div class="quarter-finals">
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick0">Q1</div>
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick1">Q2</div>
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick2">Q3</div>
-            <div class="match-dropzone-advanced" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick3">Q4</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick0">Q1</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick1">Q2</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick2">Q3</div>
+            <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick3">Q4</div>
         </div>
 
         <div class="round-of-eight">
@@ -90,10 +90,10 @@
 </div>
 
 @section Scripts {
-    <script src="/js/site.js"></script>
-
+    <script src="~/js/stagePlayoffs.js"></script>
+    <script src="~/js/playoffs.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", function () {
             fetch("/PickEms/Playoffs?handler=Images&eventId=@Model.EventId&steamId=@Model.SteamId")
                 .then(response => response.json())
                 .then(imageUrls => {
@@ -117,7 +117,7 @@
 
                     imageUrls.forEach((url, index) => {
                         const container = document.getElementById(`pick${index}`);
-
+                        enableDrag(`pick${index}`)
                         if (container) {
                             placeImageInDropzone(url, container, true);
                         } else {
@@ -133,17 +133,16 @@
         });
 
         document.addEventListener("DOMContentLoaded", () => {
-        const stages = document.querySelectorAll(".stage");
+            const stages = document.querySelectorAll(".stage");
 
-        stages.forEach(stage => {
-            stage.addEventListener("click", () => {
-                // remove active class from all
-                stages.forEach(s => s.classList.remove("active"));
-                // add active class to clicked
-                stage.classList.add("active");
+            stages.forEach(stage => {
+                stage.addEventListener("click", () => {
+                    // remove active class from all
+                    stages.forEach(s => s.classList.remove("active"));
+                    // add active class to clicked
+                    stage.classList.add("active");
                 });
             });
         });
-
     </script>
 }
