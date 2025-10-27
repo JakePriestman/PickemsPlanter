@@ -102,6 +102,8 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/stagePlayoffs.js"></script>
+    <script src="~/js/stage.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             fetch("/PickEms/Stage?handler=Images&eventId=@Model.EventId&steamId=@Model.SteamId&stage=@Model.Stage")
