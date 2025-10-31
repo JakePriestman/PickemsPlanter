@@ -1,0 +1,109 @@
+.event-select {
+    vertical-align: middle;
+}
+
+.event-select select {
+    appearance: none; /* Standard */
+    -webkit-appearance: none; /* Safari / Chrome */
+    -moz-appearance: none;
+    color: #FFF;
+    border: none;
+    padding: 1em;
+    background-color: #c7b38a;
+    font-size: x-large;
+}
+
+.stage-nav {
+    width: 1.5em;
+    height: auto;
+    position: fixed; /* Sticks to the viewport */
+    top: 50%; /* Move to the vertical middle */
+    left: 2em; /* Keep it on the left side */
+    transform: translateY(-50%);
+    display: flex; /* Arrange children in a column */
+    flex-direction: column;
+    align-items: center; /* Center horizontally inside the container */
+    gap: 5em;
+}
+
+.stage {
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 1.5em; /* Give height and width so it’s circular */
+    height: 1.5em;
+    display: flex; /* Center text inside the circle */
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    text-decoration: none;
+    font-weight: bold;
+    color: black;
+}
+
+.stage:hover {
+    transform: scale(1.2);
+}
+
+.stage.active {
+    transform: scale(1.5);
+}
+
+
+.used-image {
+    opacity: 0.1;
+    filter: grayscale(100%);
+    pointer-events: none;
+}
+
+.save-button {
+    position: fixed;
+    bottom: 12.5em;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #5e8b4b;
+    color: white;
+    padding: 1em 2em;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    margin-top: 1em;
+}
+
+body {
+    background-color: #e6dac3;
+}
+
+.navbar {
+    background-color: #c7b38a;
+    box-shadow: #B3A17C 0px 2px;
+}
+
+.dropdown-content a:hover {
+    background-color: #e6dac3;
+}
+
+.dropdown:hover .dropdown-content {
+    background-color: #c7b38a;
+    box-shadow: #B3A17C 0px 2px;
+}
+
+.team-img {
+    width: 100%;
+    height: auto;
+}
+
+
+.dropped-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.team {
+    border: 1px solid #aaa;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    cursor: grab;
+    width: 64px;
+    height: 64px;
+}

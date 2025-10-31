@@ -24,7 +24,6 @@ namespace CS2Pickems.Pages
 				return RedirectToPage("/Error");
 			}
 
-			// Extract SteamID
 			var claimedId = query["openid.claimed_id"].ToString();
 			var match = Regex.Match(claimedId, @"https://steamcommunity.com/openid/id/(\d+)");
 
@@ -35,10 +34,7 @@ namespace CS2Pickems.Pages
 
 			var steamId = match.Groups[1].Value;
 
-			// Get Steam profile info using Steam Web API (optional)
 			var userResponse = await _steamAPI.GetPlayerSummeries(steamId);
-
-			// For simplicity, just use SteamID for identity
 
 			var player = userResponse.Response.Players.First();
 

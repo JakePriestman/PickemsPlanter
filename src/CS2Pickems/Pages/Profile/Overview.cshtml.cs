@@ -1,24 +1,20 @@
 using CS2Pickems.Models;
+using CS2Pickems.Models.TableStorage;
 using CS2Pickems.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Security.Claims;
 
 namespace CS2Pickems.Pages.Profile
 {
-	public class OverviewModel(ITableStorageService tableStoreService, IUserPredictionsCachingService cachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
+	public class OverviewModel(ITableStorageService tableStorageService, IUserPredictionsCachingService cachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
 	{
 		[BindProperty]
 		public string SelectedEvent { get; set; } = string.Empty;
-
-		private readonly ITableStorageService _tableStorageService = tableStoreService;
-
-		private readonly IUserPredictionsCachingService _cachingService = cachingService;
-
-		private readonly IMemoryCache _memoryCache = memoryCache;
 
 		public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
@@ -31,31 +27,59 @@ namespace CS2Pickems.Pages.Profile
 		[BindProperty]
 		public Dictionary<string, string> AuthCodes { get; set; } = eventOptions.ToDictionary(key => key.Value, value => string.Empty);
 
+		private const string FAKE_AUTH_CODE = "FAKE_AUTH_CODE";
+
 		public async Task OnGetAsync()
 		{
 			foreach (var key in AuthCodes.Keys)
 			{
-				var tableEntity = await _tableStorageService.GetEntryIfExistsAsync(SteamId, key);
+				bool tableEntityExists = await tableStorageService.ExistsAsync(SteamId, key);
 
-				if (tableEntity is not null)
-					AuthCodes[key] = tableEntity.AuthCode;
+				if (tableEntityExists)
+					AuthCodes[key] = FAKE_AUTH_CODE;
 			}
 		}
 
+		//public async Task OnGetAsync()
+		//{
+		//	foreach (var key in AuthCodes.Keys)
+		//	{
+		//		var tableEntity = await tableStorageService.GetEntryIfExistsAsync(SteamId, key);
+
+		//		if (tableEntity is not null)
+		//			AuthCodes[key] = tableEntity.AuthCode;
+		//	}
+		//}
+
+
 		public async Task<IActionResult> OnPostChooseEvent()
 		{
-			//Set cache and everything here & add code to storage if not exists
-			var authCode = AuthCodes[SelectedEvent];
 
 			var eventName = EventOptions.First(x => x.Value == SelectedEvent).Text;
 
 			var encodedName = WebUtility.UrlEncode(eventName);
 
-			await _cachingService.RefreshUserPredictionsAsync(SteamId, SelectedEvent, authCode);
+			var authCode = AuthCodes[SelectedEvent];
 
-			await _cachingService.CacheTeamsAsync(SteamId, SelectedEvent, authCode);
+			if (authCode == FAKE_AUTH_CODE)
+			{
+				UserEvent? userEvent = await tableStorageService.GetEntryIfExistsAsync(SteamId, SelectedEvent);	
 
-			_memoryCache.Set($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE", authCode);
+				if (userEvent is null)
+				{
+					//TODO: Pop-up please enter code or something.
+					ArgumentNullException.ThrowIfNull(userEvent);
+				}
+
+				await CacheOnChooseEvent(userEvent.AuthCode);
+			}
+
+			else
+			{
+				await tableStorageService.CreateUserEventIfNotExistsAsync(SteamId, SelectedEvent, authCode);
+
+				await CacheOnChooseEvent(authCode);
+			}
 
 			return RedirectToPage("/PickEms/Stage", new
 			{
@@ -66,12 +90,34 @@ namespace CS2Pickems.Pages.Profile
 			});
 		}
 
-		public async Task OnPostDelete()
+		public async Task<IActionResult> OnPostDelete()
 		{
-			await _tableStorageService.DeleteEntityIfExistsAsync(SteamId, SelectedEvent);
+			await tableStorageService.DeleteEntityIfExistsAsync(SteamId, SelectedEvent);
 
-			_memoryCache.Remove($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE");
-			_memoryCache.Remove($"USER_{SteamId}_TOURNAMENT_{SelectedEvent}_PICKS");
+			memoryCache.Remove($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE");
+			memoryCache.Remove($"USER_{SteamId}_TOURNAMENT_{SelectedEvent}_PICKS");
+
+			return RedirectToPage("/Profile/Overview");
+		}
+
+		public async Task<IActionResult?> OnGetAuthCode(string eventId)
+		{
+			var authCode = await tableStorageService.GetEntryIfExistsAsync(SteamId, eventId);
+
+			if (authCode == null) return NotFound();
+
+			return new JsonResult(new { authCode.AuthCode });
+		}
+
+		private async Task CacheOnChooseEvent(string authCode)
+		{
+			cachingService.CacheAuthCode(SelectedEvent, SteamId, authCode);
+
+			await cachingService.RefreshUserPredictionsAsync(SteamId, SelectedEvent);
+
+			await cachingService.CacheTeamsAsync(SteamId, SelectedEvent);
+
+			memoryCache.Set($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE", authCode);
 		}
 	}
 }

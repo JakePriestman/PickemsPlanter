@@ -1,4 +1,7 @@
-﻿/* The dropdown container */
+﻿.pickem-layout {
+    display: flex;
+    gap: 1em;
+}
 
 .bracket {
     position: fixed; /* Stays in the same place when scrolling */
@@ -12,6 +15,14 @@
     align-items: center; /* Center rows horizontally */
 }
 
+.bracket {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+}
+
 .bracket > div {
     display: flex;
     justify-content: center;
@@ -21,33 +32,28 @@
 }
 
 .match-dropzone-advanced {
-    width: 20rem;
-    height: 5rem;
     background-color: #5e8b4b;
-    opacity: 70%;
-    border: 2px dashed #a58f68;
-    border-radius: 5px;
 }
 
 .match-dropzone-eliminated {
-    width: 20rem;
-    height: 5rem;
     background-color: #b06161;
-    border: 2px dashed #a58f68;
-    border-radius: 5px;
 }
 
 .match-dropzone-advanced,
 .match-dropzone-eliminated {
-    border: 2px dashed #ccc;
-    min-height: 50px;
-    min-width: 50px;
+    border-radius: 5px;
+    border: 2px dashed #aaa;
+    min-height: 64px;
+    min-width: 64px;
     padding: 5px;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
+    cursor: grab;
 }
+
 
 .teams-section {
     position: fixed;
@@ -59,87 +65,4 @@
     border-radius: 10px;
     display: flex; /* Flexbox for spacing */
     gap: 1em; /* Space between .team boxes */
-}
-
-.champion, .sem-finals, .quarter-finals, .round-of-eight {
-    display: flex;
-    width: 100%;
-    max-width: 900px;
-    box-sizing: border-box;
-}
-
-.champion {
-    justify-content: center;
-}
-
-.sem-finals {
-    justify-content: space-around;
-}
-
-    .sem-finals .match-dropzone-advanced {
-        margin-left: 8em;
-        margin-right: 8em;
-    }
-
-.quarter-finals {
-    justify-content: space-between;
-}
-
-    .quarter-finals .match-dropzone-advanced {
-        margin-left: 2.5em;
-        margin-right: 2.5em;
-    }
-
-.round-of-eight {
-    justify-content: space-between;
-}
-
-.match-dropzone-advanced, .team {
-    width: 50px;
-    height: 50px;
-    border: 2px dashed #ccc;
-    border-radius: 5px;
-    cursor: grab;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    user-select: none;
-}
-
-
-.team {
-    border: 1px solid #aaa;
-    padding: 0.5em 1em;
-    border-radius: 5px;
-    cursor: grab;
-    width: 50px;
-    height: 50px;
-}
-
-.save-button {
-    position: fixed;
-    bottom: 12.5em; /* Stays in the same place when scrolling */
-    left: 50%; /* Move to horizontal center */
-    transform: translateX(-50%);
-    background-color: #5e8b4b;
-    color: white;
-    padding: 1em 2em;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    margin-top: 1em;
-}
-
-.save-button-playoffs {
-    position: fixed;
-    bottom: 5em; /* Stays in the same place when scrolling */
-    left: 50%; /* Move to horizontal center */
-    transform: translateX(-50%);
-    background-color: #5e8b4b;
-    color: white;
-    padding: 1em 2em;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    margin-top: 1em;
 }

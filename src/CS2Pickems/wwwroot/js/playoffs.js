@@ -55,3 +55,57 @@ function enableDrag(itemId) {
 //    item.removeAttribute("draggable");
 //    item.removeEventListener("ondragstart", drag);
 //}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const { eventId, steamId, stage } = window.pageData;
+    fetch(`/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}`)
+        .then(response => response.json())
+        .then(imageUrls => {
+            imageUrls.forEach((url, index) => {
+                const container = document.getElementById(`team${index}`);
+                if (container) {
+                    const img = document.createElement("img");
+                    img.src = url;
+                    img.className = "team-img";
+                    container.appendChild(img);
+                }
+            });
+        });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const { eventId, steamId, stage } = window.pageData;
+    fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
+        .then(response => response.json())
+        .then(imageUrls => {
+            console.log("Fetched image URLs:", imageUrls);
+
+            imageUrls.forEach((url, index) => {
+                const container = document.getElementById(`pick${index}`);
+                enableDrag(`pick${index}`)
+                if (container) {
+                    placeImageInDropzone(url, container, true);
+                } else {
+                    console.warn(`Dropzone with id="pick${index}" not found`);
+                }
+            });
+        });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Possibly auto-fill from server
+    checkDropzonesFilled(); // Run after populating with data
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const stages = document.querySelectorAll(".stage");
+
+    stages.forEach(stage => {
+        stage.addEventListener("click", () => {
+            // remove active class from all
+            stages.forEach(s => s.classList.remove("active"));
+            // add active class to clicked
+            stage.classList.add("active");
+        });
+    });
+});

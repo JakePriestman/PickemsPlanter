@@ -1,0 +1,58 @@
+﻿.navbar h1 {
+    padding: 0 1em 0;
+}
+
+.login-page {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
+
+.login-page h1 {
+    text-align: center;
+    position: relative;
+    top: 25%;
+    transform: translateY(-25%);
+    font-weight: 1000;
+    font-size: 48px;
+    color: #E0E1DD;
+}
+
+.login-page h2 {
+    text-align: center;
+    position: relative;
+    top: 25%;
+    transform: translateY(-25%);
+    font-weight: 1000;
+    font-size: 28px;
+    color: #E0E1DD;
+}
+
+.login-form {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
+
+.login-button {
+    position: relative;
+    top: 35%;
+    transform: translateY(-35%);
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #778DA9;
+    border-radius: 10px;
+    border: hidden;
+    height: 4em;
+    width: 8em;
+    box-shadow: #415A77 0px 3px;
+    font-family: inherit;
+    color: #0D1B2A;
+    font-size: inherit;
+    font-weight: 525;
+}
+
+.login-button:hover {
+    background-color: #415A77;
+    box-shadow: #1B263B 0px 3px;
+}

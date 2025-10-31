@@ -1,10 +1,17 @@
 ﻿@page
 @model CS2Pickems.Pages.Profile.OverviewModel
 @{
+    ViewData["Title"] = $"Account Overview";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/overview.css" />
 }
 
 <div class="pickem-container">
     <div class="navbar">
+        <h1>@Model.PersonaName</h1>
         <div class="dropdown">
             <button class="dropbtn">
                 <img src="@Model.Avatar" />
@@ -17,19 +24,22 @@
         </div>
     </div>
 
-    <h1>@Model.PersonaName</h1>
-
-    <form method="post">
+    <form method="post" class="form">
         @foreach (var eventOption in Model.EventOptions)
         {
-            <h2>@eventOption.Text</h2>
-            <input type="password" id="AuthCode" asp-for="@Model.AuthCodes[eventOption.Value]" value="@Model.AuthCodes[eventOption.Value]" />
-            <button type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="Delete">Delete Auth Code</button>
-            <button type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="ChooseEvent">Choose Event</button>
+            <div class="event">
+                <h2>@eventOption.Text</h2>
+                <div class="inputs">
+                    <input type="password" id="authCode-@eventOption.Value" class="AuthCode" asp-for="@Model.AuthCodes[eventOption.Value]" value="@Model.AuthCodes[eventOption.Value]" />
+                    <button id="showAuthCode-@eventOption.Value" class="showAuthCode" type="button"><img src="~/Images/showpassword.png" /></button>
+                    <button class="event-button-delete" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="Delete">Delete Auth Code</button>
+                    <button class="event-button-select" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="ChooseEvent">Choose Event</button>
+                </div>
+            </div>
         }
     </form>
 </div>
 
 @section Scripts {
-
+    <script src="~/js/overview.js"></script>
 }
