@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Security.Claims;
 
@@ -39,18 +38,6 @@ namespace CS2Pickems.Pages.Profile
 					AuthCodes[key] = FAKE_AUTH_CODE;
 			}
 		}
-
-		//public async Task OnGetAsync()
-		//{
-		//	foreach (var key in AuthCodes.Keys)
-		//	{
-		//		var tableEntity = await tableStorageService.GetEntryIfExistsAsync(SteamId, key);
-
-		//		if (tableEntity is not null)
-		//			AuthCodes[key] = tableEntity.AuthCode;
-		//	}
-		//}
-
 
 		public async Task<IActionResult> OnPostChooseEvent()
 		{
