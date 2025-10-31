@@ -1,12 +1,24 @@
-body {
+ï»¿body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: #e6dac3;
+    background-color: #0D1B2A;
     margin: 0;
     padding: 0;
+    color: #E0E1DD;
+    width: 100vw;
+    height: 100vh;
 }
 
-.pickem-container {
-    padding: 1em;
+.container {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+}
+
+.navbar {
+    background-color: #1B263B;
+    display: flex;
+    justify-content: space-between; /* Spread them apart */
+    box-shadow: #060D15 0px 2px;
 }
 
 .dropdown {
@@ -15,73 +27,59 @@ body {
     font-family: Arial;
 }
 
-    /* Dropdown button */
-    .dropdown .dropbtn {
-        font-size: 16px;
-        border: none;
-        outline: none;
-        color: white;
-        padding: 14px 16px;
-        background-color: inherit;
-        font-family: inherit; /* Important for vertical align on mobile phones */
-        margin: 0; /* Important for vertical align on mobile phones */
-    }
-
-    /* Add a red background color to navbar links on hover */
-    .navbar a:hover, .dropdown:hover .dropbtn {
-        background-color: red;
-    }
-
-/* Dropdown content (hidden by default) */
-.dropdown-content {
-    right: 0;
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+/* Dropdown button */
+.dropdown .dropbtn {
+    font-size: 16px;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 1em;
+    background-color: inherit;
+    font-family: inherit; /* Important for vertical align on mobile phones */
+    margin: 0; /* Important for vertical align on mobile phones */
 }
 
-    /* Links inside the dropdown */
-    .dropdown-content a {
-        float: none;
-        color: black;
-        padding: 12px 16px;
-        text-decoration: none;
-        display: block;
-        text-align: left;
-    }
-
-        /* Add a grey background color to dropdown links on hover */
-        .dropdown-content a:hover {
-            background-color: #ddd;
-        }
-
-.navbar {
-    background-color: #c7b38a;
+.dropbtn img {
+    width: auto;
+    height: 4em;
+    padding: 0;
+    border-radius: 4px;
+    border: 2px solid #ccc;
 }
+
+/*.dropdown:hover {
+    background-color: #1B263B;
+}*/
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
     display: block;
+    background-color: #1B263B;
+    right: 0;
+    box-shadow: #060D15 0px 2px;
 }
 
-.event-select {
-    vertical-align: middle;
-    
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
 }
 
-    .event-select select {
-        appearance: none; /* Standard */
-        -webkit-appearance: none; /* Safari / Chrome */
-        -moz-appearance: none;
-        color: #FFF;
-        border: none;
-        padding: 1em;
-        background-color: #c7b38a;
-        font-size: x-large;
-    }
+/* Links inside the dropdown */
+.dropdown-content a {
+    float: none;
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: right;
+}
+
+.dropdown-content a:hover {
+    background-color: #0D1B2A;
+}
 
 .github {
     position: fixed;
@@ -90,231 +88,7 @@ body {
     z-index: 1000; /* stays above other content */
 }
 
-    .github img {
-        width: 40px; /* optional size */
-        height: auto;
-    }
-
-.navbar {
-    display: flex;
-    justify-content: space-between; /* Spread them apart */
-    padding: 0 1em; /* Optional horizontal padding */
-}
-
-.dropbtn img {
-    width: 50px;
-    height: 50px;
-}
-
-
-.stage-nav {
-    width: 1.5em;
+.github img {
+    width: 40px;  optional size 
     height: auto;
-    position: fixed; /* Sticks to the viewport */
-    top: 50%; /* Move to the vertical middle */
-    left: 2em; /* Keep it on the left side */
-    transform: translateY(-50%);
-    display: flex; /* Arrange children in a column */
-    flex-direction: column;
-    align-items: center; /* Center horizontally inside the container */
-    gap: 5em;
-}
-
-.stage {
-    border: 2px solid black;
-    border-radius: 50%;
-    width: 1.5em; /* Give height and width so it’s circular */
-    height: 1.5em;
-    display: flex; /* Center text inside the circle */
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    text-decoration: none;
-    font-weight: bold;
-    color: black;
-}
-
-    .stage:hover {
-        transform: scale(1.2);
-    }
-
-    .stage.active {
-        transform: scale(1.5);
-    }
-
-
-.stage-header {
-    margin: 1em 0;
-    font-size: 1.2em;
-}
-
-.pickem-layout {
-    display: flex;
-    gap: 1em;
-}
-
-.teams-column {
-    background-color: #f4efe3;
-    padding: 1em;
-    border-radius: 10px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-}
-
-.team {
-    border: 1px solid #aaa;
-    padding: 0.5em;
-    margin-bottom: 0.5em;
-    border-radius: 5px;
-    cursor: grab;
-    width: 50px;
-    height: 50px;
-}
-
-.bracket {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    align-items: center;
-}
-
-.quarter-final {
-    display: flex;
-    justify-content: flex-start;
-}
-
-.semi-final {
-    display: flex;
-    justify-content: center;
-}
-
-.match-dropzone-advanced {
-    width: 200px;
-    height: 50px;
-    background-color: #5e8b4b;
-    opacity: 70%;
-    border: 2px dashed #a58f68;
-    border-radius: 5px;
-}
-
-.match-dropzone-eliminated {
-    width: 200px;
-    height: 50px;
-    background-color: #b06161;
-    border: 2px dashed #a58f68;
-    border-radius: 5px;
-}
-
-.status-section {
-    margin-bottom: 1em;
-}
-
-.save-button {
-    background-color: #5e8b4b;
-    color: white;
-    padding: 1em 2em;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    margin-top: 1em;
-}
-
-.team-img {
-    width: 100%;
-    height: auto;
-}
-
-
-.match-dropzone-advanced {
-    border: 2px dashed #ccc;
-    min-height: 50px;
-    min-width: 50px;
-    padding: 5px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.match-dropzone-eliminated {
-    border: 2px dashed #ccc;
-    min-height: 50px;
-    min-width: 50px;
-    padding: 5px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.dropped-img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-.used-image {
-    opacity: 0.1;
-    filter: grayscale(100%);
-    pointer-events: none;
-}
-
-
-.playoff-bracket {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-}
-
-.round {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-}
-
-.match {
-    border: 2px dashed #444;
-    background-color: #fff8e1;
-    padding: 10px 15px;
-    text-align: center;
-    width: 160px;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
-}
-
-.playoff-column {
-    background-color: #f4efe3;
-    padding: 1em;
-    border-radius: 10px;
-    display: grid;
-    grid-template-columns: repeat(1, 1fr);
-    gap: 1rem;
-}
-
-.pick {
-    background-color: #ccc;
-    margin-top: 5px;
-    padding: 5px;
-    border-radius: 4px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.header {
-    text-align: center;
-    margin-bottom: 30px;
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.leaderboard {
-    position: absolute;
-    right: 40px;
-    top: 20px;
-    background: rgba(255,255,255,0.8);
-    border: 1px solid #999;
-    padding: 10px;
-    font-family: monospace;
 }

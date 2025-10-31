@@ -6,6 +6,8 @@ namespace CS2Pickems.Services
 	public interface ITableStorageService
 	{
 		Task<bool> ExistsAsync(string steamId, string eventId);
+		Task CreateUserEventIfNotExistsAsync(string steamId, string eventId, string authCode);
+		Task CreateUserEventAsync(string steamId, string eventId, string authCode);
 		Task CreateEntryAsync(UserEvent userEvent);
 		Task<UserEvent?> GetEntryIfExistsAsync(string steamId, string eventId);
 		Task DeleteEntityIfExistsAsync(string steamId, string eventId);
@@ -20,6 +22,24 @@ namespace CS2Pickems.Services
 			var response = await _client.GetEntityIfExistsAsync<UserEvent>(steamId, eventId);
 
 			return response.HasValue;
+		}
+		public async Task CreateUserEventIfNotExistsAsync(string steamId, string eventId, string authCode)
+		{
+			bool exists = await ExistsAsync(steamId, eventId);
+
+			if (!exists)
+				await CreateUserEventAsync(steamId, eventId, authCode);
+		}
+		public async Task CreateUserEventAsync(string steamId, string eventId, string authCode)
+		{
+			UserEvent newUserEvent = new()
+			{
+				PartitionKey = steamId,
+				RowKey = eventId,
+				AuthCode = authCode
+			};
+
+			await CreateEntryAsync(newUserEvent);
 		}
 
 		public async Task CreateEntryAsync(UserEvent userEvent)

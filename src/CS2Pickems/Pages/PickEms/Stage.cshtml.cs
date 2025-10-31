@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace CS2Pickems.Pages.PickEms
 {
-    public class StageModel(IPickemsService pickemsService, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
+    public class StageModel(IPickemsService pickemsService, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor, IUserPredictionsCachingService cachingService) : PageModel
     {
 		[BindProperty(SupportsGet = true)]
 		public required string EventId { get; init; }
@@ -29,17 +29,11 @@ namespace CS2Pickems.Pages.PickEms
 
 		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 
-		private string AuthCode { get; set; } = string.Empty;
-
-        private readonly IPickemsService _pickemsService = pickemsService;
-
 		public async Task<JsonResult> OnGetImages()
         {
-            AuthCode = _pickemsService.GetAuthCodeFromCache(EventId, SteamId);
-
 			try
             {
-                return new JsonResult(await _pickemsService.GetTeamsInStageAsync(Stage, EventId));
+                return new JsonResult(await pickemsService.GetTeamsInStageAsync(Stage, EventId));
             }
             catch
             {
@@ -49,11 +43,9 @@ namespace CS2Pickems.Pages.PickEms
 
         public async Task<JsonResult> OnGetPicks()
         {
-			AuthCode = _pickemsService.GetAuthCodeFromCache(EventId, SteamId);
-
 			try
             {
-                return new JsonResult(await _pickemsService.GetStagePicksAsync(Stage, SteamId, EventId, AuthCode));
+                return new JsonResult(await pickemsService.GetStagePicksAsync(Stage, SteamId, EventId));
             }
             catch
             {
@@ -63,11 +55,11 @@ namespace CS2Pickems.Pages.PickEms
 
         public async Task OnPostSendPicks(string droppedImagesData)
         {
-			AuthCode = _pickemsService.GetAuthCodeFromCache(EventId, SteamId);
+			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
 			try
             {
-                await _pickemsService.PostStagePickemsAsync(Stage, droppedImagesData, SteamId, EventId, AuthCode);
+                await pickemsService.PostStagePickemsAsync(Stage, droppedImagesData, SteamId, EventId, authCode);
             }
             catch
             {
