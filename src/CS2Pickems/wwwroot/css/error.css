@@ -1,0 +1,54 @@
+﻿.error-container {
+    width: inherit;
+    position: inherit;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+h1 {
+    text-align: center;
+    font-family: inherit;
+    font-size: 48px;
+    position: relative;
+}
+
+img {
+    max-width: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1em;
+    position: relative;
+}
+
+p {
+    position: relative;
+    text-align: center;
+    font-family: inherit;
+    font-size: 20px;
+    padding: 1em;
+}
+form {
+    width: inherit;
+}
+
+.overview-button {
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    background-color: #778DA9;
+    padding: 1em;
+    border-radius: 10px;
+    box-shadow: #415A77 0px 3px;
+    color: #0D1B2A;
+    border-radius: 10px;
+    border: hidden;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.overview-button:hover {
+    background-color: #415A77;
+    box-shadow: #1B263B 0px 3px;
+
+}

@@ -16,7 +16,6 @@ namespace CS2Pickems.Pages
 
 		public async Task<IActionResult> OnGet()
         {
-			//Clear all cache
 			foreach (var @event in EventOptions)
 			{
 				cachingService.EmptyUserCache(SteamId, @event.Value);

@@ -47,6 +47,14 @@ resource appService 'Microsoft.Web/sites@2024-04-01' = {
   }
 }
 
+resource appServiceConfig 'Microsoft.Web/sites/config@2024-04-01' = {
+  name: 'appsettings'
+  parent: appService
+  properties: {
+    ASPNETCORE_ENVIRONMENT: 'prod'
+  }
+}
+
 var appServiceOutboundAddresses = split(appService.properties.outboundIpAddresses, ',')
 
 module storageAccount 'storageAccount.bicep' = {

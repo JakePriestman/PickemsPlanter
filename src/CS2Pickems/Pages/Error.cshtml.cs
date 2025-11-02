@@ -3,17 +3,25 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace CS2Pickems.Pages
 {
-    public class ErrorModel(ILogger<ErrorModel> logger) : PageModel
+    public class ErrorModel(IHttpContextAccessor httpContextAccessor) : PageModel
     {
-		private readonly ILogger<ErrorModel> _logger = logger;
-
 		public string? RequestId { get; set; }
 
 		public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
+		private bool? IsAuthenticated => httpContextAccessor?.HttpContext?.User?.Identity?.IsAuthenticated;
+
 		public void OnGet()
 		{
 			RequestId = HttpContext.TraceIdentifier;
+		}
+
+		public IActionResult OnPostOverview()
+		{
+			if (IsAuthenticated is false)
+				return RedirectToPage("/Profile/Login");
+			else 
+				return RedirectToPage("/Profile/Overview");
 		}
 	}
 }
