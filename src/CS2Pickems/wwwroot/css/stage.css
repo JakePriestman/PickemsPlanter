@@ -1,22 +1,14 @@
 ﻿.pickem-layout {
     display: flex;
-    gap: 1em;
-}
-
-.bracket {
-    position: fixed; /* Stays in the same place when scrolling */
-    top: 50%; /* Move to vertical center */
-    left: 50%; /* Move to horizontal center */
-    transform: translate(-50%, -50%); /* Perfect centering */
-
-    display: flex;
     flex-direction: column;
-    gap: 2em; /* Space between each row (3-0, 3-1, etc.) */
-    align-items: center; /* Center rows horizontally */
+    gap: 1em;
+    align-items: center;
+    width: inherit;
+    height: 100vh;
+    padding: 15vh 1em;
 }
 
 .bracket {
-    flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -26,9 +18,7 @@
 .bracket > div {
     display: flex;
     justify-content: center;
-    gap: 2em; /* Horizontal spacing between items */
-    width: 100%;
-    max-width: 700px; /* Adjust for overall bracket width */
+    gap: 2em;
 }
 
 .match-dropzone-advanced {
@@ -51,18 +41,16 @@
     align-items: center;
     justify-content: center;
     user-select: none;
-    cursor: grab;
+    cursor: default;
 }
 
 
 .teams-section {
-    position: fixed;
-    bottom: 1em; /* Space from bottom */
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%);
-    background-color: #f4efe3;
     padding: 1em;
     border-radius: 10px;
-    display: flex; /* Flexbox for spacing */
-    gap: 1em; /* Space between .team boxes */
+    display: flex;
+    gap: 1em;
+    max-width: 100vw;
+    margin: 5vh 0 0 1em;
+    justify-content: center;
 }

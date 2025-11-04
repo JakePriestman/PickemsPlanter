@@ -47,10 +47,6 @@
     border: 2px solid #ccc;
 }
 
-/*.dropdown:hover {
-    background-color: #1B263B;
-}*/
-
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
     display: block;
@@ -89,6 +85,6 @@
 }
 
 .github img {
-    width: 40px;  optional size 
+    max-width: 40px;
     height: auto;
 }

@@ -1,5 +1,11 @@
+.pickem-container {
+    width: inherit;
+    height: inherit;
+}
+
 .event-select {
-    vertical-align: middle;
+    display: flex;
+    align-items: center;
 }
 
 .event-select select {
@@ -13,8 +19,13 @@
     font-size: x-large;
 }
 
+.event-select select:hover {
+    display: block;
+    border-radius: 5px;
+}
+
 .stage-nav {
-    width: 1.5em;
+    max-width: 1.5em;
     height: auto;
     position: fixed; /* Sticks to the viewport */
     top: 50%; /* Move to the vertical middle */
@@ -55,41 +66,28 @@
     pointer-events: none;
 }
 
+#saveForm {
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
+
 .save-button {
-    position: fixed;
-    bottom: 12.5em;
-    left: 50%;
-    transform: translateX(-50%);
     background-color: #5e8b4b;
     color: white;
     padding: 1em 2em;
+    margin: 5vh;
     border: none;
     border-radius: 5px;
     font-size: 1.1em;
-    margin-top: 1em;
-}
-
-body {
-    background-color: #e6dac3;
-}
-
-.navbar {
-    background-color: #c7b38a;
-    box-shadow: #B3A17C 0px 2px;
-}
-
-.dropdown-content a:hover {
-    background-color: #e6dac3;
-}
-
-.dropdown:hover .dropdown-content {
-    background-color: #c7b38a;
-    box-shadow: #B3A17C 0px 2px;
 }
 
 .team-img {
-    width: 100%;
-    height: auto;
+    min-width: 25px;
+    min-height: 25px;
+    max-width: 64px;
+    max-height: 64px;
+    object-fit: contain;
 }
 
 
@@ -104,6 +102,10 @@ body {
     padding: 0.5em 1em;
     border-radius: 5px;
     cursor: grab;
-    width: 64px;
-    height: 64px;
+    min-width: 10px;
+    min-height: 10px;
+    max-width: 64px;
+    max-height: 64px;
+    display: flex;
+    justify-content: center;
 }

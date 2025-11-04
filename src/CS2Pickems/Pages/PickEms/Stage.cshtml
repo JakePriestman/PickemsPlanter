@@ -80,6 +80,11 @@
             </div>
         </section>
 
+        <form method="post" id="saveForm">
+            <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
+            <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
+        </form>
+
         <section class="teams-section">
             <div class="team" draggable="true" ondragstart="drag(event)" id="team0"></div>
             <div class="team" draggable="true" ondragstart="drag(event)" id="team1"></div>
@@ -99,11 +104,6 @@
             <div class="team" draggable="true" ondragstart="drag(event)" id="team15"></div>
         </section>
     </div>
-
-    <form method="post" id="saveForm">
-        <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
-        <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
-    </form>
 </div>
 
 @section Scripts {

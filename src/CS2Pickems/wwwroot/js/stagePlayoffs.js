@@ -124,3 +124,12 @@ document.getElementById('saveForm').addEventListener('submit', function (e) {
 
     imageData.value = jsonData
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const { eventId, steamId, stage } = window.pageData;
+
+    var link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `/css/events/event-${eventId}.css`;
+    document.head.appendChild(link);
+});
