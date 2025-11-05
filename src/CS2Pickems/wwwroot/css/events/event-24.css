@@ -1,21 +1,13 @@
-﻿body {
-    background-color: #e6dac3;
-}
-
-.navbar {
-    background-color: #c7b38a;
-    box-shadow: #B3A17C 0px 2px;
-}
-
-.dropdown-content a:hover {
-    background-color: #e6dac3;
-}
-
-.dropdown:hover .dropdown-content {
-    background-color: #c7b38a;
-    box-shadow: #B3A17C 0px 2px;
+﻿:root {
+    --background-colour: #e6dac3;
+    --text-colour: #473717;
+    --foreground-colour: #B69F74;
+    --navbar-colour: #c7b38a;
+    --submit-colour: #40703C;
+    --delete-colour: #b06161;
 }
 
 .teams-section {
-    background-color: #f4efe3;
+    background-color: var(--foreground-colour);
+    color: var(--text-colour)
 }

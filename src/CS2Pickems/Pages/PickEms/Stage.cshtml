@@ -16,17 +16,10 @@
             <label for="event"></label>
             <select id="SelectedEvent" asp-for="SelectedEvent" asp-items="Model.EventOptions"></select>
         </form>
-
-        <div class="dropdown">
-            <button class="dropbtn">
-                <img src="@Model.Avatar" />
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-                <a asp-page="/Profile/Overview">@Model.PersonaName</a>
-                <a asp-page="/Profile/Logout">Logout</a>
-            </div>
-        </div>
+        <a asp-page="/Profile/Logout">Logout</a>
+        <button class="dropbtn" asp-page="/Profile/Overview">
+            <img src="@Model.Avatar" />
+        </button>
     </div>
 
     <nav class="stage-nav">
