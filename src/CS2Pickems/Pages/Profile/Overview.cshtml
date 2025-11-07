@@ -10,19 +10,15 @@
 }
 
 <div class="pickem-container">
-    <div class="navbar">
+    <nav class="navbar">
+        <button class="dropbtn" asp-page="/Profile/Overview">
+            <img src="@Model.Avatar" />
+        </button>
+
         <h1>@Model.PersonaName</h1>
-        <div class="dropdown">
-            <button class="dropbtn">
-                <img src="@Model.Avatar" />
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-                <a asp-page="Profile/Overview">@Model.PersonaName</a>
-                <a asp-page="/Profile/Logout">Logout</a>
-            </div>
-        </div>
-    </div>
+
+        <a asp-page="/Profile/Logout">Logout</a>
+    </nav>
 
     <form method="post" class="form">
         @foreach (var eventOption in Model.EventOptions)
@@ -38,6 +34,9 @@
             </div>
         }
     </form>
+</div>
+<div class="github">
+    <a href="https://github.com/JakePriestman" target="_blank"><img src="~/Images/github/github-mark-white.png"></a>
 </div>
 
 @section Scripts {

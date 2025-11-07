@@ -1,47 +1,102 @@
+.navbar::before {
+    background: var(--text-colour);
+}
+
 .event-select {
-    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    margin-right: auto;
 }
 
 .event-select select {
-    appearance: none; /* Standard */
-    -webkit-appearance: none; /* Safari / Chrome */
+    appearance: none;
+    -webkit-appearance: none;
     -moz-appearance: none;
-    color: #FFF;
+    color: inherit;
     border: none;
     padding: 1em;
     background-color: #c7b38a;
     font-size: x-large;
 }
 
+.event-select select:hover {
+    display: block;
+    border-radius: 5px;
+}
+
+#SelectedEvent {
+    display: flex;
+    align-items: center;
+    margin-right: auto;
+    padding: 0 0 0 1em;
+}
+
+.profile-image {
+    font-size: 16px;
+    border: none;
+    border-radius: inherit;
+    outline: none;
+    color: white;
+    padding: 1em 1em 1em 2em;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+}
+
+.profile-image img {
+    width: auto;
+    height: 4em;
+    border-radius: inherit;
+}
+
+.profile-image img:hover {
+    outline: 2px solid #ccc;
+    transition: outline 0.1s ease;
+}
+
+.logout {
+    font-family: inherit;
+    text-decoration: none;
+    color: inherit;
+    padding-right: 1em;
+    font-size: large;
+}
+
+.logout:hover {
+    text-decoration: underline;
+    transition: text-decoration 0.3s ease;
+}
+
+
 .stage-nav {
-    width: 1.5em;
+    max-width: 1.5em;
     height: auto;
-    position: fixed; /* Sticks to the viewport */
-    top: 50%; /* Move to the vertical middle */
-    left: 2em; /* Keep it on the left side */
-    transform: translateY(-50%);
-    display: flex; /* Arrange children in a column */
+    position: fixed;
+    left: 3em;
+    display: flex;
     flex-direction: column;
-    align-items: center; /* Center horizontally inside the container */
-    gap: 5em;
+    align-items: center;
+    gap: 4em;
 }
 
 .stage {
-    border: 2px solid black;
+    border: 2px solid var(--text-colour);
     border-radius: 50%;
-    width: 1.5em; /* Give height and width so it’s circular */
+    width: 1.5em;
     height: 1.5em;
-    display: flex; /* Center text inside the circle */
+    display: flex;
     justify-content: center;
     align-items: center;
     text-decoration: none;
     text-decoration: none;
     font-weight: bold;
-    color: black;
+    color: var(--text-colour);
+    font-family: "Times New Roman", Times, serif;
 }
 
 .stage:hover {
     transform: scale(1.2);
+    transition: 0.1s ease;
 }
 
 .stage.active {
@@ -55,43 +110,29 @@
     pointer-events: none;
 }
 
+#saveForm {
+    width: inherit;
+    display: flex;
+    justify-content: center;
+}
+
 .save-button {
-    position: fixed;
-    bottom: 12.5em;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #5e8b4b;
+    background-color: var(--submit-colour);
     color: white;
     padding: 1em 2em;
+    margin: 5vh;
     border: none;
     border-radius: 5px;
     font-size: 1.1em;
-    margin-top: 1em;
-}
-
-body {
-    background-color: #e6dac3;
-}
-
-.navbar {
-    background-color: #c7b38a;
-    box-shadow: #B3A17C 0px 2px;
-}
-
-.dropdown-content a:hover {
-    background-color: #e6dac3;
-}
-
-.dropdown:hover .dropdown-content {
-    background-color: #c7b38a;
-    box-shadow: #B3A17C 0px 2px;
 }
 
 .team-img {
-    width: 100%;
-    height: auto;
+    min-width: 25px;
+    min-height: 25px;
+    max-width: 64px;
+    max-height: 64px;
+    object-fit: contain;
 }
-
 
 .dropped-img {
     max-width: 100%;
@@ -102,8 +143,12 @@ body {
 .team {
     border: 1px solid #aaa;
     padding: 0.5em 1em;
-    border-radius: 5px;
     cursor: grab;
-    width: 64px;
-    height: 64px;
+    display: flex;
+    justify-content: center;
+}
+
+.team:hover .team-img {
+    transform: scale(1.2);
+    transition: 0.3s ease;
 }

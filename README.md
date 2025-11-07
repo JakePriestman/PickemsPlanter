@@ -1,4 +1,5 @@
 # CS2Pickems
 
 
-![image](https://github.com/user-attachments/assets/2828ac34-c791-4fa4-8743-0d9fc2929707)
+<img width="3837" height="1911" alt="image" src="https://github.com/user-attachments/assets/fbffe748-63a5-433e-b68a-199cb4846abc" />
+
