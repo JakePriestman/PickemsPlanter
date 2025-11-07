@@ -7,7 +7,10 @@
     --delete-colour: #b06161;
 }
 
+.nav-bar::before {
+    background-color: var(--text-colour);
+}
+
 .teams-section {
-    background-color: var(--foreground-colour);
-    color: var(--text-colour)
+    background-color: var(--background-colour);
 }

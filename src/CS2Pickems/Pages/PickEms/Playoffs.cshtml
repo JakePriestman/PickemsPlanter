@@ -12,57 +12,47 @@
 
 <div class="pickem-container">
     <div class="navbar">
-        <form method="post" class="event-select">
-            <label for="event"></label>
-            <select id="SelectedEvent" asp-for="SelectedEvent" asp-items="Model.EventOptions"></select>
-
-        </form>
-
-        <div class="dropdown">
-            <button class="dropbtn">
-                <img src="@Model.Avatar" />
-                <i class="fa fa-caret-down"></i>
-            </button>
-            <div class="dropdown-content">
-                <a asp-page="/Profile/Overview">@Model.PersonaName</a>
-                <a asp-page="/Profile/Logout">Logout</a>
-            </div>
-        </div>
+        <h2 id="SelectedEvent" asp-for="SelectedEvent" value=@Model.SelectedEvent>@Model.EventName</h2>
+        <a class="logout" asp-page="/Profile/Logout">Logout</a>
+        <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
     </div>
 
-    <nav class="stage-nav">
-        <nav class="stage-nav">
-            <a class="stage"
-               asp-page="/PickEms/Stage"
-               asp-route-eventId="@Model.EventId"
-               asp-route-eventName="@Model.EventName"
-               asp-route-steamId="@Model.SteamId"
-               asp-route-stage="@CS2Pickems.Models.Stages.Stage1">I</a>
-
-            <a class="stage"
-               asp-page="/PickEms/Stage"
-               asp-route-eventId="@Model.EventId"
-               asp-route-eventName="@Model.EventName"
-               asp-route-steamId="@Model.SteamId"
-               asp-route-stage="@CS2Pickems.Models.Stages.Stage2">II</a>
-
-            <a class="stage"
-               asp-page="/PickEms/Stage"
-               asp-route-eventId="@Model.EventId"
-               asp-route-eventName="@Model.EventName"
-               asp-route-steamId="@Model.SteamId"
-               asp-route-stage="@CS2Pickems.Models.Stages.Stage3">III</a>
-
-            <a class="stage active"
-               asp-page="/PickEms/Playoffs"
-               asp-route-eventId="@Model.EventId"
-               asp-route-eventName="@Model.EventName"
-               asp-route-steamId="@Model.SteamId">IV</a>
-        </nav>
-    </nav>
+    
 
     <div class="playoff-bracket">
+        <nav class="stage-nav">
+            <nav class="stage-nav">
+                <a class="stage"
+                   asp-page="/PickEms/Stage"
+                   asp-route-eventId="@Model.EventId"
+                   asp-route-eventName="@Model.EventName"
+                   asp-route-steamId="@Model.SteamId"
+                   asp-route-stage="@CS2Pickems.Models.Stages.Stage1">I</a>
+
+                <a class="stage"
+                   asp-page="/PickEms/Stage"
+                   asp-route-eventId="@Model.EventId"
+                   asp-route-eventName="@Model.EventName"
+                   asp-route-steamId="@Model.SteamId"
+                   asp-route-stage="@CS2Pickems.Models.Stages.Stage2">II</a>
+
+                <a class="stage"
+                   asp-page="/PickEms/Stage"
+                   asp-route-eventId="@Model.EventId"
+                   asp-route-eventName="@Model.EventName"
+                   asp-route-steamId="@Model.SteamId"
+                   asp-route-stage="@CS2Pickems.Models.Stages.Stage3">III</a>
+
+                <a class="stage active"
+                   asp-page="/PickEms/Playoffs"
+                   asp-route-eventId="@Model.EventId"
+                   asp-route-eventName="@Model.EventName"
+                   asp-route-steamId="@Model.SteamId">IV</a>
+            </nav>
+        </nav>
+
         <div class="champion">
+            <img src=""/> 
             <div class="match-dropzone-advanced" ondrop="dropPlayoffs(event)" ondragover="allowDrop(event)" id="pick6">Champion</div>
         </div>
         <div class="semi-finals">

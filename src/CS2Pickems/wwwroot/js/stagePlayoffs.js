@@ -18,7 +18,7 @@ function checkDropzonesFilled() {
     const saveButton = document.getElementById('saveButton');
     if (saveButton) {
         saveButton.disabled = !allFilled;
-        saveButton.textContent = allFilled ? "Save All Picks" : "Please fill all dropzones to enable saving.";
+        saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
     } else {
         console.warn("Save button with id 'saveButton' not found.");
     }
