@@ -1,54 +1,93 @@
 ﻿.error-container {
+    width: clamp(80%, 80%, 2300px);
+    height: clamp(80%, 80%, 1300px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-colour);
+    border-radius: 25px;
+}
+
+.error-container::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 20px 20px var(--background-colour);
+    background: black;
+    z-index: -2;
+    padding: 20px;
+    border-radius: inherit;
+}
+
+.kit-div {
+    position: relative;
+    width: clamp(125px, 250px, 250px);
+    height: clamp(125px, 250px, 250px);
+}
+
+.defuse-kit {
+    position: absolute;
     width: inherit;
-    position: inherit;
-    top: 50%;
-    transform: translateY(-50%);
+    height: inherit;
+    filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
 }
 
-
-h1 {
+ 
+error-container h1 {
+    display: flex;
+    flex-direction: column;
     text-align: center;
-    font-family: inherit;
-    font-size: 48px;
-    position: relative;
+    font-weight: 1000;
+    font-size: clamp(40px, 60px, 120px);
+    color: var(--text-colour);
+    padding: 1rem;
 }
 
-img {
-    max-width: 100px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 1em;
-    position: relative;
-}
-
-p {
-    position: relative;
+.error-container h2 {
+    display: flex;
+    flex-direction: column;
     text-align: center;
-    font-family: inherit;
-    font-size: 20px;
-    padding: 1em;
+    font-weight: 1000;
+    font-size: clamp(20px, 20px, 30px);
+    color: var(--text-colour);
+    padding: 1rem;
 }
+
 form {
-    width: inherit;
+    display: flex;
+    justify-content: center;
+    height: 3em;
 }
 
 .overview-button {
-    position: relative;
-    text-decoration: none;
-    color: inherit;
-    background-color: #778DA9;
-    padding: 1em;
-    border-radius: 10px;
-    box-shadow: #415A77 0px 3px;
-    color: #0D1B2A;
-    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--foreground-colour);
+    border-radius: 25px;
     border: hidden;
-    left: 50%;
-    transform: translateX(-50%);
+    height: 5em;
+    width: 10rem;
+    box-shadow: inset var(--submit-colour) 0 0;
+    font-family: inherit;
+    color: var(--text-colour);
+    font-size: 14px;
+    font-weight: 525;
+    padding: 1em;
+    background-image: linear-gradient(to top, var(--submit-colour) 50%, transparent 50%);
+    background-size: 100% 200%;
+    background-position: top;
+    transition: background-position 1.5s ease;
 }
 
 .overview-button:hover {
-    background-color: #415A77;
-    box-shadow: #1B263B 0px 3px;
+    background-position: bottom;
+}
 
+.overview-button:hover .text {
+    display: none;
 }

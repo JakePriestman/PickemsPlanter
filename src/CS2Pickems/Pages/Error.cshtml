@@ -10,11 +10,12 @@
 }
 
 <div class="error-container">
-    <img src="~/Images/defuse_kit_black.png" />
-    <h1>Bomb has been defused.</h1>
-    <p>We ran into a problem while processing your request.</p>
 
+    <div class="kit-div"> <img class="defuse-kit" src="~/Images/defuse_kit_black.png" /></div>
+
+    <h1>Bomb has been defused.</h1>
+    <h2>We ran into a problem while processing your request.</h2>
     <form method="post">
-        <button type="submit" class="overview-button" asp-page-handler="Overview">Account overview</button>
+        <button type="submit" class="overview-button" asp-page-handler="Overview">Defuse the bomb</button>
     </form>
 </div>
