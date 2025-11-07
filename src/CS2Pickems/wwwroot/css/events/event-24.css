@@ -4,6 +4,7 @@
     --foreground-colour: #B69F74;
     --navbar-colour: #c7b38a;
     --submit-colour: #40703C;
+    --advance-colour: #5e8b4b;
     --delete-colour: #b06161;
 }
 
@@ -13,4 +14,8 @@
 
 .teams-section {
     background-color: var(--background-colour);
+}
+
+.crown-image {
+    filter: invert(20%) sepia(12%) saturate(2447%) hue-rotate(1deg) brightness(91%) contrast(89%);
 }
