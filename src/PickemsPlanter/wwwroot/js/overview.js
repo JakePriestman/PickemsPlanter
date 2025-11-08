@@ -1,5 +1,5 @@
 ﻿document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".showAuthCode");
+    const buttons = document.querySelectorAll(".show-auth-code");
 
     buttons.forEach(button => {
         button.addEventListener("click", async function (event) {
@@ -23,7 +23,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
     // Select all AuthCode input fields
-    const authCodeInputs = document.querySelectorAll(".AuthCode");
+    const authCodeInputs = document.querySelectorAll(".auth-code");
 
     authCodeInputs.forEach(input => {
         // Get the corresponding event container (the parent .event div)
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Find the two buttons inside that container
         const deleteButton = eventContainer.querySelector(".event-button-delete");
         const selectButton = eventContainer.querySelector(".event-button-select");
-        const showButton = eventContainer.querySelector(".showAuthCode");
+        const showButton = eventContainer.querySelector(".show-auth-code");
 
         // Define a helper function to toggle button state
         const toggleButtons = () => {

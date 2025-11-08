@@ -11,11 +11,16 @@
 
 <div class="error-container">
 
-    <div class="kit-div"> <img class="defuse-kit" src="~/Images/defuse_kit_black.png" /></div>
+    <div class="kit-div"> <img class="defuse-kit" id="defuse-kit" src="~/Images/defuse_kit_black.png" /></div>
 
-    <h1>Bomb has been defused.</h1>
+    <h1>The bomb has been planted</h1>
     <h2>We ran into a problem while processing your request.</h2>
     <form method="post">
-        <button type="submit" class="overview-button" asp-page-handler="Overview">Defuse the bomb</button>
+        <button type="submit" class="overview-button" asp-page-handler="Overview" onmouseover="startKitBlinking()" onmouseout="stopKitBlinking()">Defuse the bomb</button>
     </form>
 </div>
+
+@section Scripts {
+
+    <script src="~/js/error.js"></script>
+}

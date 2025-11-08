@@ -11,6 +11,7 @@ namespace PickemsPlanter.Pages
 
         public IActionResult OnPostLogin()
         {
+            throw new Exception();
             if (User.Identity?.IsAuthenticated is true)
                 return RedirectToPage("/Profile/Overview");
 
