@@ -4,10 +4,10 @@
   "parameters": {
     "names": {
         "value": {
-            "keyVault": "kvcs2pickems",
-            "storageAccount": "sacs2pickems",
-            "appServicePlan": "asp-cs2pickems",
-            "appService": "app-cs2pickems"
+            "keyVault": "kvpickemsplanter",
+            "storageAccount": "sapickemsplanter",
+            "appServicePlan": "asp-pickemsplanter",
+            "appService": "app-pickemsplanter"
         }
     }
   }
