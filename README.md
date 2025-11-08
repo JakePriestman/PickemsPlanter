@@ -90,13 +90,9 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ---
 
-## 📸 Screenshots (Coming Soon)
+## 📸 Screenshots
 
-Add your screenshots here:
-```
 <img width="3838" height="1917" alt="image" src="https://github.com/user-attachments/assets/900efced-de01-4706-ad57-7fda3135df5f" />
 <img width="3839" height="1914" alt="image" src="https://github.com/user-attachments/assets/f57601d2-b38a-4ce0-9531-1dc73cd10795" />
 <img width="3837" height="1916" alt="image" src="https://github.com/user-attachments/assets/9a410e18-ba09-43ef-8fe0-70208621d1f6" />
 <img width="3839" height="1916" alt="image" src="https://github.com/user-attachments/assets/dce26a60-0873-4392-a07e-a32ade9d2c07" />
-
-```
