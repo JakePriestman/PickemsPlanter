@@ -6,33 +6,45 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: var(--background-colour);
+    background: #0E1012;
     border-radius: 25px;
-}
-
-.error-container::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    box-shadow: inset 0 0 20px 20px var(--background-colour);
-    background: black;
-    z-index: -2;
-    padding: 20px;
-    border-radius: inherit;
+    box-shadow: var(--shadow-m);
 }
 
 .kit-div {
     position: relative;
-    width: clamp(125px, 250px, 250px);
-    height: clamp(125px, 250px, 250px);
 }
 
 .defuse-kit {
-    position: absolute;
-    width: inherit;
-    height: inherit;
+    max-width: 250px;
+    max-height: 253px;
+    min-height: 100px;
+    min-width: 100px;
     filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.defuse-kit -blinking {
+    max-width: 250px;
+    max-height: 253px;
+    min-height: 100px;
+    min-width: 100px;
+    filter: invert(39%) sepia(11%) saturate(1869%) hue-rotate(68deg) brightness(92%) contrast(87%);
+    animation: blink 1s;
+    animation-iteration-count: infinite;
 }
 
  
@@ -82,6 +94,7 @@ form {
     background-size: 100% 200%;
     background-position: top;
     transition: background-position 1.5s ease;
+    box-shadow: var(--shadow-m);
 }
 
 .overview-button:hover {
