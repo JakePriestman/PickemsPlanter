@@ -1,0 +1,91 @@
+﻿.pickem-layout {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    width: inherit;
+    height: fit-content;
+    align-items: center;
+    justify-content: center;
+    top: 30%;
+    transform: translateY(-30%);
+}
+
+.bracket {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+    margin: 1em;
+}
+
+.picks {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+    justify-content: center;
+    margin: 2em;
+}
+
+.picks > div {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+.match-dropzone-advanced {
+    background-color: var(--advance-colour);
+}
+
+.match-dropzone-eliminated {
+    background-color: var(--delete-colour);
+}
+
+.match-dropzone-advanced,
+.match-dropzone-eliminated {
+    font-size: 20px;
+    border-radius: 5px;
+    min-height: 64px;
+    min-width: 64px;
+    padding: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    cursor: default;
+    box-shadow: var(--shadow-l);
+}
+
+
+.teams-section {
+    display: grid;
+    position: relative;
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    margin: 1em;
+    padding: 1em;
+    justify-content: center;
+    max-width: 1300px;
+    width: 80%;
+    height: fit-content;
+    gap: 1em;
+    border-radius: 10px;
+    background-color: var(--background-colour);
+    box-shadow: var(--shadow-m);
+}
+
+
+.team {
+    background-color: var(--background-colour);
+    height: auto;
+    border-radius: inherit;
+    padding: 0.5em 1em;
+    cursor: grab;
+    display: flex;
+    justify-content: center;
+    box-shadow: var(--shadow-s);
+}

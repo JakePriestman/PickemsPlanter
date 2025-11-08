@@ -1,0 +1,128 @@
+﻿.login-page {
+    width: clamp(490px, 80%, 1425px);
+    height: clamp(825px, 80%, 1300px);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #0E1012;
+    border-radius: 25px;
+    box-shadow: var(--shadow-m);
+}
+
+.bomb-div {
+    position: relative;
+}
+
+.bomb-img {
+    position: absolute;
+    max-width: 250px;
+    max-height: 253px;
+    min-height: 100px;
+    min-width: 100px;
+    filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
+}
+
+.bomb-blinker-img {
+    max-width: 250px;
+    max-height: 253px;
+    min-height: 100px;
+    min-width: 100px;
+    filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.bomb-blinking-img {
+    max-width: 250px;
+    max-height: 253px;
+    min-height: 100px;
+    min-width: 100px;
+    filter: invert(39%) sepia(11%) saturate(1869%) hue-rotate(68deg) brightness(92%) contrast(87%);
+    animation: blink 1s;
+    animation-iteration-count: infinite;
+}
+
+.login-page h1 {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-weight: 1000;
+    font-size: clamp(40px, 60px, 120px);
+    color: var(--text-colour);
+    padding: 1rem;
+}
+
+.login-page h2 {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    font-weight: 1000;
+    font-size: clamp(20px, 20px, 30px);
+    color: var(--text-colour);
+    padding: 1rem;
+}
+
+.login-form {
+    display: flex;
+    justify-content: center;
+    height: 3em;
+}
+
+.login-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--foreground-colour);
+    border-radius: 25px;
+    border: hidden;
+    height: 5em;
+    width: 10rem;
+    box-shadow: inset var(--submit-colour) 0 0;
+    font-family: inherit;
+    color: var(--text-colour);
+    font-size: 16px;
+    font-weight: 525;
+    padding: 1em;
+    background-image: linear-gradient(to top, var(--submit-colour) 50%, transparent 50%);
+    background-size: 100% 200%;
+    background-position: top;
+    transition: background-position 1.5s ease;
+    box-shadow: var(--shadow-m);
+}
+
+.login-button:hover {
+    background-position: bottom;
+}
+
+.login-button:hover .text{
+    display: none;
+}
+
+.bomb-code {
+    opacity: 0;
+    position: absolute;
+    width: 0;
+    transition: width 20s ease;
+    overflow: hidden;
+}
+
+.login-button:hover .bomb-code {
+    opacity: 1;
+    width: 100%;
+    font-size: 20px;
+}

@@ -1,0 +1,40 @@
+﻿@page
+@model PickemsPlanter.Pages.Profile.OverviewModel
+@{
+    ViewData["Title"] = $"Pick'Ems Planter - Account Overview";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/overview.css" />
+}
+
+<div class="pickem-container">
+    <nav class="navbar">
+        <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
+        <h1>@Model.PersonaName</h1>
+        <a class="logout" asp-page="/Profile/Logout">Logout</a>
+    </nav>
+
+    <form method="post" class="event-form">
+        @foreach (var eventOption in Model.EventOptions)
+        {
+            <div class="event">
+                <h2>@eventOption.Text</h2>
+                <div class="inputs">
+                    <input type="password" id="authCode-@eventOption.Value" class="auth-code" asp-for="@Model.AuthCodes[eventOption.Value]" value="@Model.AuthCodes[eventOption.Value]" />
+                    <button id="showAuthCode-@eventOption.Value" class="show-auth-code" type="button"><img src="~/Images/showpassword.png" /></button>
+                    <button class="event-button-delete" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="Delete">Delete Auth Code</button>
+                    <button class="event-button-select" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="ChooseEvent">Choose Event</button>
+                </div>
+            </div>
+        }
+    </form>
+</div>
+<div class="github">
+    <a href="https://github.com/JakePriestman" target="_blank"><img src="~/Images/github/github-mark-white.png"></a>
+</div>
+
+@section Scripts {
+    <script src="~/js/overview.js"></script>
+}
