@@ -1,0 +1,21 @@
+﻿@page
+@model PickemsPlanter.Pages.ErrorModel
+@{
+    ViewData["Title"] = "Error";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/error.css" />
+}
+
+<div class="error-container">
+
+    <div class="kit-div"> <img class="defuse-kit" src="~/Images/defuse_kit_black.png" /></div>
+
+    <h1>Bomb has been defused.</h1>
+    <h2>We ran into a problem while processing your request.</h2>
+    <form method="post">
+        <button type="submit" class="overview-button" asp-page-handler="Overview">Defuse the bomb</button>
+    </form>
+</div>
