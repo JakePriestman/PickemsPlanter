@@ -12,6 +12,7 @@ env:
   BICEP_FILE: ./infrastructure/deploy.bicep
   PARAMETERS_FILE: ./infrastructure/parameters.json
   PACKAGE_PATH: ./publish
+  PROJECT_NAME: PickemsPlanter
 
 jobs:
   build:
@@ -27,16 +28,16 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore NuGet packages
-        run: dotnet restore src/CS2Pickems.sln
+        run: dotnet restore src/${{env.PROJECT_NAME}}.sln
 
       - name: Build solution
-        run: dotnet build src/CS2Pickems/CS2Pickems.csproj --configuration Release --no-restore
+        run: dotnet build src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj --configuration Release --no-restore
 
       # - name: Run unit tests
        #  run: dotnet test ../../tests --configuration Release --no-build
 
       - name: Publish app
-        run: dotnet publish src/CS2Pickems/CS2Pickems.csproj --configuration Release --output ${{ env.PACKAGE_PATH }}
+        run: dotnet publish src/${{env.PROJECT_NAME}}/${{env.PROJECT_NAME}}.csproj --configuration Release --output ${{ env.PACKAGE_PATH }}
 
       - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
