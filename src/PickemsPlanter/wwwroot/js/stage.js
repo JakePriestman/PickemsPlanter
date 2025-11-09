@@ -19,7 +19,7 @@
 }
 
 function resetDropzoneStyle(dropzone) {
-    dropzone.removeAttribute("style"); // Removes inline styles
+    dropzone.removeAttribute("style");
 
     switch (dropzone.id) {
         case "pick0":
@@ -42,6 +42,22 @@ function resetDropzoneStyle(dropzone) {
             break;
     }
 }
+
+document.addEventListener("DOMContentLoaded", function (e) {
+    const { picksAllowed } = window.pageData;
+    const teams = document.querySelectorAll('.team');
+
+    teams.forEach(team => {
+        if (picksAllowed) {
+            enableDrag(team.id)
+            team.removeAttribute('disabled');
+        }
+        else {
+            disableDrag(team.id);
+            team.setAttribute('disabled', 'true');
+        }
+    });
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     const { eventId, steamId, stage } = window.pageData;
@@ -80,8 +96,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Possibly auto-fill from server
-    checkDropzonesFilled(); // Run after populating with data
+    checkDropzonesFilled();
+});
+
+document.addEventListener("DOMContentLoaded", function (e) {
+    const { eventId, stage } = window.pageData;
+    fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}&stage=${stage}`)
+        .then(response => response.json())
+        .then(picksAreAllowed => {
+            if (!picksAreAllowed) {
+                confirm("Picks are not allowed on this stage as of now.");
+            }
+        });
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -89,10 +115,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stages.forEach(stage => {
         stage.addEventListener("click", () => {
-            // remove active class from all
             stages.forEach(s => s.classList.remove("active"));
-            // add active class to clicked
             stage.classList.add("active");
         });
     });
+});
+
+document.getElementById("showResults").addEventListener('change', function (e) {
+
+    const { eventId, steamId, stage } = window.pageData;
+
+    if (this.checked) {
+        fetch(`/PickEms/Stage?handler=Results&eventId=${eventId}&stage=${stage}`)
+            .then(response => response.json())
+            .then(imageUrls => {
+                console.log("Fetched image URLs:", imageUrls);
+
+                imageUrls.forEach((url, index) => {
+                    const container = document.getElementById(`pick${index}`);
+
+                    if (container) {
+                        placeImageInDropzone(url, container);
+                    } else {
+                        console.warn(`Dropzone with id="pick${index}" not found`);
+                    }
+                });
+            });
+    }
+    else {
+        fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
+            .then(response => response.json())
+            .then(imageUrls => {
+                console.log("Fetched image URLs:", imageUrls);
+
+                imageUrls.forEach((url, index) => {
+                    const container = document.getElementById(`pick${index}`);
+
+                    if (container) {
+                        placeImageInDropzone(url, container);
+                    } else {
+                        console.warn(`Dropzone with id="pick${index}" not found`);
+                    }
+                });
+            });
+    }
 });

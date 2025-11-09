@@ -24,47 +24,35 @@ namespace PickemsPlanter.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public string? SelectedEvent { get; init; }
 
-		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
+		public bool PicksAllowed { get; set; }
+
+		public async Task<JsonResult> OnGetPicksAllowed()
+		{
+			bool picksAllowed = await pickemsService.GetPlayoffsPicksAllowedAsync(EventId);
+			PicksAllowed = picksAllowed;
+			return new JsonResult(picksAllowed);
+		}
 
 		public async Task<JsonResult> OnGetImages()
         {
-			try
-			{
-				return new JsonResult(await pickemsService.GetTeamsInPlayoffsAsync(EventId));
-			}
-			catch 
-			{
-				throw;
-			}
+			return new JsonResult(await pickemsService.GetTeamsInPlayoffsAsync(EventId));
         }
 
         public async Task<JsonResult> OnGetPicks()
         {
-			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
-
-			try
-			{
-				return new JsonResult(await pickemsService.GetPlayoffPicksAsync(SteamId, EventId));
-			}
-			catch
-			{
-				throw;
-			}
+			return new JsonResult(await pickemsService.GetPlayoffPicksAsync(SteamId, EventId));
         }
 
-        public async Task OnPostSendPicks(string droppedImagesData)
+		public async Task<JsonResult> OnGetResults()
+		{
+			return new JsonResult(await pickemsService.GetPlayoffResultsAsync(EventId));
+		}
+
+		public async Task OnPostSendPicks(string droppedImagesData)
 		{
 			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
-			try
-			{
-				await pickemsService.PostPlayoffPickemsAsync(droppedImagesData, SteamId, EventId, authCode);
-			}
-
-			catch
-			{
-				throw;
-			}
+			await pickemsService.PostPlayoffPickemsAsync(droppedImagesData, SteamId, EventId, authCode);
 		}
 	}
 }

@@ -42,22 +42,48 @@ function allowPlayoffDrop(sourceId, targetId) {
     else return false;
 }
 
-function enableDrag(itemId) {
-    const item = document.getElementById(itemId);
-    if (!item) return;
-    item.setAttribute("draggable", "true");
-    item.setAttribute("ondragstart", "drag(event)");
-}
+document.addEventListener("DOMContentLoaded", function (e) {
+    const { picksAllowed } = window.pageData;
+    const teams = document.querySelectorAll('.team');
 
-//function disableDrag(itemId) {
-//    const item = document.getElementById(itemId);
-//    if (!item) return;
-//    item.removeAttribute("draggable");
-//    item.removeEventListener("ondragstart", drag);
-//}
+    teams.forEach(team => {
+        if (picksAllowed) {
+            enableDrag(team.id)
+            team.removeAttribute('disabled');
+        }
+        else {
+            disableDrag(team.id);
+            team.setAttribute('disabled', 'true');
+        }
+    });
+
+    const picks = document.querySelectorAll('.match-dropzone-advanced');
+
+    picks.forEach(team => {
+        if (picksAllowed) {
+            enableDrag(team.id)
+            team.removeAttribute('disabled');
+        }
+        else {
+            disableDrag(team.id);
+            team.setAttribute('disabled', 'true');
+        }
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function (e) {
+    const { eventId } = window.pageData;
+    fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}`)
+        .then(response => response.json())
+        .then(picksAreAllowed => {
+            if (!picksAreAllowed) {
+                confirm("Picks are not allowed on this stage as of now.");
+            }
+        });
+});
 
 document.addEventListener("DOMContentLoaded", function () {
-    const { eventId, steamId, stage } = window.pageData;
+    const { eventId, steamId } = window.pageData;
     fetch(`/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}`)
         .then(response => response.json())
         .then(imageUrls => {
@@ -74,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    const { eventId, steamId, stage } = window.pageData;
+    const { eventId, steamId } = window.pageData;
     fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
         .then(response => response.json())
         .then(imageUrls => {
@@ -93,8 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Possibly auto-fill from server
-    checkDropzonesFilled(); // Run after populating with data
+    checkDropzonesFilled();
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -102,10 +127,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     stages.forEach(stage => {
         stage.addEventListener("click", () => {
-            // remove active class from all
             stages.forEach(s => s.classList.remove("active"));
-            // add active class to clicked
             stage.classList.add("active");
         });
     });
+});
+
+document.getElementById("showResults").addEventListener('change', function (e) {
+
+    const { eventId, steamId } = window.pageData;
+
+    if (this.checked) {
+        fetch(`/PickEms/Playoffs?handler=Results&eventId=${eventId}`)
+            .then(response => response.json())
+            .then(imageUrls => {
+                console.log("Fetched image URLs:", imageUrls);
+
+                imageUrls.forEach((url, index) => {
+                    const container = document.getElementById(`pick${index}`);
+
+                    if (container) {
+                        placeImageInDropzone(url, container, true);
+                    } else {
+                        console.warn(`Dropzone with id="pick${index}" not found`);
+                    }
+                });
+            });
+    }
+    else {
+        fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
+            .then(response => response.json())
+            .then(imageUrls => {
+                console.log("Fetched image URLs:", imageUrls);
+
+                imageUrls.forEach((url, index) => {
+                    const container = document.getElementById(`pick${index}`);
+
+                    if (container) {
+                        placeImageInDropzone(url, container, true);
+                    } else {
+                        console.warn(`Dropzone with id="pick${index}" not found`);
+                    }
+                });
+            });
+    }
 });

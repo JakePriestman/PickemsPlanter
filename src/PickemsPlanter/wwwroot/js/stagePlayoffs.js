@@ -2,6 +2,19 @@
     ev.preventDefault();
 }
 
+function enableDrag(itemId) {
+    const item = document.getElementById(itemId);
+    if (!item) return;
+    item.setAttribute("draggable", "true");
+    item.setAttribute("ondragstart", "drag(event)");
+}
+
+function disableDrag(itemId) {
+    const item = document.getElementById(itemId);
+    if (!item) return;
+    item.setAttribute("draggable", "false");
+}
+
 function drag(ev) {
     if (ev.target.src.includes("unknown"))
         return;
@@ -10,14 +23,15 @@ function drag(ev) {
 function checkDropzonesFilled() {
     const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
 
-    // Check for null or invalid dropzones
     const allFilled = Array.from(dropzones).every(zone =>
         zone !== null && zone.querySelector('img.dropped-img') !== null
     );
 
     const saveButton = document.getElementById('saveButton');
+    const { picksAllowed } = window.pageData;
+
     if (saveButton) {
-        saveButton.disabled = !allFilled;
+        saveButton.disabled = !allFilled || !picksAllowed;
         saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
     } else {
         console.warn("Save button with id 'saveButton' not found.");
@@ -38,8 +52,8 @@ function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
             if (existingImg) {
                 const existingFilename = existingImg.src.split('/').pop();
                 if (existingFilename === filename) {
-                    zone.innerHTML = ''; // Clear it
-                    resetDropzoneStyle(zone); // Reset styles
+                    zone.innerHTML = '';
+                    resetDropzoneStyle(zone);
                 }
             }
         });
@@ -58,16 +72,14 @@ function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
                 const existingFilename = existingImg.src.split('/').pop();
 
                 if (existingFilename === imageToRemoveName) {
-                    zone.innerHTML = ''; // Clear it
+                    zone.innerHTML = '';
                 }
             }
         });
     }
 
-    // Clear current dropzone and reset it
     dropzone.innerHTML = '';
 
-    // Create and append new image
     const img = document.createElement("img");
     img.src = imageSrc;
     img.className = "dropped-img";
@@ -76,20 +88,10 @@ function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
 
     dropzone.appendChild(img);
 
-    // Apply styling
     dropzone.style.width = "64px";
     dropzone.style.height = "64px";
     dropzone.style.justifyContent = "center";
     dropzone.style.alignItems = "center";
-
-    // Grey out source image
-    document.querySelectorAll('img[draggable="true"]').forEach(original => {
-        const originalFilename = original.src.split('/').pop();
-        if (originalFilename === filename) {
-            original.classList.add('used-image');
-            original.draggable = false;
-        }
-    });
 
     checkDropzonesFilled();
 }
@@ -110,7 +112,6 @@ document.getElementById('saveForm').addEventListener('submit', function (e) {
         const img = zone.querySelector('img.dropped-img');
         if (!img) return "";
 
-        // Extract just the filename from the src URL
         const fullSrc = img.src;
         const fileName = fullSrc.substring(fullSrc.lastIndexOf('/') + 1);
 
@@ -126,7 +127,7 @@ document.getElementById('saveForm').addEventListener('submit', function (e) {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const { eventId, steamId, stage } = window.pageData;
+    const { eventId } = window.pageData;
 
     var link = document.createElement('link');
     link.rel = 'stylesheet';

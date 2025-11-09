@@ -168,6 +168,71 @@
     transform: scale(1.5);
 }
 
+.show-results-div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.show-results-div input {
+    position: relative;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.show-results-div input:checked ~ .checkbox {
+    background-color: var(--text-colour);
+}
+
+.show-results {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    margin: 1em;
+    box-shadow: var(--shadow-m);
+}
+
+.show-results-div label {
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.checkbox {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 20%;
+    background-color: var(--navbar-colour);
+}
+
+.checkbox:hover {
+    background-color: var(--text-colour);
+    transition: 0.5s ease;
+}
+
+.checkbox::after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.show-results-div input:checked ~ .checkbox::after {
+    display: flex;
+}
+
+.checkbox::after {
+    left: 6px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
 .save-form {
     width: inherit;
     display: flex;
@@ -231,12 +296,12 @@
     object-fit: contain;
 }
 
-.team:hover {
+.team:not([disabled]):hover {
     outline: 2px solid var(--text-colour);
     transition: 0.3s ease;
 }
 
-.team:hover .team-img {
+.team:not([disabled]):hover .team-img {
     transform: scale(1.2);
     transition: 0.3s ease;
 }

@@ -73,6 +73,13 @@
                     <div class="match-dropzone-eliminated" ondrop="drop(event)" ondragover="allowDrop(event)" id="pick9">0-3</div>
                 </div>
             </div>
+            <div class="show-results-div">
+                <label for="showResults">
+                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults" />
+                    <span class="checkbox"></span>
+                    Show results from stage
+                </label>
+            </div>
         </section>
 
         <form method="post" class="save-form" id="saveForm">
@@ -81,22 +88,22 @@
         </form>
 
         <section class="teams-section">
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team0"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team1"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team2"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team3"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team4"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team5"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team6"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team7"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team8"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team9"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team10"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team11"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team12"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team13"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team14"></div>
-            <div class="team" draggable="true" ondragstart="drag(event)" id="team15"></div>
+            <div class="team" id="team0"></div>
+            <div class="team" id="team1"></div>
+            <div class="team" id="team2"></div>
+            <div class="team" id="team3"></div>
+            <div class="team" id="team4"></div>
+            <div class="team" id="team5"></div>
+            <div class="team" id="team6"></div>
+            <div class="team" id="team7"></div>
+            <div class="team" id="team8"></div>
+            <div class="team" id="team9"></div>
+            <div class="team" id="team10"></div>
+            <div class="team" id="team11"></div>
+            <div class="team" id="team12"></div>
+            <div class="team" id="team13"></div>
+            <div class="team" id="team14"></div>
+            <div class="team" id="team15"></div>
         </section>
     </div>
 </div>
@@ -106,7 +113,8 @@
         window.pageData = {
             eventId: "@Model.EventId",
             steamId: "@Model.SteamId",
-            stage: "@Model.Stage"
+            stage: "@Model.Stage",
+            picksAllowed: @Model.PicksAllowed.ToString().ToLower()
         };
     </script>
     <script src="~/js/stagePlayoffs.js"></script>
