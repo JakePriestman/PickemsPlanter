@@ -78,7 +78,6 @@
     box-shadow: var(--shadow-m);
 }
 
-
 .team {
     background-color: var(--background-colour);
     height: auto;
@@ -88,4 +87,12 @@
     display: flex;
     justify-content: center;
     box-shadow: var(--shadow-s);
+}
+
+.team[disabled] {
+    cursor: not-allowed;
+}
+
+.team[disabled] .team-img {
+    opacity: 0.3;
 }

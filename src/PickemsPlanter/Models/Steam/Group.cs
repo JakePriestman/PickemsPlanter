@@ -6,8 +6,10 @@ namespace PickemsPlanter.Models.Steam
 	{
 		public int GroupId { get; init; }
 		public string Name { get; init; }
+
 		[JsonPropertyName("points_per_pick")]
 		public int PointsPerPick { get; init; }
+
 		[JsonPropertyName("picks_allowed")]
 		public bool PicksAllowed { get; init; }
 		public IEnumerable<TeamId> Teams { get; init; }

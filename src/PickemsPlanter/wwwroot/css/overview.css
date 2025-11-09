@@ -117,6 +117,10 @@
     cursor: help;
 }
 
+.show-auth-code:disabled {
+    border-radius: 5px;
+}
+
 .auth-code {
     padding: 1em 1em;
     border: none;

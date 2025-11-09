@@ -53,10 +53,7 @@ namespace PickemsPlanter.Pages.Profile
 				UserEvent? userEvent = await tableStorageService.GetEntryIfExistsAsync(SteamId, SelectedEvent);	
 
 				if (userEvent is null)
-				{
-					//TODO: Pop-up please enter code or something.
 					ArgumentNullException.ThrowIfNull(userEvent);
-				}
 
 				await CacheOnChooseEvent(userEvent.AuthCode);
 			}
