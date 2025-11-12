@@ -13,7 +13,7 @@
 ## 🧠 Overview
 
 **PickemsPlanter** is my personal project to build a **Razor Pages web app** that lets users create and manage their **Counter-Strike 2 Pick’Ems**.  
-The goal is to recreate the experience of predicting match outcomes, tracking progress, and comparing result.
+The goal is to recreate the experience of predicting match outcomes, tracking progress, and comparing results.
 
 ---
 
@@ -26,6 +26,14 @@ The goal is to recreate the experience of predicting match outcomes, tracking pr
 | Cloud / Infra | Azure, Bicep, YAML (for pipelines & IaC) |
 | CI/CD | GitHub Actions + Azure DevOps (YAML pipelines) |
 | Hosting | Azure App Service |
+
+---
+
+## 🔗 Steam API Integration
+
+This product fully complies with Valve's [API Terms of Use](https://steamcommunity.com/dev/apiterms).
+
+- [Steam Web API](https://developer.valvesoftware.com/wiki/Steam_Web_API) - Used for management, setting and retrieving user Pick’Ems data as well as tournament data.
 
 ---
 

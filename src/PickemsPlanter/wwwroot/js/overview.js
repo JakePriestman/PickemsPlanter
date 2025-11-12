@@ -59,3 +59,8 @@ async function showAuthCode(eventId) {
 
     return data;
 }
+
+function toggleExtraInformation() {
+    var popup = document.getElementById("extraInformation");
+    popup.classList.toggle("show");
+}

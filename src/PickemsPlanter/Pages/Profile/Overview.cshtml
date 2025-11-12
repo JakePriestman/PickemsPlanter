@@ -17,6 +17,13 @@
     </nav>
 
     <form method="post" class="event-form">
+        <div class="question-mark-button" onclick="toggleExtraInformation()"><img src="~/Images/information.png" /></div>
+        <div class="extra-information" id="extraInformation">
+            <p class="information-paragraph">Game authentication codes are used to allow third-party websites to manage your game without running the client.</p>
+            <p class="information-paragraph">Click <a href="https://help.steampowered.com/en/wizard/HelpWithGameIssue/?appid=730&issueid=128">here</a> to create
+                and manage your game authentication codes.</p>
+        </div>
+
         @foreach (var eventOption in Model.EventOptions)
         {
             <div class="event">
@@ -34,6 +41,10 @@
 <div class="github">
     <a href="https://github.com/JakePriestman" target="_blank"><img src="~/Images/github/github-mark-white.png"></a>
 </div>
+
+@* <footer>
+    <p>Developed by <a href="https://steamcommunity.com/profiles/76561198386888450/">jakeicus</a>
+</footer> *@
 
 @section Scripts {
     <script src="~/js/overview.js"></script>
