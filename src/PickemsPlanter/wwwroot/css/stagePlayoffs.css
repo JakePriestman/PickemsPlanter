@@ -257,7 +257,7 @@
     background-color: var(--disabled-colour);
     border-radius: 10px;
     font-size: 1.1em;
-    margin: 5vh;
+    margin: 1em;
     border: none;
     cursor: help;
     box-shadow: var(--shadow-m);

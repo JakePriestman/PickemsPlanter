@@ -51,11 +51,19 @@ namespace PickemsPlanter.Pages.PickEms
             return new JsonResult(await pickemsService.GetStageResultsAsync(Stage, EventId));
 		}
 
-        public async Task OnPostSendPicks(string droppedImagesData)
+        public async Task<IActionResult> OnPostSendPicks(string droppedImagesData)
         {
 			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
             await pickemsService.PostStagePickemsAsync(Stage, droppedImagesData, SteamId, EventId, authCode);
-        }
+
+			return RedirectToPage("/PickEms/Stage", new
+			{
+				EventId,
+				EventName = EventOptions.First(e => e.Value == EventId).Text,
+				SteamId,
+				stage = Stages.Stage1
+			});
+		}
     }
 }
