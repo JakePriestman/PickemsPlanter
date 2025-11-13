@@ -28,6 +28,32 @@
     placeImageInDropzone(imageSrc, dropzone, true);
 }
 
+function resetDropzoneStyle(dropzone) {
+    switch (dropzone.id) {
+        case "pick6":
+            dropzone.textContent = "Winner";
+            break;
+        case "pick5":
+            dropzone.textContent = "S2";
+            break;
+        case "pick4":
+            dropzone.textContent = "S1";
+            break;
+        case "pick3":
+            dropzone.textContent = "Q4";
+            break;
+        case "pick2":
+            dropzone.textContent = "Q3";
+            break;
+        case "pick1":
+            dropzone.textContent = "Q2";
+            break;
+        case "pick0":
+            dropzone.textContent = "Q1";
+            break;
+    }
+}
+
 function allowPlayoffDrop(sourceId, targetId) {
     if ((sourceId == "team0" || sourceId == "team1") && targetId == "pick0") return true;
     if ((sourceId == "team2" || sourceId == "team3") && targetId == "pick1") return true;
@@ -96,23 +122,22 @@ document.addEventListener("DOMContentLoaded", async function () {
     await checkDropzonesFilled();
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
-    fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
-        .then(response => response.json())
-        .then(imageUrls => {
-            console.log("Fetched image URLs:", imageUrls);
 
-            imageUrls.forEach((url, index) => {
-                const container = document.getElementById(`pick${index}`);
-                enableDrag(`pick${index}`)
-                if (container) {
-                    placeImageInDropzone(url, container, true);
-                } else {
-                    console.warn(`Dropzone with id="pick${index}" not found`);
-                }
-            });
-        });
+    const response = await fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
+    const imageUrls = await response.json();
+
+    for (let [index, url] of imageUrls.entries()) {
+        const container = document.getElementById(`pick${index}`);
+        enableDrag(`pick${index}`)
+        if (container) {
+            await placeImageInDropzone(url, container, true);
+        } else {
+            console.warn(`Dropzone with id="pick${index}" not found`);
+        }
+    };
+;
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -129,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function toggleHideSaveForm() {
     const saveButton = document.getElementById('saveForm');
     if (saveButton) {
-        saveButton.style.display = saveButton.style.display === 'none' ? 'flex' : 'none';
+        saveButton.style.visibility = saveButton.style.visibility === 'hidden' ? 'visible' : 'hidden';
     }
 }
 
@@ -138,39 +163,35 @@ document.getElementById("showResults").addEventListener('change', async function
     const { eventId, steamId } = window.pageData;
 
     if (this.checked) {
-        fetch(`/PickEms/Playoffs?handler=Results&eventId=${eventId}`)
-            .then(response => response.json())
-            .then(imageUrls => {
-                console.log("Fetched image URLs:", imageUrls);
+        const response = await fetch(`/PickEms/Playoffs?handler=Results&eventId=${eventId}`)
+        const imageUrls = await response.json();
 
-                imageUrls.forEach((url, index) => {
-                    const container = document.getElementById(`pick${index}`);
+        for (let [index, url] of imageUrls.entries()) {
+            const container = document.getElementById(`pick${index}`);
 
-                    if (container) {
-                        placeImageInDropzone(url, container, true);
-                    } else {
-                        console.warn(`Dropzone with id="pick${index}" not found`);
-                    }
-                });
-            });
+            if (container) {
+                await placeImageInDropzone(url, container, true);
+            } else {
+                console.warn(`Dropzone with id="pick${index}" not found`);
+            }
+        };
+
         toggleHideSaveForm();
     }
     else {
-        fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
-            .then(response => response.json())
-            .then(imageUrls => {
-                console.log("Fetched image URLs:", imageUrls);
+        const response = await fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
+        const imageUrls = await response.json();
 
-                imageUrls.forEach((url, index) => {
-                    const container = document.getElementById(`pick${index}`);
+        for (let [index, url] of imageUrls.entries()) {
+            const container = document.getElementById(`pick${index}`);
 
-                    if (container) {
-                        placeImageInDropzone(url, container, true);
-                    } else {
-                        console.warn(`Dropzone with id="pick${index}" not found`);
-                    }
-                });
-            });
+            if (container) {
+                await placeImageInDropzone(url, container, true);
+            } else {
+                console.warn(`Dropzone with id="pick${index}" not found`);
+            }
+        };
+
         toggleHideSaveForm();
         await checkDropzonesFilled();
     }
