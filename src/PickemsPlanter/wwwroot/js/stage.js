@@ -129,39 +129,35 @@ document.getElementById("showResults").addEventListener('change', async function
     const { eventId, steamId, stage } = window.pageData;
 
     if (this.checked) {
-        fetch(`/PickEms/Stage?handler=Results&eventId=${eventId}&stage=${stage}`)
-            .then(response => response.json())
-            .then(imageUrls => {
-                console.log("Fetched image URLs:", imageUrls);
+        const response = await fetch(`/PickEms/Stage?handler=Results&eventId=${eventId}&stage=${stage}`);
+        const imageUrls = await response.json();
 
-                imageUrls.forEach((url, index) => {
-                    const container = document.getElementById(`pick${index}`);
+        imageUrls.forEach(async (url, index) => {
+            const container = document.getElementById(`pick${index}`);
 
-                    if (container) {
-                        placeImageInDropzone(url, container, false);
-                    } else {
-                        console.warn(`Dropzone with id="pick${index}" not found`);
-                    }
-                });
-            });
+            if (container) {
+                await placeImageInDropzone(url, container, false);
+            } else {
+                console.warn(`Dropzone with id="pick${index}" not found`);
+            }
+        });
+
         toggleHideSaveForm();
     }
     else {
-        fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
-            .then(response => response.json())
-            .then(imageUrls => {
-                console.log("Fetched image URLs:", imageUrls);
+        const response = await fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
+        const imageUrls = await response.json();
 
-                imageUrls.forEach((url, index) => {
-                    const container = document.getElementById(`pick${index}`);
+        for (let [index, url] of imageUrls.entries()) {
+            const container = document.getElementById(`pick${index}`);
 
-                    if (container) {
-                        placeImageInDropzone(url, container, false);
-                    } else {
-                        console.warn(`Dropzone with id="pick${index}" not found`);
-                    }
-                });
-            });
+            if (container) {
+                await placeImageInDropzone(url, container, false);
+            } else {
+                console.warn(`Dropzone with id="pick${index}" not found`);
+            }
+        }
+
         toggleHideSaveForm();
         await checkDropzonesFilled();
     }
