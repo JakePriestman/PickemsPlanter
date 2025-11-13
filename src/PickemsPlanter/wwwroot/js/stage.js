@@ -117,10 +117,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-function disableSaveButton() {
-    const saveButton = document.getElementById('saveButton');
+function toggleHideSaveForm() {
+    const saveButton = document.getElementById('saveForm');
     if (saveButton) {
-        saveButton.disabled = true;
+        saveButton.style.display = saveButton.style.display === 'none' ? 'flex' : 'none';
     }
 }
 
@@ -144,7 +144,7 @@ document.getElementById("showResults").addEventListener('change', async function
                     }
                 });
             });
-        disableSaveButton();
+        toggleHideSaveForm();
     }
     else {
         fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
@@ -162,6 +162,7 @@ document.getElementById("showResults").addEventListener('change', async function
                     }
                 });
             });
+        toggleHideSaveForm();
         await checkDropzonesFilled();
     }
 });

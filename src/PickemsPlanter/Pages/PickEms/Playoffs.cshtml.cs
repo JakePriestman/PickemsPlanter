@@ -1,7 +1,7 @@
-using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PickemsPlanter.Services;
 
 namespace PickemsPlanter.Pages.PickEms
 {
@@ -24,12 +24,11 @@ namespace PickemsPlanter.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public string? SelectedEvent { get; init; }
 
-		public bool PicksAllowed { get; set; }
+		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 
 		public async Task<JsonResult> OnGetPicksAllowed()
 		{
 			bool picksAllowed = await pickemsService.GetPlayoffsPicksAllowedAsync(EventId);
-			PicksAllowed = picksAllowed;
 			return new JsonResult(picksAllowed);
 		}
 
@@ -48,11 +47,18 @@ namespace PickemsPlanter.Pages.PickEms
 			return new JsonResult(await pickemsService.GetPlayoffResultsAsync(EventId));
 		}
 
-		public async Task OnPostSendPicks(string droppedImagesData)
+		public async Task<IActionResult> OnPostSendPicks(string droppedImagesData)
 		{
 			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
 			await pickemsService.PostPlayoffPickemsAsync(droppedImagesData, SteamId, EventId, authCode);
+
+			return RedirectToPage("/PickEms/Playoffs", new
+			{
+				EventId,
+				EventName = EventOptions.First(e => e.Value == EventId).Text,
+				SteamId
+			});
 		}
 	}
 }
