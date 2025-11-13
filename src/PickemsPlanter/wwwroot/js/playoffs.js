@@ -44,18 +44,7 @@ function allowPlayoffDrop(sourceId, targetId) {
 
 document.addEventListener("DOMContentLoaded", function (e) {
     const { picksAllowed } = window.pageData;
-    const teams = document.querySelectorAll('.team');
 
-    teams.forEach(team => {
-        if (picksAllowed) {
-            enableDrag(team.id)
-            team.removeAttribute('disabled');
-        }
-        else {
-            disableDrag(team.id);
-            team.setAttribute('disabled', 'true');
-        }
-    });
 
     const picks = document.querySelectorAll('.match-dropzone-advanced');
 
@@ -71,32 +60,50 @@ document.addEventListener("DOMContentLoaded", function (e) {
     });
 });
 
-document.addEventListener("DOMContentLoaded", function (e) {
-    const { eventId } = window.pageData;
-    fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}`)
-        .then(response => response.json())
-        .then(picksAreAllowed => {
-            if (!picksAreAllowed) {
-                confirm("Picks are not allowed on this stage as of now.");
-            }
-        });
-});
-
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
-    fetch(`/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}`)
-        .then(response => response.json())
-        .then(imageUrls => {
-            imageUrls.forEach((url, index) => {
-                const container = document.getElementById(`team${index}`);
-                if (container) {
-                    const img = document.createElement("img");
-                    img.src = url;
-                    img.className = "team-img";
-                    container.appendChild(img);
-                }
-            });
-        });
+
+    const imagesResponse = await fetch(`/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}`)
+    const imageUrls = await imagesResponse.json();
+
+    imageUrls.forEach((url, index) => {
+        const container = document.getElementById(`team${index}`);
+        if (container) {
+            const img = document.createElement("img");
+            img.src = url;
+            img.className = "team-img";
+            if (url.includes('unknown'))
+                img.classList.add('unknown')
+            container.appendChild(img);
+        }
+    });
+
+    const picksAllowedResponse = await fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}`)
+    const picksAllowed = await picksAllowedResponse.json();
+
+    const teams = document.querySelectorAll('.team');
+
+    teams.forEach(team => {
+        if (picksAllowed) {
+            const image = team.querySelector('img');
+
+            if (Array.from(image.classList).includes('unknown')) {
+                disableDrag(team.id);
+                team.setAttribute('disabled', 'true');
+            }
+            else {
+                enableDrag(team.id)
+                team.removeAttribute('disabled');
+            }
+        }
+        else {
+            disableDrag(team.id);
+            team.setAttribute('disabled', 'true');
+        }
+    });
+
+    if (!picksAllowed)
+        confirm("Picks are not allowed on this stage as of now.");
 });
 
 document.addEventListener("DOMContentLoaded", function () {

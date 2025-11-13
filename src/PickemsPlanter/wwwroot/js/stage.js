@@ -43,37 +43,51 @@ function resetDropzoneStyle(dropzone) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function (e) {
-    const { picksAllowed } = window.pageData;
+document.addEventListener("DOMContentLoaded", async function () {
+    const { eventId, steamId, stage } = window.pageData;
+
+    const imagesResponse = await fetch(`/PickEms/Stage?handler=Images&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
+    const imageUrls = await imagesResponse.json();
+
+    imageUrls.forEach((url, index) => {
+        const container = document.getElementById(`team${index}`);
+        if (container) {
+            const img = document.createElement("img");
+            img.src = url;
+            img.className = "team-img";
+            if (url.includes('unknown'))
+                img.classList.add('unknown')
+            container.appendChild(img);
+        }
+    });
+
+
+    const picksAllowedResponse = await fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}&stage=${stage}`)
+    const picksAllowed = await picksAllowedResponse.json();
+
     const teams = document.querySelectorAll('.team');
 
     teams.forEach(team => {
         if (picksAllowed) {
-            enableDrag(team.id)
-            team.removeAttribute('disabled');
+            const image = team.querySelector('img');
+
+            if (Array.from(image.classList).includes('unknown')) {
+                disableDrag(team.id);
+                team.setAttribute('disabled', 'true');
+            }
+            else {
+                enableDrag(team.id)
+                team.removeAttribute('disabled');
+            }
         }
         else {
             disableDrag(team.id);
             team.setAttribute('disabled', 'true');
         }
     });
-});
 
-document.addEventListener("DOMContentLoaded", function () {
-    const { eventId, steamId, stage } = window.pageData;
-    fetch(`/PickEms/Stage?handler=Images&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
-        .then(response => response.json())
-        .then(imageUrls => {
-            imageUrls.forEach((url, index) => {
-                const container = document.getElementById(`team${index}`);
-                if (container) {
-                    const img = document.createElement("img");
-                    img.src = url;
-                    img.className = "team-img";
-                    container.appendChild(img);
-                }
-            });
-        });
+    if (!picksAllowed)
+        confirm("Picks are not allowed on this stage as of now.");
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -101,24 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 document.addEventListener("DOMContentLoaded", function (e) {
     const { eventId, stage } = window.pageData;
-    fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}&stage=${stage}`)
-        .then(response => response.json())
-        .then(picksAreAllowed => {
-            if (!picksAreAllowed) {
-                confirm("Picks are not allowed on this stage as of now.");
-            }
-        });
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    const stages = document.querySelectorAll(".stage");
-
-    stages.forEach(stage => {
-        stage.addEventListener("click", () => {
-            stages.forEach(s => s.classList.remove("active"));
-            stage.classList.add("active");
-        });
-    });
 });
 
 document.getElementById("showResults").addEventListener('change', function (e) {

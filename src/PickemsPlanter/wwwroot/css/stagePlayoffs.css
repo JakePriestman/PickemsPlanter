@@ -135,7 +135,6 @@
 }
 
 .stage {
-    border: 2px solid var(--text-colour);
     border-radius: 50%;
     width: 1.5em;
     height: 1.5em;
@@ -145,8 +144,10 @@
     text-decoration: none;
     text-decoration: none;
     font-weight: bold;
+    font-size: x-large;
     color: var(--text-colour);
-    font-family: "Times New Roman", Times, serif;
+    font-family: inherit;
+    box-shadow: var(--shadow-s);
 }
 
 @media screen and (max-width: 1150px) {
