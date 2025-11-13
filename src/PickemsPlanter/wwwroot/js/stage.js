@@ -43,6 +43,12 @@ function resetDropzoneStyle(dropzone) {
     }
 }
 
+async function getPicksAllowed() {
+    const { eventId } = window.pageData;
+    const response = await fetch(`/PickEms/Stage?handler=PicksAllowed&eventId=${eventId}`)
+    return await response.json();
+}
+
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId, stage } = window.pageData;
 
@@ -62,7 +68,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
 
 
-    const picksAllowedResponse = await fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}&stage=${stage}`)
+    const picksAllowedResponse = await fetch(`/PickEms/Stage?handler=PicksAllowed&eventId=${eventId}&stage=${stage}`)
     const picksAllowed = await picksAllowedResponse.json();
 
     const teams = document.querySelectorAll('.team');
@@ -88,6 +94,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (!picksAllowed)
         confirm("Picks are not allowed on this stage as of now.");
+
+    await checkDropzonesFilled();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -109,16 +117,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    checkDropzonesFilled();
-});
+function disableSaveButton() {
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.disabled = true;
+    }
+}
 
-document.addEventListener("DOMContentLoaded", function (e) {
-    const { eventId, stage } = window.pageData;
-
-});
-
-document.getElementById("showResults").addEventListener('change', function (e) {
+document.getElementById("showResults").addEventListener('change', async function (e) {
 
     const { eventId, steamId, stage } = window.pageData;
 
@@ -132,12 +138,13 @@ document.getElementById("showResults").addEventListener('change', function (e) {
                     const container = document.getElementById(`pick${index}`);
 
                     if (container) {
-                        placeImageInDropzone(url, container);
+                        placeImageInDropzone(url, container, false);
                     } else {
                         console.warn(`Dropzone with id="pick${index}" not found`);
                     }
                 });
             });
+        disableSaveButton();
     }
     else {
         fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
@@ -149,11 +156,12 @@ document.getElementById("showResults").addEventListener('change', function (e) {
                     const container = document.getElementById(`pick${index}`);
 
                     if (container) {
-                        placeImageInDropzone(url, container);
+                        placeImageInDropzone(url, container, false);
                     } else {
                         console.warn(`Dropzone with id="pick${index}" not found`);
                     }
                 });
             });
+        await checkDropzonesFilled();
     }
 });

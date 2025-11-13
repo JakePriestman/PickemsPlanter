@@ -42,23 +42,11 @@ function allowPlayoffDrop(sourceId, targetId) {
     else return false;
 }
 
-document.addEventListener("DOMContentLoaded", function (e) {
-    const { picksAllowed } = window.pageData;
-
-
-    const picks = document.querySelectorAll('.match-dropzone-advanced');
-
-    picks.forEach(team => {
-        if (picksAllowed) {
-            enableDrag(team.id)
-            team.removeAttribute('disabled');
-        }
-        else {
-            disableDrag(team.id);
-            team.setAttribute('disabled', 'true');
-        }
-    });
-});
+async function getPicksAllowed() {
+    const { eventId } = window.pageData;
+    const response = await fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}`)
+    return await response.json();
+}
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
@@ -104,6 +92,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     if (!picksAllowed)
         confirm("Picks are not allowed on this stage as of now.");
+
+    await checkDropzonesFilled();
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -126,10 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    checkDropzonesFilled();
-});
-
-document.addEventListener("DOMContentLoaded", () => {
     const stages = document.querySelectorAll(".stage");
 
     stages.forEach(stage => {
@@ -140,7 +126,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-document.getElementById("showResults").addEventListener('change', function (e) {
+function disableSaveButton() {
+    const saveButton = document.getElementById('saveButton');
+    if (saveButton) {
+        saveButton.disabled = true;
+    }
+}
+
+document.getElementById("showResults").addEventListener('change', async function (e) {
 
     const { eventId, steamId } = window.pageData;
 
@@ -160,6 +153,8 @@ document.getElementById("showResults").addEventListener('change', function (e) {
                     }
                 });
             });
+
+        disableSaveButton();
     }
     else {
         fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
@@ -177,5 +172,6 @@ document.getElementById("showResults").addEventListener('change', function (e) {
                     }
                 });
             });
+        await checkDropzonesFilled();
     }
 });

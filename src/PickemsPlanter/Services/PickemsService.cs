@@ -2,6 +2,7 @@
 using PickemsPlanter.APIs;
 using PickemsPlanter.Models;
 using PickemsPlanter.Models.Steam;
+using System;
 using System.Text.Json;
 
 namespace PickemsPlanter.Services
@@ -67,9 +68,16 @@ namespace PickemsPlanter.Services
 
 			List<int> pickIds = [];
 
+			int index = 1;
+
 			foreach (var picks in section.Groups.First().Picks)
 			{
-				pickIds.AddRange(picks.PickIds);
+				if (picks.PickIds.Any())
+					pickIds.AddRange(picks.PickIds);
+				else
+					pickIds.Add(index*-10);
+
+				index++;
 			}
 
 			foreach (var pickId in pickIds.Distinct())
@@ -198,7 +206,12 @@ namespace PickemsPlanter.Services
 			{
 				foreach (var group in section.Groups)
 				{
-					pickIds.AddRange(group.Picks.SelectMany(x => x.PickIds));
+					IEnumerable<int> ids = group.Picks.SelectMany(x => x.PickIds);
+
+					if (ids.Any())
+						pickIds.AddRange(group.Picks.SelectMany(x => x.PickIds));
+					else
+						pickIds.Add(0);
 				}
 			}
 
