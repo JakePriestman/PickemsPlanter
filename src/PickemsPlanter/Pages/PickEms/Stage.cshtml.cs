@@ -27,16 +27,14 @@ namespace PickemsPlanter.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public string? SelectedEvent { get; init; }
 
-		public bool PicksAllowed { get; set; }
+		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 
 		public async Task<JsonResult> OnGetPicksAllowed()
 		{
 			bool picksAllowed = await pickemsService.GetStagePicksAllowedAsync(Stage, EventId);
-			PicksAllowed = picksAllowed;
+
 			return new JsonResult(picksAllowed);
 		}
-
-		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 
 		public async Task<JsonResult> OnGetImages()
         {

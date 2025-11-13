@@ -20,7 +20,8 @@ function drag(ev) {
         return;
     ev.dataTransfer.setData("sourceId", ev.currentTarget.id);
 }
-function checkDropzonesFilled() {
+
+async function checkDropzonesFilled() {
     const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
 
     const allFilled = Array.from(dropzones).every(zone =>
@@ -28,7 +29,7 @@ function checkDropzonesFilled() {
     );
 
     const saveButton = document.getElementById('saveButton');
-    const { picksAllowed } = window.pageData;
+    const picksAllowed = await getPicksAllowed();
 
     if (saveButton) {
         saveButton.disabled = !allFilled || !picksAllowed;
@@ -38,8 +39,14 @@ function checkDropzonesFilled() {
     }
 }
 
-function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
-    if (!imageSrc || imageSrc.includes("unknown") || !dropzone) return;
+async function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
+    if (!dropzone) return;
+
+    if (!imageSrc || imageSrc.includes("unknown")) {
+        resetDropzoneStyle(dropzone);
+        return;
+    }
+       
 
     const filename = imageSrc.split('/').pop();
     const imageInDropzone = dropzone.querySelector('img');
@@ -93,7 +100,7 @@ function placeImageInDropzone(imageSrc, dropzone, isPlayoffs) {
     dropzone.style.justifyContent = "center";
     dropzone.style.alignItems = "center";
 
-    checkDropzonesFilled();
+    await checkDropzonesFilled();
 }
 
 function getDropzonesAfter(currentId, allDropzones) {
