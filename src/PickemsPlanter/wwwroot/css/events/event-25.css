@@ -1,0 +1,20 @@
+﻿:root {
+    --background-colour: #322A37;
+    --text-colour: #A7A7A8;
+    --foreground-colour: #B69F74;
+    --navbar-colour: #3E364C;
+    --submit-colour: #40703C;
+    --advance-colour: #5e8b4b;
+    --delete-colour: #b06161;
+    --shadow-s: inset 0 1px 2px #322A3730, 0 1px 2px #00000030, 0 2px 4px #00000015;
+    --shadow-m: inset 0 1px 2px #322A3730, 0 2px 4px #00000030, 0 4px 8px #00000015;
+    --shadow-l: inset 0 1px 2px #322A3730, 0 4px 6px #00000030, 0 6px 10px #00000015;
+}
+
+.crown-image {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(6%) saturate(176%) hue-rotate(222deg) brightness(91%) contrast(89%);
+}
+
+.stage {
+    box-shadow: var(--shadow-l);
+}

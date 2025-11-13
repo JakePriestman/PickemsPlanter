@@ -7,10 +7,14 @@
     --advance-colour: #5e8b4b;
     --delete-colour: #b06161;
     --shadow-s: inset 0 1px 2px #e6dac330, 0 1px 2px #47371730, 0 2px 4px #47371715;
-    --shadow-m: inset 0 1px 2px #ffffff30, 0 2px 4px #00000030, 0 4px 8px #00000015;
+    --shadow-m: inset 0 1px 2px #e6dac330, 0 2px 4px #47371730, 0 4px 8px #47371730;
     --shadow-l: inset 0 1px 2px #e6dac330, 0 4px 6px #47371730, 0 6px 10px #47371715;
 }
 
 .crown-image {
     filter: invert(20%) sepia(12%) saturate(2447%) hue-rotate(1deg) brightness(91%) contrast(89%);
+}
+
+.stage {
+    font-family: "Times New Roman", Times, serif;
 }

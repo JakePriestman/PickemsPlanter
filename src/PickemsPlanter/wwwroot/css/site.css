@@ -32,6 +32,7 @@ body {
     padding: 0;
     position: relative;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -68,4 +69,21 @@ body {
 .github:hover {
     opacity: 0.7;
     transition: opacity 0.3s ease;
+}
+
+footer { 
+    padding: 1em;
+    position: absolute;
+    bottom: 0;
+}
+
+footer p {
+    font-family: inherit;
+    font-size: 12px;
+}
+
+footer p a {
+    color: lightblue;
+    text-decoration: none;
+    font-family: inherit;
 }
