@@ -76,7 +76,7 @@
     right: 5%;
     top: 20%;
     width: 250px;
-    height: 360px;
+    height: 770px;
     text-align: center;
     border-radius: 10px;
     box-shadow: var(--shadow-l);
@@ -98,7 +98,7 @@
     to {
         opacity: 1;
         width: 250px;
-        height: 360px;
+        height: 770px;
     }
 }
 
@@ -112,7 +112,7 @@
     to {
         opacity: 1;
         width: 250px;
-        height: 360px;
+        height: 770px;
     }
 }
 
@@ -127,6 +127,7 @@
 
 .information-paragraph a {
     color: lightblue;
+    text-decoration: none;
 }
 
 .extra-information.show .information-paragraph {

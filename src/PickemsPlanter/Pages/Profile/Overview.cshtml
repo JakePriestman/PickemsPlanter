@@ -20,8 +20,10 @@
         <div class="question-mark-button" onclick="toggleExtraInformation()"><img src="~/Images/information.png" /></div>
         <div class="extra-information" id="extraInformation">
             <p class="information-paragraph">Game authentication codes are used to allow third-party websites to manage your game without running the client.</p>
-            <p class="information-paragraph">Click <a href="https://help.steampowered.com/en/wizard/HelpWithGameIssue/?appid=730&issueid=128">here</a> to create
+            <p class="information-paragraph">Click <a href="https://help.steampowered.com/en/wizard/HelpWithGameIssue/?appid=730&issueid=128" target="_blank">here</a> to create
                 and manage your game authentication codes.</p>
+            <p class ="information-paragraph">Once you have created a code, paste it into the corresponding text box and click "Choose Event" to save the code and go to that event.</p>
+            <p class ="information-paragraph">In the event that you would like to delete your code from the database, click the "Delete Auth Code" button.</p>
         </div>
 
         @foreach (var eventOption in Model.EventOptions)
