@@ -102,6 +102,8 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 [Try it out!](https://https://app-pickemsplanter.azurewebsites.net/)
 
+---
+
 ## 📸 Screenshots
 
 <img width="3838" height="1917" alt="image" src="https://github.com/user-attachments/assets/900efced-de01-4706-ad57-7fda3135df5f" />
