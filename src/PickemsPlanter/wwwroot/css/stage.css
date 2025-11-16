@@ -11,6 +11,8 @@
     transform: translateY(-30%);
 }
 
+
+/*BRACKETS*/
 .bracket {
     position: relative;
     display: flex;
@@ -49,8 +51,8 @@
 .match-dropzone-eliminated {
     font-size: 20px;
     border-radius: 5px;
-    min-height: 64px;
-    min-width: 64px;
+    height: 64px;
+    width: 64px;
     padding: 5px;
     transition: all 0.3s ease;
     display: flex;
@@ -62,6 +64,7 @@
 }
 
 
+/*TEAMS*/
 .teams-section {
     display: grid;
     position: relative;

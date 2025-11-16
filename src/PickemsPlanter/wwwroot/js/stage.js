@@ -1,24 +1,4 @@
-﻿function drop(ev) {
-    ev.preventDefault();
-    const sourceId = ev.dataTransfer.getData("sourceId");
-    const div = document.getElementById(sourceId);
-    const imageSrc = div.querySelector("img").src;
-    if (!imageSrc) return;
-
-    if (imageSrc.includes("unknown")) {
-        return;
-    }
-
-    let dropzone = ev.target;
-    if (!dropzone.classList.contains("match-dropzone-advanced") &&
-        !dropzone.classList.contains("match-dropzone-eliminated") && !dropzone.classList.contains("match")) {
-        dropzone = dropzone.closest(".match-dropzone-advanced, .match-dropzone-eliminated, .match");
-    }
-
-    placeImageInDropzone(imageSrc, dropzone, false);
-}
-
-function resetDropzoneStyle(dropzone) {
+﻿function resetDropzoneStyle(dropzone) {
 
     switch (dropzone.id) {
         case "pick0":
@@ -42,120 +22,38 @@ function resetDropzoneStyle(dropzone) {
     }
 }
 
-async function getPicksAllowed() {
-    const { eventId } = window.pageData;
-    const response = await fetch(`/PickEms/Stage?handler=PicksAllowed&eventId=${eventId}`)
-    return await response.json();
-}
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated')
+        .forEach(dz => {
+            dz.addEventListener('drop', (ev) => drop(ev, false));
+            dz.addEventListener('dragover', allowDrop);
+        })
+})
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId, stage } = window.pageData;
-
-    const imagesResponse = await fetch(`/PickEms/Stage?handler=Images&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
-    const imageUrls = await imagesResponse.json();
-
-    imageUrls.forEach((url, index) => {
-        const container = document.getElementById(`team${index}`);
-        if (container) {
-            const img = document.createElement("img");
-            img.src = url;
-            img.className = "team-img";
-            if (url.includes('unknown'))
-                img.classList.add('unknown')
-            container.appendChild(img);
-        }
-    });
-
-
-    const picksAllowedResponse = await fetch(`/PickEms/Stage?handler=PicksAllowed&eventId=${eventId}&stage=${stage}`)
-    const picksAllowed = await picksAllowedResponse.json();
-
-    const teams = document.querySelectorAll('.team');
-
-    teams.forEach(team => {
-        if (picksAllowed) {
-            const image = team.querySelector('img');
-
-            if (Array.from(image.classList).includes('unknown')) {
-                disableDrag(team.id);
-                team.setAttribute('disabled', 'true');
-            }
-            else {
-                enableDrag(team.id)
-                team.removeAttribute('disabled');
-            }
-        }
-        else {
-            disableDrag(team.id);
-            team.setAttribute('disabled', 'true');
-        }
-    });
-
-    if (!picksAllowed)
-        confirm("Picks are not allowed on this stage as of now.");
-
-    await checkDropzonesFilled();
+    await LoadImagesAsync(eventId, steamId, stage, false);
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
-    const { eventId, steamId, stage } = window.pageData;
+    const { eventId, steamId, stage} = window.pageData;
 
-    const response = await fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
-    const imageUrls = await response.json();
-
-    for (let [index, url] of imageUrls.entries()) {
-        const container = document.getElementById(`pick${index}`);
-
-        if (container) {
-            placeImageInDropzone(url, container);
-        } else {
-            console.warn(`Dropzone with id="pick${index}" not found`);
-        }
-    };
+    await LoadPicksAsync(eventId, steamId, stage, false);
 });
 
-function toggleHideSaveForm() {
-    const saveButton = document.getElementById('saveForm');
-    if (saveButton) {
-        saveButton.style.visibility = saveButton.style.visibility === 'hidden' ? 'visible' : 'hidden';
-    }
-}
-
-document.getElementById("showResults").addEventListener('change', async function (e) {
+document.getElementById("showResults").addEventListener('change', async function() {
 
     const { eventId, steamId, stage } = window.pageData;
 
     if (this.checked) {
-        const response = await fetch(`/PickEms/Stage?handler=Results&eventId=${eventId}&stage=${stage}`);
-        const imageUrls = await response.json();
-
-        for (let [index, url] of imageUrls.entries()) {
-            const container = document.getElementById(`pick${index}`);
-
-            if (container) {
-                await placeImageInDropzone(url, container, false);
-            } else {
-                console.warn(`Dropzone with id="pick${index}" not found`);
-            }
-        };
-
-        toggleHideSaveForm();
+        toggleSaveForm();
+        await LoadResultsAsync(eventId, stage, false);
+        
     }
     else {
-        const response = await fetch(`/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`)
-        const imageUrls = await response.json();
+        await LoadPicksAsync(eventId, steamId, stage, false);
 
-        for (let [index, url] of imageUrls.entries()) {
-            const container = document.getElementById(`pick${index}`);
-
-            if (container) {
-                await placeImageInDropzone(url, container, false);
-            } else {
-                console.warn(`Dropzone with id="pick${index}" not found`);
-            }
-        }
-
-        toggleHideSaveForm();
-        await checkDropzonesFilled();
+        toggleSaveForm();
+        await checkDropzonesFilledAsync();
     }
 });

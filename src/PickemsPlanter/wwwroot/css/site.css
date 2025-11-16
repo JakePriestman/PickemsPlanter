@@ -12,7 +12,6 @@
     --shadow-l: inset 0 1px 2px #171A1E30, 0 4px 6px #0E101230, 0 6px 10px #0E101215;
 }
 
-
 body {
     font-family: stratum-1-web, sans-serif;
     background-color: var(--background-colour);
@@ -46,17 +45,8 @@ body {
     padding: 0;
 }
 
-.logout-confirmation {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(var(--background-colour-rgb), 0.9);
-}
 
+/*LOGOUT CONFIRMATION*/
 .logout-confirmation {
     position: absolute;
     width: 100vw;
@@ -68,15 +58,16 @@ body {
     background-color: rgba(var(--background-colour-rgb), 0.9);
 
 }
-    .logout-confirmation.show {
-        display: flex;
-    }
+
+.logout-confirmation.show {
+    display: flex;
+}
 
 .logout-form {
     position: absolute;
     background-color: var(--navbar-colour);
-    width: 30%;
-    height: 20%;
+    width: fit-content;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -104,7 +95,7 @@ body {
     border: none;
     border-radius: 10px;
     font-size: 1.1em;
-    margin: 0 1em 0 1em;
+    margin: 0 1em 1em 1em;
     box-shadow: var(--shadow-m);
     color: white;
     cursor: default;
@@ -125,7 +116,8 @@ body {
 }
 
 .logout-buttons button:hover,
-.logout-buttons a:hover {
+.logout-buttons a:hover,
+.ok-button:hover {
     animation: blink 1s;
     animation-iteration-count: infinite;
     cursor: default;
@@ -139,6 +131,57 @@ body {
     background-color: var(--delete-colour);
 }
 
+
+/*PICKS NOT ALLOWED*/
+.picks-not-allowed-confirmation {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(var(--background-colour-rgb), 0.9);
+}
+
+.picks-not-allowed-confirmation.show {
+    display: flex;
+}
+
+.picks-not-allowed-box {
+    position: absolute;
+    background-color: var(--navbar-colour);
+    width: fit-content;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: var(--shadow-l);
+}
+
+.picks-not-allowed-text {
+    padding: 1em;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 525;
+}
+
+.ok-button {
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    margin: 0 1em 1em 1em;
+    box-shadow: var(--shadow-m);
+    color: white;
+    cursor: default;
+    background-color: var(--submit-colour);
+}
+
+
+/*NAVBAR*/
 .navbar {
     position: relative;
     background-color: var(--navbar-colour);
@@ -149,6 +192,8 @@ body {
     box-shadow: var(--shadow-m);
 }
 
+
+/*GITHUB LOGO*/
 .github {
     position: absolute;
     bottom: clamp(1em, 1em, 1em);
@@ -166,6 +211,8 @@ body {
     transition: opacity 0.3s ease;
 }
 
+
+/*FOOTER*/
 footer { 
     padding: 1em;
     position: absolute;

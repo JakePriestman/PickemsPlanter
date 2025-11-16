@@ -1,4 +1,5 @@
-﻿.playoff-bracket {
+﻿/*BRACKET*/
+.playoff-bracket {
     display: flex;
     position: relative;
     flex-direction: column;
@@ -28,6 +29,8 @@
     max-width: 800px;
 }
 
+
+/*CHAMPION*/
 .champion {
     flex-direction: column;
     align-items: center;
@@ -39,16 +42,22 @@
     padding: 0;
 }
 
+
+/*SEMI-FINALS*/
 .semi-finals .match-dropzone-advanced {
     margin-left: 8.5em;
     margin-right: 8.5em;
 }
 
+
+/*QUERTER-FINALS*/
 .quarter-finals .match-dropzone-advanced {
     margin-left: 3em;
     margin-right: 2.5em;
 }
 
+
+/*PICKS*/
 .match-dropzone-advanced {
     width: 64px;
     height: 64px;
@@ -79,6 +88,8 @@
     transition: 0.3s ease;
 }
 
+
+/*ROUND-OF-EIGHT*/
 .round-of-eight {
     justify-content: space-between;
 }
@@ -106,6 +117,8 @@
     height: 50px;
 }
 
+
+/*SHOW-RESULTS*/
 .show-results-div {
     padding-top: 2em;
 }

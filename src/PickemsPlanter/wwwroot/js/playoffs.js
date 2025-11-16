@@ -1,34 +1,4 @@
-﻿function dropPlayoffs(ev) {
-    ev.preventDefault();
-    const sourceId = ev.dataTransfer.getData("sourceId");
-    const div = document.getElementById(sourceId);
-    const imageSrc = div.querySelector("img").src;
-
-    if (!imageSrc) return;
-
-    if (imageSrc.includes("unknown")) {
-        return;
-    }
-
-    let dropzone = ev.target;
-
-    const targetId = ev.currentTarget.id; 
-
-    if (!allowPlayoffDrop(sourceId, targetId)) {
-        return;
-    }
-
-    enableDrag(targetId);
-
-    if (!dropzone.classList.contains("match-dropzone-advanced") &&
-        !dropzone.classList.contains("match-dropzone-eliminated") && !dropzone.classList.contains("match")) {
-        dropzone = dropzone.closest(".match-dropzone-advanced, .match-dropzone-eliminated, .match");
-    }
-
-    placeImageInDropzone(imageSrc, dropzone, true);
-}
-
-function resetDropzoneStyle(dropzone) {
+﻿function resetDropzoneStyle(dropzone) {
     switch (dropzone.id) {
         case "pick6":
             dropzone.textContent = "Winner";
@@ -54,90 +24,16 @@ function resetDropzoneStyle(dropzone) {
     }
 }
 
-function allowPlayoffDrop(sourceId, targetId) {
-    if ((sourceId == "team0" || sourceId == "team1") && targetId == "pick0") return true;
-    if ((sourceId == "team2" || sourceId == "team3") && targetId == "pick1") return true;
-    if ((sourceId == "team4" || sourceId == "team5") && targetId == "pick2") return true;
-    if ((sourceId == "team6" || sourceId == "team7") && targetId == "pick3") return true;
-                                                                           
-    if ((sourceId == "pick0" || sourceId == "pick1") && targetId == "pick4") return true;
-    if ((sourceId == "pick2" || sourceId == "pick3") && targetId == "pick5") return true;
-
-    if ((sourceId == "pick4" || sourceId == "pick5") && targetId == "pick6") return true;
-
-    else return false;
-}
-
-async function getPicksAllowed() {
-    const { eventId } = window.pageData;
-    const response = await fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}`)
-    return await response.json();
-}
-
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
 
-    const imagesResponse = await fetch(`/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}`)
-    const imageUrls = await imagesResponse.json();
-
-    imageUrls.forEach((url, index) => {
-        const container = document.getElementById(`team${index}`);
-        if (container) {
-            const img = document.createElement("img");
-            img.src = url;
-            img.className = "team-img";
-            if (url.includes('unknown'))
-                img.classList.add('unknown')
-            container.appendChild(img);
-        }
-    });
-
-    const picksAllowedResponse = await fetch(`/PickEms/Playoffs?handler=PicksAllowed&eventId=${eventId}`)
-    const picksAllowed = await picksAllowedResponse.json();
-
-    const teams = document.querySelectorAll('.team');
-
-    teams.forEach(team => {
-        if (picksAllowed) {
-            const image = team.querySelector('img');
-
-            if (Array.from(image.classList).includes('unknown')) {
-                disableDrag(team.id);
-                team.setAttribute('disabled', 'true');
-            }
-            else {
-                enableDrag(team.id)
-                team.removeAttribute('disabled');
-            }
-        }
-        else {
-            disableDrag(team.id);
-            team.setAttribute('disabled', 'true');
-        }
-    });
-
-    if (!picksAllowed)
-        confirm("Picks are not allowed on this stage as of now.");
-
-    await checkDropzonesFilled();
+    await LoadImagesAsync(eventId, steamId, null, true);
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
 
-    const response = await fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
-    const imageUrls = await response.json();
-
-    for (let [index, url] of imageUrls.entries()) {
-        const container = document.getElementById(`pick${index}`);
-        enableDrag(`pick${index}`)
-        if (container) {
-            await placeImageInDropzone(url, container, true);
-        } else {
-            console.warn(`Dropzone with id="pick${index}" not found`);
-        }
-    };
-;
+    await LoadPicksAsync(eventId, steamId, null, true);
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -151,48 +47,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-function toggleHideSaveForm() {
-    const saveButton = document.getElementById('saveForm');
-    if (saveButton) {
-        saveButton.style.visibility = saveButton.style.visibility === 'hidden' ? 'visible' : 'hidden';
-    }
-}
-
 document.getElementById("showResults").addEventListener('change', async function (e) {
 
     const { eventId, steamId } = window.pageData;
+    const picksAllowed = await getPicksAllowedAsync(eventId, isPlayoffs);
 
     if (this.checked) {
-        const response = await fetch(`/PickEms/Playoffs?handler=Results&eventId=${eventId}`)
-        const imageUrls = await response.json();
-
-        for (let [index, url] of imageUrls.entries()) {
-            const container = document.getElementById(`pick${index}`);
-
-            if (container) {
-                await placeImageInDropzone(url, container, true);
-            } else {
-                console.warn(`Dropzone with id="pick${index}" not found`);
-            }
-        };
-
-        toggleHideSaveForm();
+        toggleSaveForm();
+        await LoadResultsAsync(eventId, null, true);
     }
+
     else {
-        const response = await fetch(`/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}`)
-        const imageUrls = await response.json();
+        await LoadPicksAsync(eventId, steamId, null, true);
 
-        for (let [index, url] of imageUrls.entries()) {
-            const container = document.getElementById(`pick${index}`);
-
-            if (container) {
-                await placeImageInDropzone(url, container, true);
-            } else {
-                console.warn(`Dropzone with id="pick${index}" not found`);
-            }
-        };
-
-        toggleHideSaveForm();
-        await checkDropzonesFilled();
+        toggleSaveForm();
+        await checkDropzonesFilled(picksAllowed);
     }
 });
