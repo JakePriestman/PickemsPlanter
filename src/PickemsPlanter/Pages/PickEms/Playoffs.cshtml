@@ -15,7 +15,7 @@
         <h2 class="selected-event" id="SelectedEvent" asp-for="SelectedEvent" value=@Model.SelectedEvent>@Model.EventName</h2>
         <div class="navigation" id="navigation">
             <div class="dropdown" id="dropDown">
-                <a class="logout" asp-page="/Profile/Logout">Logout</a>
+                <a class="logout" onclick="toggleLogoutConfirmation()">Logout</a>
                 <a class="profile" asp-page="/Profile/Overview">@Model.PersonaName</a>
             </div>
             <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
