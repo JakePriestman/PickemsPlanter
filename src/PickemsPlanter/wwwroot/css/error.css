@@ -11,6 +11,7 @@
     box-shadow: var(--shadow-m);
 }
 
+/*Defuse Kit Image*/
 .kit-div {
     position: relative;
 }
@@ -48,6 +49,7 @@
 }
 
  
+/*TEXT*/
 error-container h1 {
     display: flex;
     flex-direction: column;
@@ -68,6 +70,8 @@ error-container h1 {
     padding: 1rem;
 }
 
+
+/*Form*/
 form {
     display: flex;
     justify-content: center;

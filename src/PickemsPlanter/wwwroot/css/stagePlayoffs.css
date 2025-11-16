@@ -1,3 +1,4 @@
+/*NAVBAR*/
 .selected-event {
     display: flex;
     align-items: center;
@@ -124,6 +125,8 @@
     }
 }
 
+
+/*STAGE NAV*/
 .stage-nav {
     height: auto;
     position: fixed;
@@ -159,7 +162,6 @@
     }
 }
 
-
 .stage:hover {
     transform: scale(1.2);
     transition: 0.1s ease;
@@ -169,6 +171,8 @@
     transform: scale(1.5);
 }
 
+
+/*SHOW-RESULTS*/
 .show-results-div{
     display: flex;
     justify-content: center;
@@ -234,6 +238,8 @@
     transform: rotate(45deg);
 }
 
+
+/*SAVE PICKS*/
 .save-form {
     width: inherit;
     display: flex;
@@ -283,6 +289,8 @@
     animation-iteration-count: infinite;
 }
 
+
+/*TEAMS*/
 .team-img {
     min-width: 25px;
     min-height: 25px;
