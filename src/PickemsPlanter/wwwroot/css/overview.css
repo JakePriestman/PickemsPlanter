@@ -10,6 +10,7 @@
     padding: 1em;
     font-size: 20px;
     border-radius: 50px;
+    cursor: default;
 }
 
 .logout:hover {
@@ -17,6 +18,7 @@
     transition: text-decoration 0.3s ease;
     box-shadow: var(--shadow-s);
     transition: 0.6s ease;
+    cursor: default;
 }
 
 .profile-image {

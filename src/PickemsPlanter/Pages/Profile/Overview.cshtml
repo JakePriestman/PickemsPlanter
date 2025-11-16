@@ -13,7 +13,7 @@
     <nav class="navbar">
         <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
         <h1>@Model.PersonaName</h1>
-        <a class="logout" asp-page="/Profile/Logout">Logout</a>
+        <a class="logout" onclick="toggleLogoutConfirmation()">Logout</a>
     </nav>
 
     <form method="post" class="event-form">

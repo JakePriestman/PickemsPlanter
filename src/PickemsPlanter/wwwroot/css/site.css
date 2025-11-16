@@ -1,5 +1,6 @@
 ﻿:root {
     --background-colour: #171A1E;
+    --background-colour-rgb: 23, 26, 30;
     --text-colour: #E0E1DD;
     --foreground-colour: #434C5E;
     --navbar-colour: #22252C;
@@ -23,6 +24,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .container {
@@ -42,6 +44,99 @@ body {
     width: inherit;
     margin: 0;
     padding: 0;
+}
+
+.logout-confirmation {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(var(--background-colour-rgb), 0.9);
+}
+
+.logout-confirmation {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(var(--background-colour-rgb), 0.9);
+
+}
+    .logout-confirmation.show {
+        display: flex;
+    }
+
+.logout-form {
+    position: absolute;
+    background-color: var(--navbar-colour);
+    width: 30%;
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: var(--shadow-l);
+}
+
+.logout-text {
+    padding: 1em;
+    font-family: inherit;
+    font-size: 20px;
+    font-weight: 525;
+}
+
+.logout-buttons {
+    display: flex;
+    padding: 1em;
+}
+
+.logout-buttons button,
+.logout-buttons a{
+    margin: 1em;
+    padding: 0.5em 0.5em;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1em;
+    margin: 0 1em 0 1em;
+    box-shadow: var(--shadow-m);
+    color: white;
+    cursor: default;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+.logout-buttons button:hover,
+.logout-buttons a:hover {
+    animation: blink 1s;
+    animation-iteration-count: infinite;
+    cursor: default;
+}
+
+.confirm-logout-button {
+    background-color: var(--submit-colour);
+}
+
+.cancel-logout-button {
+    background-color: var(--delete-colour);
 }
 
 .navbar {

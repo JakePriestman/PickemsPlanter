@@ -12,8 +12,17 @@
     </head>
     <body>
         <main role="main" class="container">
-            @RenderBody()
+        <div class="logout-confirmation" id="logoutConfirmation">
+                <form class="logout-form">
+                <p class="logout-text">Are you sure you want to logout?</p>
 
+                <div class="logout-buttons">
+                    <button class="confirm-logout-button" asp-page="/Profile/Logout">Logout</button>
+                    <a class="cancel-logout-button" onclick="toggleLogoutConfirmation()">Cancel</a>
+                </div>
+                </form>
+            </div>
+            @RenderBody()
         </main>
 
         @RenderSection("Scripts", required: false)
