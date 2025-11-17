@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 document.getElementById("showResults").addEventListener('change', async function (e) {
 
     const { eventId, steamId } = window.pageData;
-    const picksAllowed = await getPicksAllowedAsync(eventId, isPlayoffs);
+    const picksAllowed = await getPicksAllowedAsync(eventId, true);
 
     if (this.checked) {
         toggleSaveForm();
