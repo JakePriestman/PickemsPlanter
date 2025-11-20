@@ -61,6 +61,6 @@ document.getElementById("showResults").addEventListener('change', async function
         await LoadPicksAsync(eventId, steamId, null, true);
 
         toggleSaveForm();
-        await checkDropzonesFilled(picksAllowed);
+        await checkDropzonesFilledAsync(picksAllowed);
     }
 });

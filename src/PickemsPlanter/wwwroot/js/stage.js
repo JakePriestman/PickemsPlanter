@@ -22,13 +22,67 @@
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+function dropBackInTeamSection(ev) {
+    ev.preventDefault();
+
+    const sourceId = ev.dataTransfer.getData("sourceId");
+    const div = document.getElementById(sourceId);
+    const imageSrc = div.querySelector("img").src;
+
+    if (sourceId.includes('pick')) {
+        div.innerHTML = '';
+        resetDropzoneStyle(div);
+        disableDrag(div);
+
+        const filename = imageSrc.split('/').pop();
+        const teams = document.querySelectorAll('.team[disabled]');
+        teams.forEach(team => {
+            const existingImg = team.querySelector('img');
+            if (existingImg) {
+                const existingFilename = existingImg.src.split('/').pop();
+                if (existingFilename === filename) {
+                    team.removeAttribute('disabled');
+                }
+            }
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
+    const { eventId, stage } = window.pageData;
+    let picksAllowed = await getPicksAllowedAsync(eventId, stage, false);
+
+    if (picksAllowed) {
+        const teamSection = document.getElementById('teamSection');
+        teamSection.addEventListener('dragover', (ev) => ev.preventDefault());
+        teamSection.addEventListener('drop', (ev) => dropBackInTeamSection(ev));
+    }
     document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated')
         .forEach(dz => {
-            dz.addEventListener('drop', (ev) => drop(ev, false));
-            dz.addEventListener('dragover', allowDrop);
-        })
-})
+            if (picksAllowed) {
+                dz.addEventListener('drop', (ev) => {
+                    dz.classList.remove('drag-hover');
+                    drop(ev, false);
+                });
+                dz.addEventListener('dragover', (ev) => ev.preventDefault());
+                dz.addEventListener('dragenter', () => dz.classList.add('drag-hover'));
+                dz.addEventListener('dragleave', (e) => {
+                    if (!dz.contains(e.relatedTarget))
+                        dz.classList.remove('drag-hover');
+                });
+            }
+            else {
+                switch (dz.className) {
+                    case "match-dropzone-advanced":
+                        dz.className = "match-dropzone-advanced-not-allowed";
+                        break;
+                    case "match-dropzone-eliminated":
+                        dz.className = "match-dropzone-eliminated-not-allowed";
+                        break;
+                }
+            }
+        });
+});
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId, stage } = window.pageData;
