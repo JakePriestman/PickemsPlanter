@@ -51,7 +51,7 @@ async function dropBackInTeamSection(ev, picksAllowed) {
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
-    const { eventId, stage } = window.pageData;
+    const { eventId, steamId, stage } = window.pageData;
     let picksAllowed = await getPicksAllowedAsync(eventId, stage, false);
 
     if (picksAllowed) {
@@ -59,40 +59,33 @@ document.addEventListener("DOMContentLoaded", async function () {
         teamSection.addEventListener('dragover', (ev) => ev.preventDefault());
         teamSection.addEventListener('drop', (ev) => dropBackInTeamSection(ev, picksAllowed));
     }
+
     document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated')
-        .forEach(dz => {
-            if (picksAllowed) {
-                dz.addEventListener('drop', (ev) => {
-                    dz.classList.remove('drag-hover');
-                    drop(ev, false);
-                });
-                dz.addEventListener('dragover', (ev) => ev.preventDefault());
-                dz.addEventListener('dragenter', () => dz.classList.add('drag-hover'));
-                dz.addEventListener('dragleave', (e) => {
-                    if (!dz.contains(e.relatedTarget))
+            .forEach(dz => {
+                if (picksAllowed) {
+                    dz.addEventListener('drop', (ev) => {
                         dz.classList.remove('drag-hover');
-                });
-            }
-            else {
-                switch (dz.className) {
-                    case "match-dropzone-advanced":
-                        dz.className = "match-dropzone-advanced-not-allowed";
-                        break;
-                    case "match-dropzone-eliminated":
-                        dz.className = "match-dropzone-eliminated-not-allowed";
-                        break;
+                        drop(ev, false);
+                    });
+                    dz.addEventListener('dragover', (ev) => ev.preventDefault());
+                    dz.addEventListener('dragenter', () => dz.classList.add('drag-hover'));
+                    dz.addEventListener('dragleave', (e) => {
+                        if (!dz.contains(e.relatedTarget))
+                            dz.classList.remove('drag-hover');
+                    });
                 }
-            }
-        });
-});
-
-document.addEventListener("DOMContentLoaded", async function () {
-    const { eventId, steamId, stage } = window.pageData;
+                else {
+                    switch (dz.className) {
+                        case "match-dropzone-advanced":
+                            dz.className = "match-dropzone-advanced-not-allowed";
+                            break;
+                        case "match-dropzone-eliminated":
+                            dz.className = "match-dropzone-eliminated-not-allowed";
+                            break;
+                    }
+                }
+            });
     await LoadImagesAsync(eventId, steamId, stage, false);
-});
-
-document.addEventListener("DOMContentLoaded", async function () {
-    const { eventId, steamId, stage} = window.pageData;
 
     await LoadPicksAsync(eventId, steamId, stage, false);
 });

@@ -77,7 +77,7 @@ async function drop(ev, isPlayoffs) {
     if (sourceId.includes('pick') && !isPlayoffs)
         swapImagesInDropzones(div, dropzone);
     else
-        placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed);
+        await placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed);
 }
 
 
@@ -277,6 +277,7 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs) {
         const container = document.getElementById(`pick${index}`);
 
         if (container) {
+            //This is an issue for reloading the page. Investigate.
             await placeImageInDropzoneAsync(url, container,  isPlayoffs, picksAllowed);
         } else {
             console.warn(`Dropzone with id="pick${index}" not found`);
