@@ -22,7 +22,7 @@
     }
 }
 
-function dropBackInTeamSection(ev) {
+async function dropBackInTeamSection(ev, picksAllowed) {
     ev.preventDefault();
 
     const sourceId = ev.dataTransfer.getData("sourceId");
@@ -45,6 +45,8 @@ function dropBackInTeamSection(ev) {
                 }
             }
         });
+
+        await checkDropzonesFilledAsync(picksAllowed);
     }
 }
 
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (picksAllowed) {
         const teamSection = document.getElementById('teamSection');
         teamSection.addEventListener('dragover', (ev) => ev.preventDefault());
-        teamSection.addEventListener('drop', (ev) => dropBackInTeamSection(ev));
+        teamSection.addEventListener('drop', (ev) => dropBackInTeamSection(ev, picksAllowed));
     }
     document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated')
         .forEach(dz => {
