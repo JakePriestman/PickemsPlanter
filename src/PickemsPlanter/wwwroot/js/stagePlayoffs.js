@@ -171,10 +171,10 @@ async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAl
 
     if (!imageSrc || imageSrc.includes("unknown")) {
         resetDropzoneStyle(dropzone);
+        disableDrag(dropzone.id);
         return;
     }
 
-    const filename = imageSrc.split('/').pop();
     const imageInDropzone = dropzone.querySelector('img');
 
     //Only remove the images after the current dropzone in playoffs mode
@@ -273,12 +273,27 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs) {
     const imageUrls = await response.json();
     const picksAllowed = await getPicksAllowedAsync(eventId, stage, isPlayoffs);
 
+    const teams = document.querySelectorAll('.team');
+
+    teams.forEach(team => {
+        toggleImageFunctionality(team, picksAllowed);
+    });
+
     for (let [index, url] of imageUrls.entries()) {
         const container = document.getElementById(`pick${index}`);
 
         if (container) {
-            //This is an issue for reloading the page. Investigate.
-            await placeImageInDropzoneAsync(url, container,  isPlayoffs, picksAllowed);
+            await placeImageInDropzoneAsync(url, container, isPlayoffs, picksAllowed);
+
+            switch (container.className) {
+                case "match-dropzone-advanced-not-allowed":
+                    container.className = "match-dropzone-advanced";
+                    break;
+                case "match-dropzone-eliminated-not-allowed":
+                    container.className = "match-dropzone-eliminated";
+                    break;
+            }
+
         } else {
             console.warn(`Dropzone with id="pick${index}" not found`);
         }
@@ -293,13 +308,29 @@ async function LoadResultsAsync(eventId, stage, isPlayoffs) {
 
     const response = await fetch(url);
     const imageUrls = await response.json();
-    const picksAllowed = await getPicksAllowedAsync(eventId, isPlayoffs);
+
+    const teams = document.querySelectorAll('.team');
+
+    teams.forEach(team => {
+        toggleImageFunctionality(team, false);
+    });
 
     for (let [index, url] of imageUrls.entries()) {
         const container = document.getElementById(`pick${index}`);
 
         if (container) {
-            await placeImageInDropzoneAsync(url, container, isPlayoffs,  picksAllowed);
+            {
+                await placeImageInDropzoneAsync(url, container, isPlayoffs, false);
+
+                switch (container.className) {
+                    case "match-dropzone-advanced":
+                        container.className = "match-dropzone-advanced-not-allowed";
+                        break;
+                    case "match-dropzone-eliminated":
+                        container.className = "match-dropzone-eliminated-not-allowed";
+                        break;
+                }
+            }
         } else {
             console.warn(`Dropzone with id="pick${index}" not found`);
         }
