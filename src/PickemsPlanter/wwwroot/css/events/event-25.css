@@ -14,3 +14,7 @@
 .crown-image {
     filter: brightness(0) saturate(100%) invert(60%) sepia(6%) saturate(176%) hue-rotate(222deg) brightness(91%) contrast(89%);
 }
+
+.clear-all-picks img {
+    filter: brightness(0) saturate(100%) invert(60%) sepia(6%) saturate(176%) hue-rotate(222deg) brightness(91%) contrast(89%);
+}

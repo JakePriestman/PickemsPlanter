@@ -41,11 +41,15 @@ document.getElementById("showResults").addEventListener('change', async function
     if (this.checked) {
         toggleSaveForm();
         await LoadResultsAsync(eventId, null, true);
+
+        toggleClearAllDropzonesButton();
     }
 
     else {
         toggleSaveForm();
         await LoadPicksAsync(eventId, steamId, null, true);
+
+        toggleClearAllDropzonesButton();
     }
 });
 

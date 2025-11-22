@@ -100,12 +100,15 @@ document.getElementById("showResults").addEventListener('change', async function
         toggleSaveForm();
 
         await LoadResultsAsync(eventId, stage, false);
-        
+
+        toggleClearAllDropzonesButton();
     }
     else {
         toggleSaveForm();
 
         await LoadPicksAsync(eventId, steamId, stage, false);
+
+        toggleClearAllDropzonesButton();
     }
 });
 
