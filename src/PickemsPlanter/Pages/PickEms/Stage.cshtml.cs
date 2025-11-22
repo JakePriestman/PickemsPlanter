@@ -20,6 +20,8 @@ namespace PickemsPlanter.Pages.PickEms
         [BindProperty(SupportsGet = true)]
         public required Stages Stage { get; init; }
 
+		public IReadOnlyCollection<string> Picks { get; set; }
+
         public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
         public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
@@ -43,7 +45,7 @@ namespace PickemsPlanter.Pages.PickEms
 
         public async Task<JsonResult> OnGetPicks()
         {
-            return new JsonResult(await pickemsService.GetStagePicksAsync(Stage, SteamId, EventId));
+			return new JsonResult(await pickemsService.GetStagePicksAsync(Stage, SteamId, EventId));
 		}
 
         public async Task<JsonResult> OnGetResults()

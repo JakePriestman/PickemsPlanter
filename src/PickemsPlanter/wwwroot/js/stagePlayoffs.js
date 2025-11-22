@@ -50,11 +50,21 @@ function removeDuplicateImage(filename) {
     });
 }
 
-function swapImagesInDropzones(div, dropzone) {
-    const innerHTML = div.innerHTML;
+function swapImagesInDropzones(div, dropzone, picksAllowed, picks) {
+    if (picksAllowed) {
+        const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
 
-    div.innerHTML = dropzone.innerHTML;
-    dropzone.innerHTML = innerHTML;
+        const allFilled = Array.from(dropzones).every(zone =>
+            zone !== null && zone.querySelector('img.dropped-img') !== null
+        );
+
+        const innerHTML = div.innerHTML;
+
+        div.innerHTML = dropzone.innerHTML;
+        dropzone.innerHTML = innerHTML;
+
+        toggleSaveButton(allFilled, picksAllowed, picks);
+    }
 }
 
 async function drop(ev, isPlayoffs) {
@@ -66,7 +76,7 @@ async function drop(ev, isPlayoffs) {
 
     let dropzone = ev.target;
 
-    const { eventId, stage } = window.pageData;
+    const { eventId, stage, picks } = window.pageData;
     const picksAllowed = await getPicksAllowedAsync(eventId, stage, isPlayoffs);
 
     if (!dropzone.classList.contains("match-dropzone-advanced") &&
@@ -75,24 +85,47 @@ async function drop(ev, isPlayoffs) {
     }
 
     if (sourceId.includes('pick') && !isPlayoffs)
-        swapImagesInDropzones(div, dropzone);
+        swapImagesInDropzones(div, dropzone, picksAllowed, picks);
     else
         await placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed);
 }
 
 
-async function checkDropzonesFilledAsync(picksAllowed) {
+async function checkDropzonesFilledAsync(picksAllowed, picks) {
     const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
 
     const allFilled = Array.from(dropzones).every(zone =>
         zone !== null && zone.querySelector('img.dropped-img') !== null
     );
 
+    toggleSaveButton(allFilled, picksAllowed, picks);
+}
+
+function toggleSaveButton(allFilled, picksAllowed) {
+    const { picks } = window.pageData;
+
     const saveButton = document.getElementById('saveButton');
 
     if (saveButton) {
-        saveButton.disabled = !allFilled || !picksAllowed;
-        saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
+        if (!picks || picks.length === 0) {
+            saveButton.disabled = !allFilled || !picksAllowed;
+            saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
+        }
+        else if (allFilled) {
+            const imagesFromDropzones = Array.from(document.querySelectorAll('img.dropped-img'))
+                .map(img => img.src.split('/').pop());
+
+            const areSame = picks.every((val, i) => val === imagesFromDropzones[i]);
+
+            if (areSame) {
+                saveButton.disabled = true;
+                saveButton.textContent = "Picks already planted";
+            }
+            else {
+                saveButton.disabled = false;
+                saveButton.textContent = "Plant Picks";
+            }
+        }
     }
 }
 
@@ -167,6 +200,8 @@ function addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed) {
 
 
 async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed) {
+    const { picks } = window.pageData;
+
     if (!dropzone) return;
 
     if (!imageSrc || imageSrc.includes("unknown")) {
@@ -183,7 +218,7 @@ async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAl
 
     addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed);
 
-    await checkDropzonesFilledAsync(picksAllowed);
+    await checkDropzonesFilledAsync(picksAllowed, picks);
 }
 
 
@@ -285,19 +320,25 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs) {
         if (container) {
             await placeImageInDropzoneAsync(url, container, isPlayoffs, picksAllowed);
 
-            switch (container.className) {
-                case "match-dropzone-advanced-not-allowed":
-                    container.className = "match-dropzone-advanced";
-                    break;
-                case "match-dropzone-eliminated-not-allowed":
-                    container.className = "match-dropzone-eliminated";
-                    break;
+            if (picksAllowed) {
+                switch (container.className) {
+                    case "match-dropzone-advanced-not-allowed":
+                        container.className = "match-dropzone-advanced";
+                        break;
+                    case "match-dropzone-eliminated-not-allowed":
+                        container.className = "match-dropzone-eliminated";
+                        break;
+                }
             }
 
         } else {
             console.warn(`Dropzone with id="pick${index}" not found`);
         }
     };
+
+    const images = imageUrls.map(img => img.split('/').pop());
+    window.pageData.picks = images;
+    toggleSaveButton(images.length != 0, picksAllowed, images);
 }
 
 
@@ -338,9 +379,9 @@ async function LoadResultsAsync(eventId, stage, isPlayoffs) {
 }
 
 function toggleSaveForm() {
-    const saveButton = document.getElementById('saveForm');
-    if (saveButton) {
-        saveButton.style.visibility = saveButton.style.visibility === 'hidden' ? 'visible' : 'hidden';
+    const saveForm = document.getElementById('saveForm');
+    if (saveForm) {
+        saveForm.style.visibility = saveForm.style.visibility === 'hidden' ? 'visible' : 'hidden';
     }
 }
 

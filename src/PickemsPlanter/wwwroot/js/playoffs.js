@@ -58,9 +58,7 @@ document.getElementById("showResults").addEventListener('change', async function
     }
 
     else {
-        await LoadPicksAsync(eventId, steamId, null, true);
-
         toggleSaveForm();
-        await checkDropzonesFilledAsync(picksAllowed);
+        await LoadPicksAsync(eventId, steamId, null, true);
     }
 });

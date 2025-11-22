@@ -44,25 +44,28 @@
 
 
 /*SEMI-FINALS*/
-.semi-finals .match-dropzone-advanced {
+.semi-finals .match-dropzone-advanced,
+.semi-finals .match-dropzone-advanced-not-allowed {
     margin-left: 8.5em;
     margin-right: 8.5em;
 }
 
 
 /*QUERTER-FINALS*/
-.quarter-finals .match-dropzone-advanced {
+.quarter-finals .match-dropzone-advanced,
+.quarter-finals .match-dropzone-advanced-not-allowed {
     margin-left: 3em;
     margin-right: 2.5em;
 }
 
 
 /*PICKS*/
-.match-dropzone-advanced {
+.match-dropzone-advanced,
+.match-dropzone-advanced-not-allowed {
     width: 64px;
     height: 64px;
     border-radius: 5px;
-    cursor: grab;
+    cursor: default;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -71,6 +74,19 @@
     box-shadow: var(--shadow-m);
     font-family: stratum-1-web, sans-serif;
     font-weight: 500;
+}
+
+.match-dropzone-advanced {
+    cursor: grab;
+}
+
+.match-dropzone-advanced-not-allowed {
+    cursor: not-allowed
+}
+
+.match-dropzone-advanced.drag-hover {
+    transform: scale(1.3);
+    transition: 0.8s ease;
 }
 
 .match-dropzone-advanced .dropped-img {

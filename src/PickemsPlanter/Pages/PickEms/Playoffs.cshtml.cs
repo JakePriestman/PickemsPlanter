@@ -17,6 +17,8 @@ namespace PickemsPlanter.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public required string SteamId { get; init; }
 
+		public IReadOnlyCollection<string> Picks { get; set; }
+
 		public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
 		public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
