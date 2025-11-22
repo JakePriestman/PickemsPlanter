@@ -67,6 +67,16 @@
     box-shadow: var(--shadow-l);
 }
 
+.match-dropzone-advanced,
+.match-dropzone-eliminated {
+    cursor: grab;
+}
+
+.match-dropzone-advanced-not-allowed,
+.match-dropzone-eliminated-not-allowed {
+    cursor: not-allowed
+}
+
 .match-dropzone-advanced.drag-hover,
 .match-dropzone-eliminated.drag-hover,
 .match-dropzone-advanced:hover,
@@ -108,6 +118,6 @@
 }
 
 .team[disabled] .team-img {
-    opacity: 0.3;
-    filter: brightness(8%);
-}
+                opacity: 0.3;
+                filter: brightness(8%);
+            }

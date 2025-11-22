@@ -96,13 +96,13 @@ document.getElementById("showResults").addEventListener('change', async function
 
     if (this.checked) {
         toggleSaveForm();
+
         await LoadResultsAsync(eventId, stage, false);
         
     }
     else {
-        await LoadPicksAsync(eventId, steamId, stage, false);
-
         toggleSaveForm();
-        await checkDropzonesFilledAsync();
+
+        await LoadPicksAsync(eventId, steamId, stage, false);
     }
 });
