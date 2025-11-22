@@ -28,29 +28,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
 
     await LoadImagesAsync(eventId, steamId, null, true);
-});
-
-document.addEventListener("DOMContentLoaded", async function () {
-    const { eventId, steamId } = window.pageData;
 
     await LoadPicksAsync(eventId, steamId, null, true);
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    const stages = document.querySelectorAll(".stage");
-
-    stages.forEach(stage => {
-        stage.addEventListener("click", () => {
-            stages.forEach(s => s.classList.remove("active"));
-            stage.classList.add("active");
-        });
-    });
+    toggleClearAllDropzonesButton();
 });
 
 document.getElementById("showResults").addEventListener('change', async function (e) {
 
     const { eventId, steamId } = window.pageData;
-    const picksAllowed = await getPicksAllowedAsync(eventId, true);
 
     if (this.checked) {
         toggleSaveForm();
@@ -61,4 +47,8 @@ document.getElementById("showResults").addEventListener('change', async function
         toggleSaveForm();
         await LoadPicksAsync(eventId, steamId, null, true);
     }
+});
+
+document.getElementById("clearAllPicks").addEventListener('click', () => {
+    clearAllDropzones(true);
 });

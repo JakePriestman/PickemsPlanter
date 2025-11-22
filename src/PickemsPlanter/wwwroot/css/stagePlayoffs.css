@@ -289,6 +289,35 @@
     animation-iteration-count: infinite;
 }
 
+.buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.clear-all-picks {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+}
+
+.clear-all-picks img {
+    width: 100%;
+    height: auto;
+}
+
+.clear-all-picks:not([disabled]) img:hover {
+    transform: scale(1.1);
+    transition: 0.5s ease;
+}
+
+.clear-all-picks:disabled {
+    opacity: 0.2;
+}
+
 
 /*TEAMS*/
 .team-img {

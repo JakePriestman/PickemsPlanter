@@ -35,6 +35,45 @@ function allowPlayoffDrop(sourceId, targetId) {
     else return false;
 }
 
+function toggleClearAllDropzonesButton() {
+    const allDropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated');
+
+    const allEmpty = Array.from(allDropzones).every(zone => zone.querySelector('img.dropped-img') === null);
+
+    const button = document.getElementById('clearAllPicks');
+
+    if (allEmpty) {
+        button.disabled = true;
+    }
+    else {
+        button.disabled = false;
+    }
+}
+
+async function clearAllDropzones(isPlayoffs) {
+    const {eventId, stage, picks } = window.pageData;
+    const picksAllowed = await getPicksAllowedAsync(eventId, stage, isPlayoffs);
+
+    const allDropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated');
+
+    allDropzones.forEach(zone => {
+        zone.innerHTML = '';
+        resetDropzoneStyle(zone);
+        disableDrag(zone.id);
+    });
+
+    const button = document.getElementById('clearAllPicks');
+    button.disabled = true;
+
+    const teams = document.querySelectorAll('.team');
+
+    teams.forEach(team => {
+        toggleImageFunctionality(team, picksAllowed);
+    });
+
+    await checkDropzonesFilledAsync(picksAllowed, picks);
+}
+
 function removeDuplicateImage(filename) {
     const allDropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated');
     allDropzones.forEach(zone => {
@@ -88,6 +127,8 @@ async function drop(ev, isPlayoffs) {
         swapImagesInDropzones(div, dropzone, picksAllowed, picks);
     else
         await placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed);
+
+    toggleClearAllDropzonesButton();
 }
 
 
@@ -101,8 +142,7 @@ async function checkDropzonesFilledAsync(picksAllowed, picks) {
     toggleSaveButton(allFilled, picksAllowed, picks);
 }
 
-function toggleSaveButton(allFilled, picksAllowed) {
-    const { picks } = window.pageData;
+function toggleSaveButton(allFilled, picksAllowed, picks) {
 
     const saveButton = document.getElementById('saveButton');
 
@@ -125,6 +165,10 @@ function toggleSaveButton(allFilled, picksAllowed) {
                 saveButton.disabled = false;
                 saveButton.textContent = "Plant Picks";
             }
+        }
+        else {
+            saveButton.disabled = !allFilled || !picksAllowed;
+            saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
         }
     }
 }

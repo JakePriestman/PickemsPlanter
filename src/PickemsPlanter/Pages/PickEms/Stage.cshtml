@@ -87,6 +87,10 @@
             <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Plant Picks</button>
         </form>
 
+        <div class="buttons">
+            <button class="clear-all-picks" id="clearAllPicks" type="button"><img src="/Images/clear_all_picks.png" /></button>
+        </div>
+
         <section class="teams-section" id="teamSection">
             <div class="team" id="team0"></div>
             <div class="team" id="team1"></div>

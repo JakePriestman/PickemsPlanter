@@ -63,13 +63,13 @@
     align-items: center;
     justify-content: center;
     user-select: none;
-    cursor: default;
+    cursor: default !important;
     box-shadow: var(--shadow-l);
 }
 
-.match-dropzone-advanced,
-.match-dropzone-eliminated {
-    cursor: grab;
+.match-dropzone-advanced[draggable="true"],
+.match-dropzone-eliminated[draggable="true"] {
+    cursor: grab !important;
 }
 
 .match-dropzone-advanced-not-allowed,

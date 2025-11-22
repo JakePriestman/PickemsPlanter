@@ -93,6 +93,10 @@
             <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
             <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
         </form>
+
+        <div>
+            <button class="clear-all-picks" id="clearAllPicks" type="button"><img src="/Images/clear_all_picks.png" /></button>
+        </div>
     </div>
 </div>
 

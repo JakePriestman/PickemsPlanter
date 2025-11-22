@@ -88,6 +88,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     await LoadImagesAsync(eventId, steamId, stage, false);
 
     await LoadPicksAsync(eventId, steamId, stage, false);
+
+    toggleClearAllDropzonesButton();
 });
 
 document.getElementById("showResults").addEventListener('change', async function() {
@@ -105,4 +107,8 @@ document.getElementById("showResults").addEventListener('change', async function
 
         await LoadPicksAsync(eventId, steamId, stage, false);
     }
+});
+
+document.getElementById("clearAllPicks").addEventListener('click', () => {
+    clearAllDropzones(false);
 });
