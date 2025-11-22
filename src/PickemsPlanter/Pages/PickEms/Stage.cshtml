@@ -55,28 +55,28 @@
             </nav>
             <div class="picks">
                 <div class="three-zero">
-                    <div class="match-dropzone-advanced" id="pick0">3-0</div>
-                    <div class="match-dropzone-advanced" id="pick1">3-0</div>
+                    <div class="match-dropzone-advanced" id="pick0" title="3-0">3-0</div>
+                    <div class="match-dropzone-advanced" id="pick1" title="3-0">3-0</div>
                 </div>
                 <div class="three-one">
-                    <div class="match-dropzone-advanced" id="pick2">3-1</div>
-                    <div class="match-dropzone-advanced" id="pick3">3-1</div>
-                    <div class="match-dropzone-advanced" id="pick4">3-1</div>
+                    <div class="match-dropzone-advanced" id="pick2" title="3-1">3-1</div>
+                    <div class="match-dropzone-advanced" id="pick3" title="3-1">3-1</div>
+                    <div class="match-dropzone-advanced" id="pick4" title="3-1">3-1</div>
                 </div>
                 <div class="three-two">
-                    <div class="match-dropzone-advanced" id="pick5">3-2</div>
-                    <div class="match-dropzone-advanced" id="pick6">3-2</div>
-                    <div class="match-dropzone-advanced" id="pick7">3-2</div>
+                    <div class="match-dropzone-advanced" id="pick5" title="3-2">3-2</div>
+                    <div class="match-dropzone-advanced" id="pick6" title="3-2">3-2</div>
+                    <div class="match-dropzone-advanced" id="pick7" title="3-2">3-2</div>
                 </div>
                 <div class="zero-three">
-                    <div class="match-dropzone-eliminated" id="pick8">0-3</div>
-                    <div class="match-dropzone-eliminated" id="pick9">0-3</div>
+                    <div class="match-dropzone-eliminated" id="pick8" title="0-3">0-3</div>
+                    <div class="match-dropzone-eliminated" id="pick9" title="0-3">0-3</div>
                 </div>
             </div>
             <div class="show-results-div">
                 <label for="showResults">
-                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults" />
-                    <span class="checkbox"></span>
+                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults"/>
+                    <span class="checkbox" title="Show the results from the stage"></span>
                     Show results from stage
                 </label>
             </div>
@@ -84,11 +84,11 @@
 
         <form method="post" class="save-form" id="saveForm">
             <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
-            <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Plant Picks</button>
+            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Plant Picks</button>
         </form>
 
         <div class="buttons">
-            <button class="clear-all-picks" id="clearAllPicks" type="button"><img src="/Images/clear_all_picks.png" /></button>
+            <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
         </div>
 
         <section class="teams-section" id="teamSection">

@@ -56,17 +56,17 @@
 
             <div class="champion">
                 <img class="crown-image" src="/Images/crown.png" />
-                <div class="match-dropzone-advanced" id="pick6">Winner</div>
+                <div class="match-dropzone-advanced" id="pick6"  title="Winner">Winner</div>
             </div>
             <div class="semi-finals">
-                <div class="match-dropzone-advanced" id="pick4">S1</div>
-                <div class="match-dropzone-advanced" id="pick5">S2</div>
+                <div class="match-dropzone-advanced" id="pick4" title="Semi final 1">S1</div>
+                <div class="match-dropzone-advanced" id="pick5" title="Semi final 2">S2</div>
             </div>
             <div class="quarter-finals">
-                <div class="match-dropzone-advanced" id="pick0">Q1</div>
-                <div class="match-dropzone-advanced" id="pick1">Q2</div>
-                <div class="match-dropzone-advanced" id="pick2">Q3</div>
-                <div class="match-dropzone-advanced" id="pick3">Q4</div>
+                <div class="match-dropzone-advanced" id="pick0" title="Quarter final 1">Q1</div>
+                <div class="match-dropzone-advanced" id="pick1" title="Quarter final 2">Q2</div>
+                <div class="match-dropzone-advanced" id="pick2" title="Quarter final 3">Q3</div>
+                <div class="match-dropzone-advanced" id="pick3" title="Quarter final 4">Q4</div>
             </div>
 
             <div class="round-of-eight">
@@ -83,7 +83,7 @@
             <div class="show-results-div">
                 <label for="showResults">
                     <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults" />
-                    <span class="checkbox"></span>
+                    <span class="checkbox" title="Show the results from the stage"></span>
                     Show results from stage
                 </label>
             </div>
@@ -91,11 +91,11 @@
     
         <form method="post" class="save-form" id="saveForm">
             <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
-            <button class="save-button" type="submit" id="saveButton" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
+            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
         </form>
 
         <div>
-            <button class="clear-all-picks" id="clearAllPicks" type="button"><img src="/Images/clear_all_picks.png" /></button>
+            <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
         </div>
     </div>
 </div>
