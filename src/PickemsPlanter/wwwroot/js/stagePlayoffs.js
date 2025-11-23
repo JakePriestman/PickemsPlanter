@@ -329,6 +329,141 @@ function removeSucceedingImages(imageInDropzone, dropzone) {
     });
 }
 
+function mapTeamName(image, dropzone) {
+    let name = image.split('/').pop();
+
+    name = name.split('.');
+
+    switch (name[0]) {
+        case "3dm":
+            dropzone.title = "3DMAX";
+            break;
+        case "astr":
+            dropzone.title = "Astralis";
+            break;
+        case "aura":
+            dropzone.title = "Aurora";
+            break;
+        case "b8":
+            dropzone.title = "B8";
+            break;
+        case "bb":
+            dropzone.title = "BetBoom";
+            break;
+        case "chin":
+            dropzone.title = "Chinggis Warriors";
+            break;
+        case "cplx":
+            dropzone.title = "Complexity";
+            break;
+        case "fal":
+            dropzone.title = "Falcons";
+            break;
+        case "faze":
+            dropzone.title = "FaZe";
+            break;
+        case "flux":
+            dropzone.title = "Fluxo";
+            break;
+        case "fntc":
+            dropzone.title = "fnatic";
+            break;
+        case "fq":
+            dropzone.title = "FlyQuest";
+            break;
+        case "furi":
+            dropzone.title = "FURIA";
+            break;
+        case "g2":
+            dropzone.title = "G2";
+            break;
+        case "gl":
+            dropzone.title = "GamerLegion";
+            break;
+        case "hero":
+            dropzone.title = "Heroic";
+            break;
+        case "huns":
+            dropzone.title = "The Huns";
+            break;
+        case "imp":
+            dropzone.title = "Imperial";
+            break;
+        case "lgcy":
+            dropzone.title = "Legacy";
+            break;
+        case "liq":
+            dropzone.title = "Liquid";
+            break;
+        case "lynn":
+            dropzone.title = "Lynn Vision";
+            break;
+        case "m80":
+            dropzone.title = "M80";
+            break;
+        case "meti":
+            dropzone.title = "Metizport";
+            break;
+        case "mibr":
+            dropzone.title = "MIBR";
+            break;
+        case "mngz":
+            dropzone.title = "The MongolZ";
+            break;
+        case "mouz":
+            dropzone.title = "MOUZ";
+            break;
+        case "navi":
+            dropzone.title = "Natus Vincere";
+            break;
+        case "nemi":
+            dropzone.title = "Nemiga";
+            break;
+        case "nip":
+            dropzone.title = "Ninjas in Pyjamas";
+            break;
+        case "nrg":
+            dropzone.title = "NRG";
+            break;
+        case "og":
+            dropzone.title = "OG";
+            break;
+        case "pain":
+            dropzone.title = "paiN";
+            break;
+        case "pari":
+            dropzone.title = "PARIVISION";
+            break;
+        case "psnu":
+            dropzone.title = "Passion UA";
+            break;
+        case "ratm":
+            dropzone.title = "Rare Atom";
+            break;
+        case "redc":
+            dropzone.title = "RED Canids";
+            break;
+        case "spir":
+            dropzone.title = "Spirit";
+            break;
+        case "tyl":
+            dropzone.title = "TYLOO";
+            break;
+        case "unknown":
+            dropzone.title = "unknown";
+            break;
+        case "vita":
+            dropzone.title = "Vitality";
+            break;
+        case "vp":
+            dropzone.title = "Virtus.pro";
+            break;
+        case "wcrd":
+            dropzone.title = "Wildcard";
+            break;
+    }
+}
+
 function addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, isPlayoffs, isResults) {
 
     if (picksAllowed) {
@@ -495,6 +630,8 @@ async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed
             container.appendChild(img);
 
             toggleImageFunctionality(container, picksAllowed);
+
+            mapTeamName(url, container);
         }
     }
 
@@ -532,6 +669,8 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
             if (isPlayoffs) {
                 toggleImageFunctionality(container, picksAllowed);
             }
+
+            mapTeamName(url, container);
 
         } else {
             console.warn(`Dropzone with id="pick${index}" not found`);
@@ -574,6 +713,8 @@ async function LoadResultsAsync(eventId, stage, isPlayoffs) {
                         container.className = "match-dropzone-eliminated-not-allowed";
                         break;
                 }
+
+                mapTeamName(url, container);
             }
         } else {
             console.warn(`Dropzone with id="pick${index}" not found`);
