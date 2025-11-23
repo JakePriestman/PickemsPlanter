@@ -47,12 +47,14 @@ async function dropBackInTeamSection(ev, picksAllowed) {
         });
 
         await checkDropzonesFilledAsync(picksAllowed);
+        toggleClearAllDropzonesButton(picksAllowed);
+        toggleRandomPicksButton(picksAllowed);
     }
 }
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId, stage } = window.pageData;
-    let picksAllowed = await getPicksAllowedAsync(eventId, stage, false);
+    const picksAllowed = await getPicksAllowedAsync(eventId, stage, false);
 
     if (picksAllowed) {
         const teamSection = document.getElementById('teamSection');
@@ -85,33 +87,48 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }
                 }
             });
-    await LoadImagesAsync(eventId, steamId, stage, false);
 
-    await LoadPicksAsync(eventId, steamId, stage, false);
+    await LoadImagesAsync(eventId, steamId, stage, false, picksAllowed);
 
-    toggleClearAllDropzonesButton();
+    await LoadPicksAsync(eventId, steamId, stage, false, picksAllowed);
+
+    toggleClearAllDropzonesButton(picksAllowed);
+    toggleRandomPicksButton(picksAllowed);
 });
 
 document.getElementById("showResults").addEventListener('change', async function() {
 
     const { eventId, steamId, stage } = window.pageData;
+    const picksAllowed = await getPicksAllowedAsync(eventId, stage, false);
 
     if (this.checked) {
         toggleSaveForm();
 
-        await LoadResultsAsync(eventId, stage, false);
+        await LoadResultsAsync(eventId, stage, false, picksAllowed);
 
-        toggleClearAllDropzonesButton();
+        toggleClearAllDropzonesButton(picksAllowed);
+        toggleRandomPicksButton(picksAllowed);
     }
     else {
         toggleSaveForm();
 
-        await LoadPicksAsync(eventId, steamId, stage, false);
+        await LoadPicksAsync(eventId, steamId, stage, false, picksAllowed);
 
-        toggleClearAllDropzonesButton();
+        const teams = document.querySelectorAll('.team');
+
+        teams.forEach(team => {
+            toggleImageFunctionality(team, picksAllowed);
+        }); 
+
+        toggleClearAllDropzonesButton(picksAllowed);
+        toggleRandomPicksButton(picksAllowed);
     }
 });
 
-document.getElementById("clearAllPicks").addEventListener('click', () => {
-    clearAllDropzones(false);
+document.getElementById("clearAllPicks").addEventListener('click', async () => {
+    await clearAllDropzonesAsync(false);
+});
+
+document.getElementById("randomPicks").addEventListener('click', async () => {
+    await selectRandomPicksAsync(false);
 });
