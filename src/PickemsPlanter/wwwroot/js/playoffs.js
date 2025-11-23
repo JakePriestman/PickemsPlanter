@@ -26,33 +26,74 @@
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
+    const picksAllowed = await getPicksAllowedAsync(eventId, null, true);
 
-    await LoadImagesAsync(eventId, steamId, null, true);
+    document.querySelectorAll('.match-dropzone-advanced')
+        .forEach(dz => {
+            if (picksAllowed) {
+                dz.addEventListener('drop', (ev) => {
+                    dz.classList.remove('drag-hover');
+                    drop(ev, true);
+                });
+                dz.addEventListener('dragover', (ev) => ev.preventDefault());
+                dz.addEventListener('dragenter', () => dz.classList.add('drag-hover'));
+                dz.addEventListener('dragleave', (e) => {
+                    if (!dz.contains(e.relatedTarget))
+                        dz.classList.remove('drag-hover');
+                });
+            }
+            else {
+                switch (dz.className) {
+                    case "match-dropzone-advanced":
+                        dz.className = "match-dropzone-advanced-not-allowed";
+                        break;
+                    case "match-dropzone-eliminated":
+                        dz.className = "match-dropzone-eliminated-not-allowed";
+                        break;
+                }
+            }
+        });
 
-    await LoadPicksAsync(eventId, steamId, null, true);
+    await LoadImagesAsync(eventId, steamId, null, true, picksAllowed);
 
-    toggleClearAllDropzonesButton();
+    await LoadPicksAsync(eventId, steamId, null, true, picksAllowed);
+
+    toggleClearAllDropzonesButton(picksAllowed);
+    toggleRandomPicksButton(picksAllowed);
 });
 
 document.getElementById("showResults").addEventListener('change', async function (e) {
 
     const { eventId, steamId } = window.pageData;
+    const picksAllowed = await getPicksAllowedAsync(eventId, null, false);
 
     if (this.checked) {
         toggleSaveForm();
-        await LoadResultsAsync(eventId, null, true);
+        await LoadResultsAsync(eventId, null, true, picksAllowed);
 
-        toggleClearAllDropzonesButton();
+        toggleClearAllDropzonesButton(picksAllowed);
+        toggleRandomPicksButton(picksAllowed);
     }
 
     else {
         toggleSaveForm();
-        await LoadPicksAsync(eventId, steamId, null, true);
+        await LoadPicksAsync(eventId, steamId, null, true, picksAllowed);
 
-        toggleClearAllDropzonesButton();
+        const teams = document.querySelectorAll('.team');
+
+        teams.forEach(team => {
+            toggleImageFunctionality(team, picksAllowed);
+        });   
+
+        toggleClearAllDropzonesButton(picksAllowed);
+        toggleRandomPicksButton(picksAllowed);
     }
 });
 
 document.getElementById("clearAllPicks").addEventListener('click', () => {
-    clearAllDropzones(true);
+    clearAllDropzonesAsync(true);
+});
+
+document.getElementById("randomPicks").addEventListener('click', async () => {
+    await selectRandomPicksAsync(true);
 });

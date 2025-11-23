@@ -295,7 +295,9 @@
     align-items: center;
 }
 
-.clear-all-picks {
+.clear-all-picks,
+.random-picks {
+    margin: 1em;
     width: 32px;
     height: 32px;
     display: flex;
@@ -304,17 +306,20 @@
     border: none;
 }
 
-.clear-all-picks img {
+.clear-all-picks img,
+.random-picks img{
     width: 100%;
     height: auto;
 }
 
-.clear-all-picks:not([disabled]) img:hover {
+.clear-all-picks:not([disabled]) img:hover,
+.random-picks:not([disabled]) img:hover {
     transform: scale(1.1);
     transition: 0.5s ease;
 }
 
-.clear-all-picks:disabled {
+.clear-all-picks:disabled,
+.random-picks:disabled {
     opacity: 0.2;
 }
 

@@ -94,8 +94,9 @@
             <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
         </form>
 
-        <div>
+        <div class="buttons">
             <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
+            <button class="random-picks" id="randomPicks" type="button" title="Randomly fill the empty dropzones"><img src="/Images/random_picks.png" /></button>
         </div>
     </div>
 </div>
