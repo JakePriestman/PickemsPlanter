@@ -173,6 +173,31 @@
 
 
 /*SHOW-RESULTS*/
+.checkmark {
+    position: absolute;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: green;
+}
+
+.checkmark.show {
+    display: flex;
+    z-index: 10;
+}
+
+.check {
+    position: absolute;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
 .show-results-div{
     display: flex;
     justify-content: center;
@@ -323,7 +348,6 @@
     opacity: 0.2;
 }
 
-
 /*TEAMS*/
 .team-img {
     min-width: 25px;
@@ -337,6 +361,11 @@
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+}
+
+.dropped-img.reduced-opacity {
+    filter: brightness(30%);
+    opacity: 0.7;
 }
 
 .team:not([disabled]):hover {
