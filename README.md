@@ -64,7 +64,7 @@ This product fully complies with Valve's [API Terms of Use](https://steamcommuni
 
 4. **Open in your browser**
    ```
-   http://localhost:5000
+   http://localhost:7118
    ```
 
 ---
