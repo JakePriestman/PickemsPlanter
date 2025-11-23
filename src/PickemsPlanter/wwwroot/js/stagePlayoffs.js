@@ -246,12 +246,11 @@ async function drop(ev, isPlayoffs) {
     if (sourceId.includes('pick') && !isPlayoffs)
         swapImagesInDropzones(div, dropzone, picksAllowed, picks);
     else
-        await placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed);
+        await placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed, false);
 
     toggleClearAllDropzonesButton(picksAllowed);
     toggleRandomPicksButton(picksAllowed);
 }
-
 
 async function checkDropzonesFilledAsync(picksAllowed, picks) {
     const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
@@ -330,7 +329,7 @@ function removeSucceedingImages(imageInDropzone, dropzone) {
     });
 }
 
-function addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, isPlayoffs) {
+function addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, isPlayoffs, isResults) {
 
     if (picksAllowed) {
         enableDrag(dropzone.id);
@@ -364,7 +363,13 @@ function addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, i
         }
     }
 
-    dropzone.innerHTML = '';
+    if (isResults) {
+        dropzone.innerHTML = '<div class="checkmark"><div class="check"></div></div>';
+    }
+    else {
+        dropzone.innerHTML = '';
+    }
+
 
     const img = document.createElement("img");
     img.src = imageSrc;
@@ -373,8 +378,7 @@ function addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, i
     dropzone.appendChild(img);
 }
 
-
-async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed) {
+async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed, isResults) {
     const { picks } = window.pageData;
 
     if (!dropzone) return;
@@ -391,11 +395,10 @@ async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAl
     if (isPlayoffs && imageInDropzone != null)
         removeSucceedingImages(imageInDropzone, dropzone);
 
-    addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, isPlayoffs);
+    addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, isPlayoffs, isResults);
 
     await checkDropzonesFilledAsync(picksAllowed, picks);
 }
-
 
 async function getPicksAllowedAsync(eventId, stage, isPlayoffs) {
     const url = isPlayoffs ? 
@@ -431,6 +434,46 @@ function toggleImageFunctionality(team, picksAllowed) {
     }
 }
 
+function toggleCheckmark(index, result) {
+    const { picks } = window.pageData;
+
+    const threeZero = picks.slice(0, 2);
+    const threeOneThreeTwo = picks.slice(2, 8);
+    const zeroThree = picks.slice(8, 9);
+
+    if (index === 0 || index === 1) {
+        const pick = document.getElementById(`pick${index}`);
+        const checkmark = pick.querySelector('.checkmark');
+        const image = pick.querySelector('img.dropped-img');
+
+        if (threeZero.includes(result)) {
+            checkmark.classList.add('show');
+            image.classList.add('reduced-opacity');
+        }
+    }
+
+    else if (index === 8 || index === 9) {
+        const pick = document.getElementById(`pick${index}`);
+        const checkmark = pick.querySelector('.checkmark');
+        const image = pick.querySelector('img.dropped-img');
+
+        if (zeroThree.includes(result)) {
+            checkmark.classList.add('show');
+            image.classList.add('reduced-opacity');
+        }
+    }
+
+    else {
+        const pick = document.getElementById(`pick${index}`);
+        const checkmark = pick.querySelector('.checkmark');
+        const image = pick.querySelector('img.dropped-img');
+
+        if (threeOneThreeTwo.includes(result)) {
+            checkmark.classList.add('show');
+            image.classList.add('reduced-opacity');
+        }
+    }
+}
 
 async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed) {
     const url = isPlayoffs ?
@@ -461,7 +504,6 @@ async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed
     await checkDropzonesFilledAsync(picksAllowed);
 }
 
-
 async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed) {
     const url = isPlayoffs ?
         `/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}` :
@@ -474,7 +516,7 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
         const container = document.getElementById(`pick${index}`);
 
         if (container) {
-            await placeImageInDropzoneAsync(url, container, isPlayoffs, picksAllowed);
+            await placeImageInDropzoneAsync(url, container, isPlayoffs, picksAllowed, false);
 
             if (picksAllowed) {
                 switch (container.className) {
@@ -501,7 +543,6 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
     toggleSaveButton(images.length != 0, picksAllowed, images);
 }
 
-
 async function LoadResultsAsync(eventId, stage, isPlayoffs) {
     const url = isPlayoffs ?
         `/PickEms/Playoffs?handler=Results&eventId=${eventId}` :
@@ -521,7 +562,9 @@ async function LoadResultsAsync(eventId, stage, isPlayoffs) {
 
         if (container) {
             {
-                await placeImageInDropzoneAsync(url, container, isPlayoffs, false);
+                await placeImageInDropzoneAsync(url, container, isPlayoffs, false, true);
+
+                toggleCheckmark(index, url.split('/').pop());
 
                 switch (container.className) {
                     case "match-dropzone-advanced":

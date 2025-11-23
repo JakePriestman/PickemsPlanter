@@ -118,6 +118,6 @@
 }
 
 .team[disabled] .team-img {
-                opacity: 0.3;
-                filter: brightness(8%);
-            }
+    opacity: 0.3;
+    filter: brightness(8%);
+}
