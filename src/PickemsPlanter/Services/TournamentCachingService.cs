@@ -20,32 +20,30 @@ namespace PickemsPlanter.Services
 		{
 			string key = $"TOURNAMENT_{eventId}_{stage}";
 
-			if (!_cache.TryGetValue(key, out Section? sectionFromCache))
+			if (!_cache.TryGetValue(key, out Section? section))
 			{
 				var layout = await _steamAPI.GetTournamentLayoutAsync(eventId);
-				var section = layout.Result.Sections[(int)stage];
+				section = layout.Result.Sections[(int)stage];
 				_cache.Set(key, section, TimeSpan.FromMinutes(10));
 			}
 
-			return sectionFromCache!;
+			return section!;
 		}
 
 		public async Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId)
 		{
 			string key = $"TOURNAMENT_{eventId}_{Stages.Playoffs}";
 
-			if (!_cache.TryGetValue(key, out IReadOnlyCollection<Section>? sectionFromCache))
+			if (!_cache.TryGetValue(key, out IReadOnlyCollection<Section>? sections))
 			{
 				var layout = await _steamAPI.GetTournamentLayoutAsync(eventId);
-				layout.Result.Sections.Remove(layout.Result.Sections[0]);
-				layout.Result.Sections.Remove(layout.Result.Sections[0]);
-				layout.Result.Sections.Remove(layout.Result.Sections[0]);
 
-				var sections = layout.Result.Sections[0];
+				sections = [.. layout.Result.Sections.Skip(3)];
+
 				_cache.Set(key, sections, TimeSpan.FromMinutes(10));
 			}
 
-			return sectionFromCache!;
+			return sections!;
 		}
 	}
 }
