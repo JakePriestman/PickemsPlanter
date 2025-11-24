@@ -84,11 +84,6 @@ document.getElementById("showResults").addEventListener('change', async function
 
     else {
         toggleSaveForm();
-        const teams = document.querySelectorAll('.team');
-
-        teams.forEach(team => {
-            toggleImageFunctionality(team, picksAllowed);
-        });   
 
         await LoadPicksAsync(eventId, steamId, null, true, picksAllowed);
 

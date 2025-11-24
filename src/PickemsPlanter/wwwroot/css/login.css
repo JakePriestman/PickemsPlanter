@@ -1,6 +1,6 @@
 ﻿.login-page {
     width: clamp(490px, 80%, 1425px);
-    height: clamp(825px, 80%, 1300px);
+    height: clamp(500px, 80%, 1300px);
     position: relative;
     display: flex;
     flex-direction: column;
