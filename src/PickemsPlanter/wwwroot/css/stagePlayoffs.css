@@ -284,16 +284,15 @@
 }
 
 .save-button:disabled {
-    opacity: 0.3;
     padding: 1em 2em;
-    background-color: var(--disabled-colour);
     border-radius: 10px;
     font-size: 1.1em;
     margin: 1em;
-    border: none;
+    border: dashed var(--submit-colour);
     cursor: help;
     box-shadow: var(--shadow-m);
-    color: white;
+    color: var(--submit-colour);
+    background: rgba(64, 112, 60, 0.2);
 }
 
 @keyframes blink {

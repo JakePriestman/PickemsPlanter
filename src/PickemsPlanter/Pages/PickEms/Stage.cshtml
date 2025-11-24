@@ -89,7 +89,7 @@
 
         <form method="post" class="save-form" id="saveForm">
             <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
-            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Plant Picks</button>
+            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" disabled>Plant Picks</button>
         </form>
 
         <section class="teams-section" id="teamSection">
