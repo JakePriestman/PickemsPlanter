@@ -657,7 +657,7 @@ async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed
         }
     }
 
-    if (!picksAllowed)
+    if (!picksAllowed && stage)
         togglePicksNotAllowedConfirmation();
 
     await checkDropzonesFilledAsync(picksAllowed, null, isPlayoffs);

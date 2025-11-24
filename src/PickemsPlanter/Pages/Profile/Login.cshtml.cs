@@ -9,7 +9,15 @@ namespace PickemsPlanter.Pages
     {
         private readonly ILoginAPI _loginAPI = loginAPI;
 
-        public IActionResult OnPostLogin()
+		public IActionResult OnGet()
+		{
+			if (User.Identity?.IsAuthenticated is true)
+				return RedirectToPage("/Profile/Overview");
+
+			return Page();
+		}
+
+		public IActionResult OnPostLogin()
         {
             if (User.Identity?.IsAuthenticated is true)
                 return RedirectToPage("/Profile/Overview");
