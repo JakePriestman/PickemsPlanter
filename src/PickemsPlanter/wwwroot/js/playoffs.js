@@ -33,7 +33,7 @@
 
 document.addEventListener("DOMContentLoaded", async function () {
     const { eventId, steamId } = window.pageData;
-    const picksAllowed = await getPicksAllowedAsync(eventId, null, true);
+    const picksAllowed = await getPicksAllowedAsync(eventId, null, false);
 
     document.querySelectorAll('.match-dropzone-advanced')
         .forEach(dz => {

@@ -78,7 +78,7 @@ async function clearAllDropzonesAsync(isPlayoffs) {
 
     toggleRandomPicksButton(picksAllowed);
 
-    await checkDropzonesFilledAsync(picksAllowed, picks);
+    await checkDropzonesFilledAsync(picksAllowed, picks, isPlayoffs);
 }
 
 function toggleRandomPicksButton(picksAllowed) {
@@ -209,9 +209,9 @@ function removeDuplicateImage(filename) {
     });
 }
 
-function swapImagesInDropzones(div, dropzone, picksAllowed, picks) {
+function swapImagesInDropzones(div, dropzone, picksAllowed, picks, isPlayoffs) {
     if (picksAllowed) {
-        const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
+        const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated');
 
         const allFilled = Array.from(dropzones).every(zone =>
             zone !== null && zone.querySelector('img.dropped-img') !== null
@@ -244,7 +244,7 @@ async function drop(ev, isPlayoffs) {
     }
 
     if (sourceId.includes('pick') && !isPlayoffs)
-        swapImagesInDropzones(div, dropzone, picksAllowed, picks);
+        swapImagesInDropzones(div, dropzone, picksAllowed, picks, isPlayoffs);
     else
         await placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAllowed, false);
 
@@ -252,33 +252,52 @@ async function drop(ev, isPlayoffs) {
     toggleRandomPicksButton(picksAllowed);
 }
 
-async function checkDropzonesFilledAsync(picksAllowed, picks) {
-    const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated, .match');
+async function checkDropzonesFilledAsync(picksAllowed, picks, isPlayoffs) {
+    const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated');
 
     const allFilled = Array.from(dropzones).every(zone =>
         zone !== null && zone.querySelector('img.dropped-img') !== null
     );
 
-    toggleSaveButton(allFilled, picksAllowed, picks);
+    toggleSaveButton(allFilled, picksAllowed, picks, isPlayoffs);
 }
 
-function toggleSaveButton(allFilled, picksAllowed, picks) {
+function toggleSaveButton(allFilled, picksAllowed, picks, isPlayoffs) {
 
     const saveButton = document.getElementById('saveButton');
+
+    const dropzones = document.querySelectorAll('.match-dropzone-advanced, .match-dropzone-eliminated');
+
+    const numberFilled = Array.from(dropzones).filter(dz => dz.querySelector('img.dropped-img') !== null).length;
+
+    const total = isPlayoffs ? 7 : 10;
 
     if (saveButton) {
 
         if (picksAllowed) {
             if (!picks || picks.length === 0) {
                 saveButton.disabled = !allFilled || !picksAllowed;
-                saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
+                saveButton.textContent = allFilled ? "Plant Picks" : `${numberFilled} / ${total} Planted`;
             }
             else if (allFilled) {
-                //The order for playoffs messes things up here. Chekc this out and figure out a solution.
+                let areSame = false;
+
                 const imagesFromDropzones = Array.from(document.querySelectorAll('img.dropped-img'))
                     .map(img => img.src.split('/').pop());
 
-                const areSame = picks.every((val, i) => val === imagesFromDropzones[i]);
+                if (isPlayoffs) {
+                    areSame = true;
+                    const compareMap = [6, 4, 5, 0, 1, 2, 3];
+
+                    areSame = compareMap.every((i, j) => {
+                        return imagesFromDropzones[j] === picks[i];
+                    });
+                }
+
+                else {
+                    //The order for playoffs messes things up here. Check this out and figure out a solution.
+                    areSame = picks.every((val, i) => val === imagesFromDropzones[i]);
+                }
 
                 if (areSame) {
                     saveButton.disabled = true;
@@ -291,7 +310,7 @@ function toggleSaveButton(allFilled, picksAllowed, picks) {
             }
             else {
                 saveButton.disabled = !allFilled || !picksAllowed;
-                saveButton.textContent = allFilled ? "Plant Picks" : "All picks need to be within the dropzones to plant your picks";
+                saveButton.textContent = allFilled ? "Plant Picks" : `${numberFilled} / ${total} Planted`;
             }
         }
         else {
@@ -532,7 +551,7 @@ async function placeImageInDropzoneAsync(imageSrc, dropzone, isPlayoffs, picksAl
 
     addImageToDropzone(dropzone, imageSrc, imageInDropzone, picksAllowed, isPlayoffs, isResults);
 
-    await checkDropzonesFilledAsync(picksAllowed, picks);
+    await checkDropzonesFilledAsync(picksAllowed, picks, isPlayoffs);
 }
 
 async function getPicksAllowedAsync(eventId, stage, isPlayoffs) {
@@ -629,6 +648,8 @@ async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed
 
             container.appendChild(img);
 
+            toggleImageFunctionality(container, picksAllowed);
+
             mapTeamName(url, container);
 
             if(!isPlayoffs)
@@ -639,7 +660,7 @@ async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed
     if (!picksAllowed)
         togglePicksNotAllowedConfirmation();
 
-    await checkDropzonesFilledAsync(picksAllowed);
+    await checkDropzonesFilledAsync(picksAllowed, null, isPlayoffs);
 }
 
 async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed) {
@@ -680,6 +701,9 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
                 }
             }
 
+            if (isPlayoffs)
+                toggleImageFunctionality(container, picksAllowed);
+
             mapTeamName(url, container);
 
         } else {
@@ -688,7 +712,7 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
     };
 
     window.pageData.picks = images;
-    toggleSaveButton(images.length != 0, picksAllowed, images);
+    toggleSaveButton(images.length != 0, picksAllowed, images, isPlayoffs);
 }
 
 async function LoadResultsAsync(eventId, stage, isPlayoffs) {
