@@ -629,9 +629,10 @@ async function LoadImagesAsync(eventId, steamId, stage, isPlayoffs, picksAllowed
 
             container.appendChild(img);
 
-            toggleImageFunctionality(container, picksAllowed);
-
             mapTeamName(url, container);
+
+            if(!isPlayoffs)
+                container.setAttribute('disabled', 'true');
         }
     }
 
@@ -648,6 +649,19 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
 
     const response = await fetch(url);
     const imageUrls = await response.json();
+    const images = imageUrls.map(img => img.split('/').pop());
+
+    if (picksAllowed && !isPlayoffs) {
+        const teams = Array.from(document.querySelectorAll('.team'));
+        const teamImages = teams.map(team => team.querySelector('img.team-img').src.split('/').pop());
+
+        const teamsToEnable = teamImages.filter(item => !images.includes(item) && item != "unknown.png");
+
+        teamsToEnable.forEach(team => {
+            const teamDiv = teams.find(t => t.querySelector('img.team-img').src.split('/').pop() === team);
+            teamDiv.removeAttribute('disabled');
+        });
+    }
 
     for (let [index, url] of imageUrls.entries()) {
         const container = document.getElementById(`pick${index}`);
@@ -666,10 +680,6 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
                 }
             }
 
-            if (isPlayoffs) {
-                toggleImageFunctionality(container, picksAllowed);
-            }
-
             mapTeamName(url, container);
 
         } else {
@@ -677,7 +687,6 @@ async function LoadPicksAsync(eventId, steamId, stage, isPlayoffs, picksAllowed)
         }
     };
 
-    const images = imageUrls.map(img => img.split('/').pop());
     window.pageData.picks = images;
     toggleSaveButton(images.length != 0, picksAllowed, images);
 }

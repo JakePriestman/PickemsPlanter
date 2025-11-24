@@ -104,7 +104,7 @@
 
 .team {
     background-color: var(--background-colour);
-    height: auto;
+    height: 50px;
     border-radius: inherit;
     padding: 0.5em 1em;
     cursor: grab;
@@ -120,4 +120,26 @@
 .team[disabled] .team-img {
     opacity: 0.3;
     filter: brightness(8%);
+}
+
+@media screen and (max-height: 990px) {
+    .save-button:enabled,
+    .save-button:disabled {
+        margin: 0;
+    }
+
+    .pickem-layout {
+        gap: 0;
+        top: 20%;
+    }
+
+    .teams-section {
+        margin: 0;
+    }
+
+    .save-form {
+        width: fit-content;
+        position: absolute;
+        right: 3em;
+    }
 }
