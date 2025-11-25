@@ -387,3 +387,67 @@
         bottom: 65%;
     }
 }
+
+@media screen and (max-width: 990px) {
+    .bracket {
+        gap: 0;
+    }
+
+    .stage-nav {
+        gap: 1em;
+    }
+
+    .stage {
+        width: 1em;
+        height: 1em;
+        font-weight: bold;
+        font-size: 15px;
+        border: none;
+    }
+
+    .buttons {
+        right: 0;
+    }
+
+    .clear-all-picks,
+    .random-picks {
+        width: 24px;
+        height: 24px;
+    }
+
+    .profile-image-hidden,
+    .profile.profile-image {
+        align-items: center;
+        height: 5%;
+        padding: 5px;
+    }
+
+    .profile-image-hidden img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .show-results-div label {
+        font-size: 8px;
+    }
+    .checkbox {
+        width: 15px;
+        height: 15px;
+        left: 15%;
+    }
+
+    .save-button:enabled,
+    .save-button:disabled {
+        position: absolute;
+        font-size: 8px;
+        padding: 0.5em;
+    }
+
+    .dropdown {
+        top: 100%;
+    }
+
+    .dropdown a {
+        font-size: 8px;
+    }
+}

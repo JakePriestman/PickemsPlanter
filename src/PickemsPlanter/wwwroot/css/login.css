@@ -130,3 +130,37 @@
     width: 100%;
     font-size: 20px;
 }
+
+
+
+@media screen and (max-width: 990px) {
+
+    .login-page {
+        height: 60%;
+        width: 80%;
+    }
+
+    .bomb-blinker-img,
+    .bomb-img,
+    .bomb-blinking-img {
+        width: 100px;
+        height: 100px;
+    }
+
+    .login-page h1 {
+        font-size: 20px;
+    }
+
+    .login-page h2 {
+        font-size: 10px;
+    }
+
+    .login-button {
+        width: 8em;
+        font-size: 10px;
+    }
+
+    .login-button:hover .bomb-code {
+        font-size: 10px;
+    }
+}

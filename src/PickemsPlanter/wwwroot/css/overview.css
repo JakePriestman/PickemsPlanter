@@ -233,7 +233,7 @@
 .inputs {
     display: flex;
     align-items: center;
-    min-width: 700px;
+    max-width: 700px;
     padding: 1em;
 }
 
@@ -300,8 +300,10 @@
 }
 
 .show-auth-code {
-    width: 32px;
-    height: 32px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 32px;
+    max-height: 32px;
     box-shadow: var(--shadow-m)
 }
 
@@ -313,4 +315,88 @@
 .show-auth-code img {
     width: 100%;
     height: 100%;
+}
+
+
+@media screen and (max-width: 990px) {
+    .event-form {
+        padding: 1em 2em 0 2em;
+    }
+    .navbar h1 {
+        font-size: 25px;
+    }
+
+    .information-button {
+        right: 0%;
+        width: 24px;
+    }
+
+    .extra-information {
+        top: 25%;
+        width: 300px;
+        height: 210px;
+    }
+
+    .extra-information p {
+        font-size: 12px;
+    }
+
+    @-webkit-keyframes fadeIn {
+        from {
+            opacity: 0;
+            width: 0;
+            height: 0px;
+        }
+
+        to {
+            opacity: 1;
+            width: 300px;
+            height: 210px;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            width: 0;
+            height: 0px;
+        }
+
+        to {
+            opacity: 1;
+            width: 300px;
+            height: 210px;
+        }
+    }
+
+    .profile-image {
+        display: flex;
+        align-items: center;
+        height: 5%;
+        padding: 5px 20px 5px 5px;
+    }
+
+    .profile-image img {
+        width: 30px;
+        height: 30px;
+    }
+    .event h2 {
+        width: 100%;
+        font-size: 100%;
+    }
+
+    .event-button-select,
+    .event-button-delete {
+        font-size: 8px;
+    }
+
+    .auth-code {
+        font-size: 10px;
+    }
+
+    .logout {
+        padding: 10px;
+        font-size: 15px;
+        margin-right: 5px;
+    }
 }

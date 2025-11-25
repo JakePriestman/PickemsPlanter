@@ -805,11 +805,11 @@ document.getElementById("profileImage").addEventListener('click', function (e) {
             break;
         case "none":
             dropdown.style.display = "flex";
-            navigation.style.borderRadius = "0px 50px 0px 0px";
+            navigation.style.borderRadius = "0px 45% 0px 0px";
             break;
         case "":
             dropdown.style.display = "flex";
-            navigation.style.borderRadius = "0px 50px 0px 0px";
+            navigation.style.borderRadius = "0px 45% 0px 0px";
             break;
     }
 });

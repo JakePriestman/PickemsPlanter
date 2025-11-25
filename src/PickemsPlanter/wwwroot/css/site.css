@@ -217,6 +217,7 @@ footer {
     padding: 1em;
     position: absolute;
     bottom: 0;
+    text-align: center;
 }
 
 footer p {
@@ -228,4 +229,55 @@ footer p a {
     color: lightblue;
     text-decoration: none;
     font-family: inherit;
+}
+
+@media screen and (max-width: 990px) {
+    .navbar {
+        height: 5%;
+    }
+
+    .logout-text{
+        font-size: 10px;
+    }
+
+    .confirm-logout-button,
+    .cancel-logout-button {
+        font-size: 10px;
+    }
+
+    
+    footer {
+        width: 50%;
+    }
+
+    .github img {
+        width: 32px;
+    }
+}
+
+@media screen and (max-width: 990px) {
+    .navbar {
+        height: 5%;
+    }
+
+    .logout-text,
+    .picks-not-allowed-text{
+        font-size: 10px;
+    }
+
+
+    .logout-buttons button,
+    .logout-buttons a,
+    .ok-button {
+        font-size: 10px;
+    }
+
+
+    footer {
+        width: 50%;
+    }
+
+    .github img {
+        width: 32px;
+    }
 }

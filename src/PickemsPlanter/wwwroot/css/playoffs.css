@@ -160,3 +160,38 @@
         top: 20%;
     }
 }
+
+@media screen and (max-width: 990px) {
+
+    .crown-image,
+    .match-dropzone-advanced,
+    .match-dropzone-advanced-not-allowed,
+    .team {
+        width: 25px;
+        height: 25px;
+    }
+
+    .navbar h2 {
+        font-size: 10px;
+    }
+
+    .semi-finals .match-dropzone-advanced {
+        margin-left: 5em;
+        margin-right: 5em;
+    }
+
+    .quarter-finals .match-dropzone-advanced {
+        margin-left: 2em;
+        margin-right: 2em;
+    }
+
+    .match-dropzone-advanced,
+    .match-dropzone-advanced-not-allowed {
+        font-size: 8px;
+    }
+
+    .bracket > div {
+        gap: 1em;
+        width: 80vw;
+    }
+}
