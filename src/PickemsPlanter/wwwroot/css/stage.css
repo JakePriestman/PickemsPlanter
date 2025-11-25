@@ -133,13 +133,45 @@
         top: 20%;
     }
 
-    .teams-section {
-        margin: 0;
-    }
-
     .save-form {
         width: fit-content;
         position: absolute;
         right: 3em;
+    }
+}
+
+@media screen and (max-width: 990px) {
+    .pickem-layout {
+        top: 25%;
+    }
+    .bracket {
+        gap: 0;
+    }
+
+    .navbar h2 {
+        font-size: 10px;
+    }
+
+    .picks {
+        margin: 0.5em;
+        gap: 1em;
+    }
+    .picks > div {
+        gap: 1em;
+    }
+
+    .team,
+    .match-dropzone-advanced,
+    .match-dropzone-eliminated,
+    .match-dropzone-advanced-not-allowed,
+    .match-dropzone-eliminated-not-allowed {
+        height: 25px;
+        width: 25px;
+        font-size: 10px;
+    }
+
+    .teams-section {
+        gap: 1em;
+        grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
     }
 }
