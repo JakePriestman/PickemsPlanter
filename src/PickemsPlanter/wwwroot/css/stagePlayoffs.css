@@ -422,9 +422,10 @@
         padding: 5px;
     }
 
-    .profile-image-hidden img {
-        width: 20px;
-        height: 20px;
+    .profile-image-hidden img,
+    .profile-image img {
+        width: 25px;
+        height: 25px;
     }
 
     .show-results-div label {
@@ -434,6 +435,22 @@
         width: 15px;
         height: 15px;
         left: 15%;
+    }
+
+    .checkbox::after {
+        height: 8px;
+        width: 3px;
+    }
+
+    .checkmark {
+        width: 12px;
+        height: 12px;
+    }
+
+    .check {
+        width: 2px;
+        height: 6px;
+        border-width: 0 2px 2px 0;
     }
 
     .save-button:enabled,
