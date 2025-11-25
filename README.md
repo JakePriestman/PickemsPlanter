@@ -100,7 +100,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 # 🌐 Website
 
-[Try it out!](https://https://app-pickemsplanter.azurewebsites.net/)
+[Try it out!](https://app-pickemsplanter.azurewebsites.net/)
 
 ---
 
