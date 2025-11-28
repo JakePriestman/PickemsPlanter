@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace PickemsPlanter.Pages.Profile
 {
-	public class OverviewModel(ITableStorageService tableStorageService, IUserPredictionsCachingService cachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
+	public class OverviewModel(ITableStorageService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
 	{
 		[BindProperty]
 		public string SelectedEvent { get; set; } = string.Empty;
@@ -65,12 +65,14 @@ namespace PickemsPlanter.Pages.Profile
 				await CacheOnChooseEvent(authCode);
 			}
 
+			var firstActiveStage = await tournamentCachingService.GetFirstActiveStageOrDefaultAsync(SelectedEvent);
+
 			return RedirectToPage("/PickEms/Stage", new
 			{
 				eventId = SelectedEvent,
 				eventName,
 				SteamId,
-				stage = Stages.Stage1
+				stage = firstActiveStage
 			});
 		}
 

@@ -29,7 +29,7 @@ async function LoadImagesAsync() {
         }
     }
 
-    if (!picksAllowed && stage)
+    if (!picksAllowed)
         togglePicksNotAllowedConfirmation();
 
     updateSaveButton();
