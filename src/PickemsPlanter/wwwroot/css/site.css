@@ -45,6 +45,12 @@ body {
     padding: 0;
 }
 
+img {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 
 /*LOGOUT CONFIRMATION*/
 .logout-confirmation {

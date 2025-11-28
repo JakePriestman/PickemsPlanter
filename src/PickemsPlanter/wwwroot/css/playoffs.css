@@ -44,24 +44,24 @@
 
 
 /*SEMI-FINALS*/
-.semi-finals .match-dropzone-advanced,
-.semi-finals .match-dropzone-advanced-not-allowed {
+.semi-finals .dropzone-advanced,
+.semi-finals .dropzone-advanced-not-allowed {
     margin-left: 8.5em;
     margin-right: 8.5em;
 }
 
 
 /*QUERTER-FINALS*/
-.quarter-finals .match-dropzone-advanced,
-.quarter-finals .match-dropzone-advanced-not-allowed {
+.quarter-finals .dropzone-advanced,
+.quarter-finals .dropzone-advanced-not-allowed {
     margin-left: 3em;
     margin-right: 2.5em;
 }
 
 
 /*PICKS*/
-.match-dropzone-advanced,
-.match-dropzone-advanced-not-allowed {
+.dropzone-advanced,
+.dropzone-advanced-not-allowed {
     width: 64px;
     height: 64px;
     border-radius: 5px;
@@ -81,30 +81,30 @@
     height: 50px;
 }
 
-.match-dropzone-advanced {
+.dropzone-advanced {
     cursor: grab;
 }
 
-.match-dropzone-advanced-not-allowed {
+.dropzone-advanced-not-allowed {
     cursor: not-allowed
 }
 
-.match-dropzone-advanced.drag-hover {
+.dropzone-advanced.drag-hover {
     transform: scale(1.3);
     transition: 0.8s ease;
 }
 
-.match-dropzone-advanced .dropped-img {
+.dropzone-advanced .dropped-img {
     width: 50px;
     height: 50px
 }
 
-.match-dropzone-advanced:not([disabled]):hover {
+.dropzone-advanced:not([disabled]):hover {
     outline: 2px solid var(--text-colour);
     transition: 0.3s ease;
 }
 
-.match-dropzone-advanced:not([disabled]):hover .dropped-img {
+.dropzone-advanced:not([disabled]):hover .dropped-img {
     transform: scale(1.2);
     transition: 0.3s ease;
 }
@@ -129,7 +129,7 @@
 }
 
 .team[disabled],
-.match-dropzone-advanced[disabled] {
+.dropzone-advanced[disabled] {
     cursor: not-allowed;
 }
 
@@ -194,4 +194,11 @@
         gap: 1em;
         width: 80vw;
     }
+}
+
+.dropped-img.dragging,
+.team-img.dragging {
+    position: absolute;
+    cursor: grabbing;
+    padding: 0;
 }

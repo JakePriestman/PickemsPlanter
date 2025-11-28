@@ -55,22 +55,22 @@
             </nav>
             <div class="picks">
                 <div class="three-zero">
-                    <div class="match-dropzone-advanced" id="pick0" title="3-0">3-0</div>
-                    <div class="match-dropzone-advanced" id="pick1" title="3-0">3-0</div>
+                    <div class="dropzone-advanced" id="pick0" title="3-0">3-0</div>
+                    <div class="dropzone-advanced" id="pick1" title="3-0">3-0</div>
                 </div>
                 <div class="three-one">
-                    <div class="match-dropzone-advanced" id="pick2" title="3-1">3-1</div>
-                    <div class="match-dropzone-advanced" id="pick3" title="3-1">3-1</div>
-                    <div class="match-dropzone-advanced" id="pick4" title="3-1">3-1</div>
+                    <div class="dropzone-advanced" id="pick2" title="3-1">3-1</div>
+                    <div class="dropzone-advanced" id="pick3" title="3-1">3-1</div>
+                    <div class="dropzone-advanced" id="pick4" title="3-1">3-1</div>
                 </div>
                 <div class="three-two">
-                    <div class="match-dropzone-advanced" id="pick5" title="3-2">3-2</div>
-                    <div class="match-dropzone-advanced" id="pick6" title="3-2">3-2</div>
-                    <div class="match-dropzone-advanced" id="pick7" title="3-2">3-2</div>
+                    <div class="dropzone-advanced" id="pick5" title="3-2">3-2</div>
+                    <div class="dropzone-advanced" id="pick6" title="3-2">3-2</div>
+                    <div class="dropzone-advanced" id="pick7" title="3-2">3-2</div>
                 </div>
                 <div class="zero-three">
-                    <div class="match-dropzone-eliminated" id="pick8" title="0-3">0-3</div>
-                    <div class="match-dropzone-eliminated" id="pick9" title="0-3">0-3</div>
+                    <div class="dropzone-eliminated" id="pick8" title="0-3">0-3</div>
+                    <div class="dropzone-eliminated" id="pick9" title="0-3">0-3</div>
                 </div>
             </div>
             <div class="show-results-div">
@@ -88,8 +88,8 @@
         </div>
 
         <form method="post" class="save-form" id="saveForm">
-            <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
-            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" disabled>Plant Picks</button>
+            <input type="hidden" name="picksToPost" id="picksToPost" />
+            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" asp-route-stage="@Model.Stage" disabled>Plant Picks</button>
         </form>
 
         <section class="teams-section" id="teamSection">
@@ -122,7 +122,14 @@
             picks: [@Model.Picks]
         };
     </script>
-    <script src="~/js/stagePlayoffs.js"></script>
-    <script src="~/js/stage.js"></script>
+    <script src="~/js/PickEms/stylingFunctions.js"></script>
+    <script src="~/js/PickEms/utilities.js"></script>
+    <script src="~/js/PickEms/randomPicksFunctions.js"></script>
+    <script src="~/js/PickEms/dropzoneFunctions.js"></script>
+    <script src="~/js/PickEms/dropFunctions.js"></script>
+    <script src="~/js/PickEms/dragFunctions.js"></script>
+    <script src="~/js/PickEms/apiFunctions.js"></script>
+    <script src="~/js/PickEms/stagePlayoffs.js"></script>
+    <script src="~/js/PickEms/stage.js"></script>
 }
 

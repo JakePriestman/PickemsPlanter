@@ -56,17 +56,17 @@
 
             <div class="champion">
                 <img class="crown-image" src="/Images/crown.png" />
-                <div class="match-dropzone-advanced" id="pick6"  title="Winner">Winner</div>
+                <div class="dropzone-advanced-not-allowed" id="pick6" title="Winner">Winner</div>
             </div>
             <div class="semi-finals">
-                <div class="match-dropzone-advanced" id="pick4" title="Semi final 1">S1</div>
-                <div class="match-dropzone-advanced" id="pick5" title="Semi final 2">S2</div>
+                <div class="dropzone-advanced-not-allowed" id="pick4" title="Semi final 1">S1</div>
+                <div class="dropzone-advanced-not-allowed" id="pick5" title="Semi final 2">S2</div>
             </div>
             <div class="quarter-finals">
-                <div class="match-dropzone-advanced" id="pick0" title="Quarter final 1">Q1</div>
-                <div class="match-dropzone-advanced" id="pick1" title="Quarter final 2">Q2</div>
-                <div class="match-dropzone-advanced" id="pick2" title="Quarter final 3">Q3</div>
-                <div class="match-dropzone-advanced" id="pick3" title="Quarter final 4">Q4</div>
+                <div class="dropzone-advanced-not-allowed" id="pick0" title="Quarter final 1">Q1</div>
+                <div class="dropzone-advanced-not-allowed" id="pick1" title="Quarter final 2">Q2</div>
+                <div class="dropzone-advanced-not-allowed" id="pick2" title="Quarter final 3">Q3</div>
+                <div class="dropzone-advanced-not-allowed" id="pick3" title="Quarter final 4">Q4</div>
             </div>
 
             <div class="round-of-eight">
@@ -95,7 +95,7 @@
         </div>
     
         <form method="post" class="save-form" id="saveForm">
-            <input type="hidden" name="DroppedImagesData" id="DroppedImagesData" />
+            <input type="hidden" name="picksToPost" id="picksToPost" />
             <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId">Save All Picks</button>
         </form>
     </div>
@@ -109,6 +109,13 @@
             picks: [@Model.Picks]
         };
     </script>
-    <script src="~/js/stagePlayoffs.js"></script>
-    <script src="~/js/playoffs.js"></script>
+    <script src="~/js/PickEms/stylingFunctions.js"></script>
+    <script src="~/js/PickEms/utilities.js"></script>
+    <script src="~/js/PickEms/randomPicksFunctions.js"></script>
+    <script src="~/js/PickEms/dropzoneFunctions.js"></script>
+    <script src="~/js/PickEms/dropFunctions.js"></script>
+    <script src="~/js/PickEms/dragFunctions.js"></script>
+    <script src="~/js/PickEms/apiFunctions.js"></script>
+    <script src="~/js/PickEms/stagePlayoffs.js"></script>
+    <script src="~/js/PickEms/playoffs.js"></script>
 }

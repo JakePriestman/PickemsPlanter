@@ -49,11 +49,11 @@ namespace PickemsPlanter.Pages.PickEms
 			return new JsonResult(await pickemsService.GetPlayoffResultsAsync(EventId));
 		}
 
-		public async Task<IActionResult> OnPostSendPicks(string droppedImagesData)
+		public async Task<IActionResult> OnPostSendPicks(string picksToPost)
 		{
 			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
-			await pickemsService.PostPlayoffPickemsAsync(droppedImagesData, SteamId, EventId, authCode);
+			await pickemsService.PostPlayoffPickemsAsync(picksToPost, SteamId, EventId, authCode);
 
 			return RedirectToPage("/PickEms/Playoffs", new
 			{

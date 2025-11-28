@@ -39,20 +39,20 @@
     gap: 2em;
 }
 
-.match-dropzone-advanced,
-.match-dropzone-advanced-not-allowed {
+.dropzone-advanced,
+.dropzone-advanced-not-allowed {
     background-color: var(--advance-colour);
 }
 
-.match-dropzone-eliminated,
-.match-dropzone-eliminated-not-allowed {
+.dropzone-eliminated,
+.dropzone-eliminated-not-allowed {
     background-color: var(--delete-colour);
 }
 
-.match-dropzone-advanced,
-.match-dropzone-eliminated,
-.match-dropzone-advanced-not-allowed,
-.match-dropzone-eliminated-not-allowed {
+.dropzone-advanced,
+.dropzone-eliminated,
+.dropzone-advanced-not-allowed,
+.dropzone-eliminated-not-allowed {
     font-size: 20px;
     border-radius: 5px;
     height: 64px;
@@ -63,24 +63,23 @@
     align-items: center;
     justify-content: center;
     user-select: none;
-    cursor: default !important;
     box-shadow: var(--shadow-l);
 }
 
-.match-dropzone-advanced[draggable="true"],
-.match-dropzone-eliminated[draggable="true"] {
-    cursor: grab !important;
+.dropzone-advanced,
+.dropzone-eliminated {
+    cursor: grab;
 }
 
-.match-dropzone-advanced-not-allowed,
-.match-dropzone-eliminated-not-allowed {
+.dropzone-advanced-not-allowed,
+.dropzone-eliminated-not-allowed {
     cursor: not-allowed
 }
 
-.match-dropzone-advanced.drag-hover,
-.match-dropzone-eliminated.drag-hover,
-.match-dropzone-advanced:hover,
-.match-dropzone-eliminated:hover {
+.dropzone-advanced.drag-hover,
+.dropzone-eliminated.drag-hover,
+.dropzone-advanced:hover,
+.dropzone-eliminated:hover {
     transform: scale(1.3);
     transition: 0.8s ease;
 }
@@ -161,10 +160,10 @@
     }
 
     .team,
-    .match-dropzone-advanced,
-    .match-dropzone-eliminated,
-    .match-dropzone-advanced-not-allowed,
-    .match-dropzone-eliminated-not-allowed {
+    .dropzone-advanced,
+    .dropzone-eliminated,
+    .dropzone-advanced-not-allowed,
+    .dropzone-eliminated-not-allowed {
         height: 25px;
         width: 25px;
         font-size: 10px;
