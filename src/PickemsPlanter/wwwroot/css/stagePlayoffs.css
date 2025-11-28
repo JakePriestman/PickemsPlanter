@@ -284,6 +284,8 @@
 }
 
 .save-button:disabled {
+    display: flex;
+    align-items: center;
     padding: 1em 2em;
     border-radius: 10px;
     font-size: 1.1em;
@@ -293,6 +295,14 @@
     box-shadow: var(--shadow-m);
     color: var(--submit-colour);
     background: rgba(64, 112, 60, 0.2);
+}
+
+.save-button:disabled img {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    padding-right: 5px;
+    filter: brightness(0) saturate(100%) invert(37%) sepia(38%) saturate(550%) hue-rotate(68deg) brightness(93%) contrast(90%);
 }
 
 @keyframes blink {
@@ -346,6 +356,7 @@
 .clear-all-picks:disabled,
 .random-picks:disabled {
     opacity: 0.2;
+    cursor: not-allowed;
 }
 
 /*TEAMS*/
@@ -459,6 +470,10 @@
         font-size: 8px;
         padding: 0.5em;
     }
+    .save-button:enabled img,
+    .save-button:disabled img {
+        display: none;
+    }
 
     .dropdown {
         top: 100%;
@@ -467,4 +482,27 @@
     .dropdown a {
         font-size: 8px;
     }
+}
+
+
+.team-img.dragging,
+.dropped-img.dragging {
+    position: absolute;
+    cursor: grabbing;
+    padding: 0;
+}
+
+.dropzone-advanced .dropped-img, 
+.dropzone-eliminated .dropped-img {
+    cursor: grab;
+}
+
+.dropzone-advanced:not(:has(.dropped-img)),
+.dropzone-eliminated:not(:has(.dropped-img)) {
+    cursor: default !important;
+}
+
+.dropzone-advanced-not-allowed:hover,
+.dropzone-eliminated-not-allowed:hover {
+    cursor: not-allowed;
 }

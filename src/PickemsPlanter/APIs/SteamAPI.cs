@@ -100,7 +100,9 @@ namespace PickemsPlanter.APIs
 
 			request.Content = new FormUrlEncodedContent(formData);
 
-			await _httpClient.SendAsync(request);
+			var response = await _httpClient.SendAsync(request);
+
+			response.EnsureSuccessStatusCode();
 		}
 
 		public async Task PostPlayoffPredictionsAsync(List<string> pickNames, List<Team> teams, IReadOnlyCollection<Section> playoffs, string steamId, string eventId, string authCode)
