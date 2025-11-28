@@ -9,6 +9,7 @@ namespace PickemsPlanter.Services
 	{
 		Task<Section> GetSectionAsync(string eventId, Stages stage);
 		Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId);
+		Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId);
 	}
 
 	public class TournamentCachingService(ISteamAPI steamAPI, IMemoryCache cache) : ITournamentCachingService
@@ -44,6 +45,30 @@ namespace PickemsPlanter.Services
 			}
 
 			return sections!;
+		}
+
+		public async Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (i != 3)
+				{
+					var stage = (Stages)i;
+					var section = await GetSectionAsync(eventId, stage);
+
+					if (section.Groups.Any(x => x.PicksAllowed))
+						return stage;
+
+					continue;
+				}
+
+				var playoffs = await GetPlayoffsAsync(eventId);
+
+				if (playoffs.Any(x => x.Groups.Any(x => x.PicksAllowed)))
+					return Stages.Playoffs;
+			}
+
+			return Stages.Stage1;
 		}
 	}
 }
