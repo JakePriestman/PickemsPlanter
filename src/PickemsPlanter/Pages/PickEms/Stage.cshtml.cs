@@ -20,7 +20,7 @@ namespace PickemsPlanter.Pages.PickEms
         [BindProperty(SupportsGet = true)]
         public required Stages Stage { get; init; }
 
-		public IReadOnlyCollection<string> Picks { get; set; }
+		public IReadOnlyCollection<string>? Picks { get; set; }
 
         public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 

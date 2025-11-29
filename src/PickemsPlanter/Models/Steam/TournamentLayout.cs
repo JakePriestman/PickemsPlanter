@@ -7,11 +7,11 @@ namespace PickemsPlanter.Models.Steam
 		[JsonPropertyName("event")]
 		public int Event { get; set; }
 		[JsonPropertyName("name")]
-		public string Name { get; set; }
+		public required string Name { get; set; }
 		[JsonPropertyName("sections")]
-		public List<Section> Sections { get; set; }
+		public required List<Section> Sections { get; set; }
 		[JsonPropertyName("teams")]
-		public IEnumerable<Team> Teams { get; set; }
+		public required IReadOnlyCollection<Team> Teams { get; set; }
 
 	}
 }

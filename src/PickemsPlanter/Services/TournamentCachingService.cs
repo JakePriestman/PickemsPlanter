@@ -8,40 +8,53 @@ namespace PickemsPlanter.Services
 	public interface ITournamentCachingService
 	{
 		Task<Section> GetSectionAsync(string eventId, Stages stage);
+		Task<IReadOnlyCollection<Team>> GetTournamentTeamsAsync(string eventId);
 		Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId);
 		Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId);
 	}
 
 	public class TournamentCachingService(ISteamAPI steamAPI, IMemoryCache cache) : ITournamentCachingService
 	{
-		private readonly IMemoryCache _cache = cache;
-		private readonly ISteamAPI _steamAPI = steamAPI;
 
 		public async Task<Section> GetSectionAsync(string eventId, Stages stage)
 		{
 			string key = $"TOURNAMENT_{eventId}_{stage}";
 
-			if (!_cache.TryGetValue(key, out Section? section))
+			if (!cache.TryGetValue(key, out Section? section))
 			{
-				var layout = await _steamAPI.GetTournamentLayoutAsync(eventId);
+				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
 				section = layout.Result.Sections[(int)stage];
-				_cache.Set(key, section, TimeSpan.FromMinutes(10));
+				cache.Set(key, section, TimeSpan.FromMinutes(10));
 			}
 
 			return section!;
+		}
+
+		public async Task<IReadOnlyCollection<Team>> GetTournamentTeamsAsync(string eventId)
+		{
+			string key = $"TOURNAMENT_{eventId}_TEAMS";
+
+			if (!cache.TryGetValue(key, out IReadOnlyCollection<Team>? teams) || teams is null)
+			{
+				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
+				teams = layout.Result.Teams;
+				cache.Set(key, teams);
+			}
+
+			return teams;
 		}
 
 		public async Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId)
 		{
 			string key = $"TOURNAMENT_{eventId}_{Stages.Playoffs}";
 
-			if (!_cache.TryGetValue(key, out IReadOnlyCollection<Section>? sections))
+			if (!cache.TryGetValue(key, out IReadOnlyCollection<Section>? sections))
 			{
-				var layout = await _steamAPI.GetTournamentLayoutAsync(eventId);
+				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
 
 				sections = [.. layout.Result.Sections.Skip(3)];
 
-				_cache.Set(key, sections, TimeSpan.FromMinutes(10));
+				cache.Set(key, sections, TimeSpan.FromMinutes(10));
 			}
 
 			return sections!;

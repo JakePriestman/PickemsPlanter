@@ -1,10 +1,9 @@
-using PickemsPlanter.Models;
-using PickemsPlanter.Models.TableStorage;
-using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using PickemsPlanter.Models.TableStorage;
+using PickemsPlanter.Services;
 using System.Net;
 using System.Security.Claims;
 
@@ -101,7 +100,7 @@ namespace PickemsPlanter.Pages.Profile
 
 			await cachingService.RefreshUserPredictionsAsync(SteamId, SelectedEvent);
 
-			await cachingService.CacheTeamsAsync(SteamId, SelectedEvent);
+			await cachingService.CacheUserTeamsAsync(SteamId, SelectedEvent);
 
 			memoryCache.Set($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE", authCode);
 		}
