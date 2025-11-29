@@ -1,6 +1,7 @@
-﻿using PickemsPlanter.APIs;
+﻿using Microsoft.Extensions.Caching.Memory;
+using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Steam;
-using Microsoft.Extensions.Caching.Memory;
+using System;
 
 namespace PickemsPlanter.Services
 {
@@ -11,11 +12,12 @@ namespace PickemsPlanter.Services
 		void RemoveAuthCodeFromCache(string eventId, string steamId);
 		Task<UserPredictions> CacheUserPredictionsAsync(string steamId, string eventId);
 		Task<UserPredictions> RefreshUserPredictionsAsync(string steamId, string eventId);
-		Task CacheTeamsAsync(string steamId, string eventId);
+		Task<IReadOnlyCollection<Team>> GetUserTeamsFromCacheAsync(string steamId, string eventId);
+		Task<IReadOnlyCollection<Team>> CacheUserTeamsAsync(string steamId, string eventId);
 		void EmptyUserCache(string steamId, string eventId);
 	} 
 
-	public class UserPredictionsCachingService(IMemoryCache cache, ISteamAPI steamAPI) : IUserPredictionsCachingService
+	public class UserPredictionsCachingService(IMemoryCache cache, ISteamAPI steamAPI, ITournamentCachingService tournamentCachingService) : IUserPredictionsCachingService
 	{
 		public void CacheAuthCode(string eventId, string steamId, string authCode)
 		{
@@ -50,41 +52,48 @@ namespace PickemsPlanter.Services
 			string authCode = GetAuthCodeFromCache(eventId, steamId);
 
 			GetResult<UserPredictions> userPredictions = await steamAPI.GetUserPredictionsAsync(steamId, eventId, authCode);
-			cache.Set(key, userPredictions.Result, TimeSpan.FromMinutes(2));
+			cache.Set(key, userPredictions.Result, TimeSpan.FromMinutes(10));
 
 			return userPredictions.Result;
 		}
 
-		public async Task CacheTeamsAsync(string steamId, string eventId)
+		public async Task<IReadOnlyCollection<Team>> GetUserTeamsFromCacheAsync(string steamId, string eventId)
 		{
 			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS";
 
-			if (cache.TryGetValue(key, out IEnumerable<Team>? userTeams))
-				return;
+			if (!cache.TryGetValue(key, out IReadOnlyCollection<Team>? teams) && teams is not null)
+			{
+				teams = await CacheUserTeamsAsync(steamId, eventId);
+			}
+
+			return teams!;
+		}
+
+		public async Task<IReadOnlyCollection<Team>> CacheUserTeamsAsync(string steamId, string eventId)
+		{
+			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS";
+
+			if (cache.TryGetValue(key, out IReadOnlyCollection<Team>? userTeams) &&  userTeams is not null)
+				return userTeams;
 
 			string authCode = GetAuthCodeFromCache(eventId, steamId);
 
-			IEnumerable<Team>? teams = (IEnumerable<Team>?)cache.Get($"TOURNAMENT_{eventId}_TEAMS");
-
-			if (teams is null)
-			{
-				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
-
-				teams = layout.Result.Teams;
-			}
+			var teams = await tournamentCachingService.GetTournamentTeamsAsync(eventId);
 
 			GetResult<TournamentItems> items =  await steamAPI.GetTournamentItemsAsync(steamId, eventId, authCode);
 
 			foreach (var team in teams)
 			{
-				var teamFromitems = items.Result.Items.First(x => x.TeamId == team.PickId);
+				var teamFromItems = items.Result.Items.First(x => x.TeamId == team.PickId);
 
-				team.TeamId = teamFromitems.TeamId;
-				team.ItemId = teamFromitems.ItemId;
-				team.Type = teamFromitems.Type;
+				team.TeamId = teamFromItems.TeamId;
+				team.ItemId = teamFromItems.ItemId;
+				team.Type = teamFromItems.Type;
 			}
 
-			cache.Set(key, teams);
+			cache.Set(key, teams, TimeSpan.FromMinutes(30));
+
+			return teams;
 		}
 
 		public void EmptyUserCache(string steamId, string eventId)
