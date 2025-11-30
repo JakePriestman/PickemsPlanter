@@ -105,23 +105,32 @@ namespace PickemsPlanter.Services
 		 
 		public async Task<List<string>> GetStagePicksAsync(Stages stage, string steamId, string eventId)
 		{
+			List<string> imageUrls = [];
+
 			IReadOnlyCollection<Team> teams = await cachingService.GetUserTeamsFromCacheAsync(steamId, eventId);
+
+			Dictionary<int, Team> teamLookup = teams.ToDictionary(t => t.PickId);
 
 			Section section = await tournamentCachingService.GetSectionAsync(eventId, stage);
 
-			var imageUrls = new List<string>();
+			if (section?.Groups == null || !section.Groups.Any()) return imageUrls;
 
-			var picks = await cachingService.CacheUserPredictionsAsync(steamId, eventId);
+			UserPredictions picks = await cachingService.CacheUserPredictionsAsync(steamId, eventId);
 
-			var picksInGroup = picks.Picks.Where(x => x.GroupId == section.Groups.First().GroupId);
+			if (picks?.Picks is null) return imageUrls;
 
-			if (picksInGroup is null) return null!;
+			int groupId = section.Groups.First().GroupId;
+
+			var picksInGroup = picks.Picks.Where(x => x.GroupId == groupId).ToList();
+
+			if (picksInGroup.Count == 0) return imageUrls;
 
 			foreach (var pick in picksInGroup)
 			{
-				var logo = teams.First(x => x.PickId == pick.Pick).Logo;
-
-				imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
+				if (teamLookup.TryGetValue(pick.Pick, out var team) && team.Logo is not null)
+					imageUrls.Add($"{IMAGE_LOCATION}/{team.Logo}.png");
+				else
+					imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
 			}
 			return imageUrls;
 		}

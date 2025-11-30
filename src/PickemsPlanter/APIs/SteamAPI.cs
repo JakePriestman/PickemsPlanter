@@ -25,6 +25,8 @@ namespace PickemsPlanter.APIs
 
 			var response = await httpClient.SendAsync(request);
 
+			response.EnsureSuccessStatusCode();
+
 			var json = await response.Content.ReadAsStringAsync();
 
 			return JsonSerializer.Deserialize<GetResponse<PlayerList>>(json, serializerOptions)!;
@@ -34,6 +36,8 @@ namespace PickemsPlanter.APIs
 			HttpRequestMessage request = new(HttpMethod.Get, $"/ICSGOTournaments_730/GetTournamentItems/v1?key={_config.WebApiKey}&event={eventId}&steamid={steamId}&steamidkey={authCode}");
 
 			var response = await httpClient.SendAsync(request);
+
+			response.EnsureSuccessStatusCode();
 
 			var json = await response.Content.ReadAsStringAsync();
 
@@ -46,6 +50,8 @@ namespace PickemsPlanter.APIs
 
 			var response = await httpClient.SendAsync(request);
 
+			response.EnsureSuccessStatusCode();
+
 			var json = await response.Content.ReadAsStringAsync();
 
 			return JsonSerializer.Deserialize<GetResult<TournamentLayout>>(json, serializerOptions)!;
@@ -56,6 +62,8 @@ namespace PickemsPlanter.APIs
 			HttpRequestMessage request = new(HttpMethod.Get, $"/ICSGOTournaments_730/GetTournamentPredictions/v1?key={_config.WebApiKey}&event={eventId}&steamid={steamId}&steamidkey={authCode}");
 
 			var response = await httpClient.SendAsync(request);
+
+			response.EnsureSuccessStatusCode();
 
 			var json = await response.Content.ReadAsStringAsync();
 
@@ -117,7 +125,9 @@ namespace PickemsPlanter.APIs
 
 			request.Content = new FormUrlEncodedContent(formData);
 
-			await httpClient.SendAsync(request);
+			var response = await httpClient.SendAsync(request);
+
+			response.EnsureSuccessStatusCode();
 		}
 
 		private static Dictionary<string, string> HandleQuarters(Dictionary<string, string> formData, List<string> pickNames, IReadOnlyCollection<Team> teams, Section quarterFinals)

@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Steam;
-using System;
+using PickemsPlanter.Models.TableStorage;
 
 namespace PickemsPlanter.Services
 {
 	public interface IUserPredictionsCachingService
 	{
 		void CacheAuthCode(string eventId, string steamId, string authCode);
-		string GetAuthCodeFromCache(string eventId, string steamId);
+		Task<string> GetAuthCodeFromCache(string eventId, string steamId);
 		void RemoveAuthCodeFromCache(string eventId, string steamId);
 		Task<UserPredictions> CacheUserPredictionsAsync(string steamId, string eventId);
 		Task<UserPredictions> RefreshUserPredictionsAsync(string steamId, string eventId);
@@ -17,15 +17,26 @@ namespace PickemsPlanter.Services
 		void EmptyUserCache(string steamId, string eventId);
 	} 
 
-	public class UserPredictionsCachingService(IMemoryCache cache, ISteamAPI steamAPI, ITournamentCachingService tournamentCachingService) : IUserPredictionsCachingService
+	public class UserPredictionsCachingService(IMemoryCache cache, ISteamAPI steamAPI, ITournamentCachingService tournamentCachingService, ITableStorageService tableService) : IUserPredictionsCachingService
 	{
 		public void CacheAuthCode(string eventId, string steamId, string authCode)
 		{
 			cache.Set($"TOURNAMENT_{eventId}_USER_{steamId}_AUTHCODE", authCode);
 		}
-		public string GetAuthCodeFromCache(string eventId, string steamId)
+		public async Task<string> GetAuthCodeFromCache(string eventId, string steamId)
 		{
-			return cache.Get<string>($"TOURNAMENT_{eventId}_USER_{steamId}_AUTHCODE")!;
+			string key = $"TOURNAMENT_{eventId}_USER_{steamId}_AUTHCODE";
+
+			if (!cache.TryGetValue(key, out string? authCode) || authCode is null)
+			{
+				UserEvent? userEvent = await tableService.GetEntryIfExistsAsync(steamId, eventId) ?? throw new Exception($"Auth Code for the user {steamId} for event {eventId} is missing in the table storage.");
+
+				authCode = userEvent.AuthCode;
+
+				cache.Set(key, authCode);
+			}
+
+			return authCode;
 		}
 
 		public void RemoveAuthCodeFromCache(string eventId, string steamId)
@@ -37,22 +48,26 @@ namespace PickemsPlanter.Services
 		{
 			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_PICKS";
 
-			if (!cache.TryGetValue(key, out UserPredictions? picks))
+			if (!cache.TryGetValue(key, out UserPredictions? picks) || picks is null)
 			{
-				return await RefreshUserPredictionsAsync(steamId, eventId);
+				picks = await RefreshUserPredictionsAsync(steamId, eventId);
 			}
 
-			return picks!;
+			return picks;
 		}
 
 		public async Task<UserPredictions> RefreshUserPredictionsAsync(string steamId, string eventId)
 		{
 			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_PICKS";
 
-			string authCode = GetAuthCodeFromCache(eventId, steamId);
+			string authCode = await GetAuthCodeFromCache(eventId, steamId);
 
 			GetResult<UserPredictions> userPredictions = await steamAPI.GetUserPredictionsAsync(steamId, eventId, authCode);
-			cache.Set(key, userPredictions.Result, TimeSpan.FromMinutes(10));
+
+			if (userPredictions?.Result is null) 
+				throw new Exception($"The user predictions from the Steam API for user {steamId}, for event {eventId} returned null");
+
+			cache.Set(key, userPredictions.Result, TimeSpan.FromMinutes(30));
 
 			return userPredictions.Result;
 		}
@@ -61,7 +76,7 @@ namespace PickemsPlanter.Services
 		{
 			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS";
 
-			if (!cache.TryGetValue(key, out IReadOnlyCollection<Team>? teams) && teams is not null)
+			if (!cache.TryGetValue(key, out IReadOnlyCollection<Team>? teams) || teams is null)
 			{
 				teams = await CacheUserTeamsAsync(steamId, eventId);
 			}
@@ -73,10 +88,10 @@ namespace PickemsPlanter.Services
 		{
 			string key = $"USER_{steamId}_TOURNAMENT_{eventId}_TEAMS";
 
-			if (cache.TryGetValue(key, out IReadOnlyCollection<Team>? userTeams) &&  userTeams is not null)
+			if (cache.TryGetValue(key, out IReadOnlyCollection<Team>? userTeams) && userTeams is not null)
 				return userTeams;
 
-			string authCode = GetAuthCodeFromCache(eventId, steamId);
+			string authCode = await GetAuthCodeFromCache(eventId, steamId);
 
 			var teams = await tournamentCachingService.GetTournamentTeamsAsync(eventId);
 
