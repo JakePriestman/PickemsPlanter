@@ -55,7 +55,7 @@ namespace PickemsPlanter.Pages.PickEms
 
         public async Task<IActionResult> OnPostSendPicks(string picksToPost)
         {
-			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
+			var authCode = await cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
             await pickemsService.PostStagePickemsAsync(Stage, picksToPost, SteamId, EventId, authCode);
 

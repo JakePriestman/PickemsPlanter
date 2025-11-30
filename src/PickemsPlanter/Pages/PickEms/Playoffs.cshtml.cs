@@ -17,7 +17,7 @@ namespace PickemsPlanter.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public required string SteamId { get; init; }
 
-		public IReadOnlyCollection<string> Picks { get; set; }
+		public IReadOnlyCollection<string>? Picks { get; set; }
 
 		public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
@@ -51,7 +51,7 @@ namespace PickemsPlanter.Pages.PickEms
 
 		public async Task<IActionResult> OnPostSendPicks(string picksToPost)
 		{
-			var authCode = cachingService.GetAuthCodeFromCache(EventId, SteamId);
+			var authCode = await cachingService.GetAuthCodeFromCache(EventId, SteamId);
 
 			await pickemsService.PostPlayoffPickemsAsync(picksToPost, SteamId, EventId, authCode);
 
