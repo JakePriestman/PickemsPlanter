@@ -237,7 +237,7 @@ function toggleCheckmark(index, resultImageSource) {
 
     const threeZero = picks.slice(0, 2);
     const threeOneThreeTwo = picks.slice(2, 8);
-    const zeroThree = picks.slice(8, 9);
+    const zeroThree = picks.slice(8, 10);
 
     const dropzone = document.getElementById(`pick${index}`);
 
