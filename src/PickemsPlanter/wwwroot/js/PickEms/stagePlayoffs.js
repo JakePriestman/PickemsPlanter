@@ -13,6 +13,6 @@ document.getElementById("profileImage").addEventListener('click', handleNavBarSt
 
 document.addEventListener('pointermove', dragging);
 
-document.addEventListener('mouseup', () => {
+document.addEventListener('pointerup', () => {
     dragEnd(isPlayoffs);
 });
