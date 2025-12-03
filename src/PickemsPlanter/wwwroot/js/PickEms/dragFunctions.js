@@ -6,7 +6,7 @@
             dragStart(event, isPlayoffs);
         };
 
-        element.addEventListener('mousedown', element._dragHandler);
+        element.addEventListener('pointerdown', element._dragHandler);
     }
 }
 
@@ -14,7 +14,7 @@ function disableDrag(elementId) {
     const element = document.getElementById(elementId);
 
     if (element && element._dragHandler) {
-        element.removeEventListener('mousedown', element._dragHandler);
+        element.removeEventListener('pointerdown', element._dragHandler);
         delete element._dragHandler;
     }
 }

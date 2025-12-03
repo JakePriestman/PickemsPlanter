@@ -8,7 +8,7 @@
             placeImageInDropzone(currentImageSource, dropzone, false);
         }
 
-        if (dragOriginElement.id.includes('pick')) {
+        else if (dragOriginElement.id.includes('pick')) {
             //Dragging from another dropzone in a stage
             swapImagesInDropzones(dragOriginElement, dropzone);
         }

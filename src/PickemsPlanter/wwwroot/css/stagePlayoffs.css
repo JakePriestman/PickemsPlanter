@@ -290,7 +290,7 @@
     border-radius: 10px;
     font-size: 1.1em;
     margin: 1em;
-    border: dashed var(--submit-colour);
+    border: dashed var(--submit-colour) 3px;
     cursor: help;
     box-shadow: var(--shadow-m);
     color: var(--submit-colour);
@@ -481,6 +481,14 @@
 
     .dropdown a {
         font-size: 8px;
+    }
+
+    .checkmark {
+        border: solid #0e2912 2px;
+    }
+
+    .save-button:disabled {
+        border: dashed var(--submit-colour) 1px;
     }
 }
 
