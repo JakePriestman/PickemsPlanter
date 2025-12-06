@@ -66,6 +66,16 @@ namespace PickemsPlanter.Pages.Profile
 
 			var firstActiveStage = await tournamentCachingService.GetFirstActiveStageOrDefaultAsync(SelectedEvent);
 
+			if (firstActiveStage == Models.Stages.Playoffs)
+			{
+				return RedirectToPage("/PickEms/Playoffs", new
+				{
+					eventId = SelectedEvent,
+					eventName,
+					SteamId
+				});
+			}
+
 			return RedirectToPage("/PickEms/Stage", new
 			{
 				eventId = SelectedEvent,
