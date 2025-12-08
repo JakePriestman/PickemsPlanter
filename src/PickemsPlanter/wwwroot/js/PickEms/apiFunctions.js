@@ -23,7 +23,7 @@ async function LoadImagesAsync() {
 
             mapElementTitle(imageSource, container);
 
-            if (!isPlayoffs || imageSrc.includes('unknown'))
+            if (!isPlayoffs || imageSource.includes('unknown'))
                 container.setAttribute('disabled', 'true');
 
             container.addEventListener('dragstart', (e) => e.preventDefault());
