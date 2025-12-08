@@ -12,9 +12,16 @@ function resetCurrentDraggedElement() {
     }
 }
 
-function getTeamsToEnable(teams, pickImageSources) {
+function getTeamsToEnable(teams, pickImageSources) {    
     const teamImages = teams.map(team => team.querySelector('.team-img').src.split('/').pop());
-    const teamsToEnable = teamImages.filter(item => !pickImageSources.includes(item) && item != "unknown.png");
+    let teamsToEnable = [];
+    
+    if (isPlayoffs) {
+        teamsToEnable = teamImages.filter(item => item != "unknown.png");
+    }
+    else {
+        teamsToEnable = teamImages.filter(item => !pickImageSources.includes(item) && item != "unknown.png");
+    }
 
     return teamsToEnable;
 }
