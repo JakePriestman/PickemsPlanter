@@ -111,17 +111,17 @@ namespace PickemsPlanter.APIs
 		{
 			HttpRequestMessage request = new(HttpMethod.Post, $"/ICSGOTournaments_730/UploadTournamentPredictions/v1?key={_config.WebApiKey}");
 
-			Section final = playoffs.ElementAt(2);
+			Section quarterFinals = playoffs.First();
 
-			Dictionary<string, string> formData = HandleFinal(pickNames, teams, final, steamId, eventId, authCode);
+			Dictionary<string, string> formData = HandleQuarters(pickNames, teams, quarterFinals, steamId, eventId, authCode);
 
 			Section semiFinals = playoffs.ElementAt(1);
 
 			formData = HandleSemis(formData, pickNames, teams, semiFinals);
 
-			Section quarterFinals = playoffs.First();
+			Section final = playoffs.ElementAt(2);
 
-			formData = HandleQuarters(formData, pickNames, teams, quarterFinals);
+			formData = HandleFinal(formData, pickNames, teams, final);
 
 			request.Content = new FormUrlEncodedContent(formData);
 
@@ -130,8 +130,15 @@ namespace PickemsPlanter.APIs
 			response.EnsureSuccessStatusCode();
 		}
 
-		private static Dictionary<string, string> HandleQuarters(Dictionary<string, string> formData, List<string> pickNames, IReadOnlyCollection<Team> teams, Section quarterFinals)
+		private static Dictionary<string, string> HandleQuarters(List<string> pickNames, IReadOnlyCollection<Team> teams, Section quarterFinals, string steamId, string eventId, string authCode)
 		{
+			Dictionary<string, string> formData = [];
+
+			formData.Add("event", eventId);
+			formData.Add("steamid", steamId);
+			formData.Add("steamidkey", authCode);
+
+
 			for (int i = 0; i < quarterFinals.Groups.Count(); i++)
 			{
 				int j = i + 3;
@@ -139,11 +146,22 @@ namespace PickemsPlanter.APIs
 
 				var group = quarterFinals.Groups.ElementAt(i);
 
-				formData.Add($"sectionId{j}", $"{quarterFinals.SectionId}");
-				formData.Add($"groupId{j}", $"{group.GroupId}");
-				formData.Add($"index{j}", j.ToString());
-				formData.Add($"pickId{j}", item.TeamId.ToString());
-				formData.Add($"itemId{j}", item.ItemId.ToString());
+				if (i == 0)
+				{
+					formData.Add($"sectionId", $"{quarterFinals.SectionId}");
+					formData.Add($"groupId", $"{group.GroupId}");
+					formData.Add($"index", "0");
+					formData.Add($"pickId", item.TeamId.ToString());
+					formData.Add($"itemId", item.ItemId.ToString());
+				}
+				else
+				{
+					formData.Add($"sectionId{i}", $"{quarterFinals.SectionId}");
+					formData.Add($"groupId{i}", $"{group.GroupId}");
+					formData.Add($"index{i}", "0");
+					formData.Add($"pickId{i}", item.TeamId.ToString());
+					formData.Add($"itemId{i}", item.ItemId.ToString());
+				}
 			}
 
 			return formData;
@@ -154,35 +172,30 @@ namespace PickemsPlanter.APIs
 			for (int i = 0; i < semiFinals.Groups.Count(); i++)
 			{
 				int j = i + 1;
+				int k = i + 4;
 				var item = teams.First(x => x.Logo == pickNames[j]);
 
 				var group = semiFinals.Groups.ElementAt(i);
 
-				formData.Add($"sectionId{j}", $"{semiFinals.SectionId}");
-				formData.Add($"groupId{j}", $"{group.GroupId}");
-				formData.Add($"index{j}", j.ToString());
-				formData.Add($"pickId{j}", item.TeamId.ToString());
-				formData.Add($"itemId{j}", item.ItemId.ToString());
+				formData.Add($"sectionId{k}", $"{semiFinals.SectionId}");
+				formData.Add($"groupId{k}", $"{group.GroupId}");
+				formData.Add($"index{k}", "0");
+				formData.Add($"pickId{k}", item.TeamId.ToString());
+				formData.Add($"itemId{k}", item.ItemId.ToString());
 			}
 
 			return formData;
 		}
 
-		private static Dictionary<string, string> HandleFinal(List<string> pickNames, IReadOnlyCollection<Team> teams, Section final, string steamId, string eventId, string authCode)
+		private static Dictionary<string, string> HandleFinal(Dictionary<string, string> formData, List<string> pickNames, IReadOnlyCollection<Team> teams, Section final)
 		{
 			var finalTeam = teams.First(x => x.Logo == pickNames.First());
 
-			Dictionary<string, string> formData = new()
-			{
-				{"event", eventId },
-				{"steamId", steamId },
-				{"steamIdKey", authCode },
-				{"sectionId",$"{final.SectionId}" },
-				{"groupId", $"{final.Groups.First().GroupId}" },
-				{"index", "0" },
-				{"pickId", finalTeam.TeamId.ToString() },
-				{"itemId", finalTeam.ItemId.ToString() }
-			};
+			formData.Add("sectionid6", final.SectionId.ToString());
+			formData.Add("groupid6", final.Groups.First().GroupId.ToString());
+			formData.Add("index6", "0");
+			formData.Add("pickid6", finalTeam.TeamId.ToString());
+			formData.Add("itemid6", finalTeam.ItemId.ToString());
 
 			return formData;
 		}

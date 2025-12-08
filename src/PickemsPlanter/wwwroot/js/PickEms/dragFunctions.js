@@ -23,7 +23,8 @@ function dragStart(event) {
     const rect = event.target.getBoundingClientRect();
     dragOriginElement = event.target.parentElement;
 
-    if ((event.target.parentElement.id.includes('team') && event.target.parentElement.id != "teamSection") || isPlayoffs) {
+    if ((event.target.parentElement.id.includes('team') && event.target.parentElement.id != "teamSection") ||
+        (isPlayoffs && (event.target.parentElement.id.includes('team') || event.target.parentElement.id.includes('pick')))) {
         currentDraggedElement = event.target.cloneNode(true);
     }
     else if (event.target.parentElement.id.includes('pick')) {
