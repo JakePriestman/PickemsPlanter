@@ -49,6 +49,14 @@ async function LoadPicksAsync() {
         enableTeamsFunctionality(pickImageSources);
     }
 
+    const dropzones = document.querySelectorAll('.dropzone-advanced, .dropzone-eliminated');
+
+    dropzones.forEach(dz => {
+        dz.addEventListener('dragstart', (e) => e.preventDefault());
+        setDropzoneClassName(dz, false);
+    });
+
+
     if (imageUrls.length > 0) {
         for (let [index, imageSource] of imageUrls.entries()) {
             const dropzone = document.getElementById(`pick${index}`);
@@ -60,8 +68,6 @@ async function LoadPicksAsync() {
             }
 
             mapElementTitle(imageSource, dropzone);
-
-            dropzone.addEventListener('dragstart', (e) => e.preventDefault());
         }
     }
     else {
