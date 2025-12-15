@@ -160,6 +160,7 @@ function placeImageInDropzone(imageSource, dropzone, isResults) {
 
     if (isPlayoffs) {
         greyOutImages();
+        resetEliminatedImages();
     }
 
 
