@@ -18,6 +18,10 @@ async function LoadImagesAsync() {
     for (const [index, imageSource] of imageUrls.entries()) {
         const container = document.getElementById(`team${index}`);
         if (container) {
+
+            if (isPlayoffs)
+                container.innerHTML = "";
+
             const teamImage = createTeamImage(imageSource);
             container.appendChild(teamImage);
 

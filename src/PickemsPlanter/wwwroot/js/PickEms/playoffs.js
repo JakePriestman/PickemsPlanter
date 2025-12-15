@@ -5,28 +5,19 @@
             dropzone.title = "Winner";
             break;
         case "pick5":
-            dropzone.textContent = "S2";
-            dropzone.title = "Semi final 2";
-            break;
         case "pick4":
-            dropzone.textContent = "S1";
-            dropzone.title = "Semi final 1";
+            dropzone.textContent = "GF";
+            dropzone.title = "Grand Final";
             break;
         case "pick3":
-            dropzone.textContent = "Q4";
-            dropzone.title = "Quart final 4";
-            break;
         case "pick2":
-            dropzone.textContent = "Q3";
-            dropzone.title = "Quart final 3";
+            dropzone.textContent = "S2";
+            dropzone.title = "Semi Final 2";
             break;
         case "pick1":
-            dropzone.textContent = "Q2";
-            dropzone.title = "Quart final 2";
-            break;
         case "pick0":
-            dropzone.textContent = "Q1";
-            dropzone.title = "Quart final 1";
+            dropzone.textContent = "S1";
+            dropzone.title = "Semi Final 1";
             break;
     }
 }

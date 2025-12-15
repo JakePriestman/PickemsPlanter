@@ -93,3 +93,74 @@ function removeSucceedingImages(imageInDropzone, dropzone) {
         }
     });
 }
+
+function getPlayoffsStageBefore(stage) {
+    switch (stage) {
+        case "pick6":
+            return ".grand-final";
+
+        case "pick5":
+        case "pick4":
+            return ".semi-finals";
+
+        case "pick3":
+        case "pick2":
+        case "pick1":
+        case "pick0":
+            return ".quarter-finals";
+    }
+}
+
+function getPlayoffsMatchBeforeId(id) {
+    switch (id) {
+        case "pick6":
+            return "match0";
+
+        case "pick5":
+            return "match1";
+        case "pick4":
+            return "match0";
+
+        case "pick3":
+            return "match3";
+        case "pick2":
+            return "match2";
+        case "pick1":
+            return "match1";
+        case "pick0":
+            return "match0";
+    }
+}
+
+function getPlayoffsPickAfterId(id) {
+    switch (id) {
+        case "pick6":
+            return null;
+
+        case "pick5":
+        case "pick4":
+            return "pick6";
+
+        case "pick3":
+            return "pick5";
+        case "pick2":
+            return "pick5";
+        case "pick1":
+            return "pick4";
+        case "pick0":
+            return "pick4";
+
+        case "team0":
+        case "team1":
+            return "pick0";
+        case "team2":
+        case "team3":
+            return "pick1";
+        case "team4":
+        case "team5":
+            return "pick2";
+        case "team6":
+        case "team7":
+            return "pick3";
+    }
+}

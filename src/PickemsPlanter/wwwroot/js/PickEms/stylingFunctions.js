@@ -330,3 +330,53 @@ function handleNavBarStyling() {
             break;
     }
 }
+
+function greyOutImages() {
+    const dropzones = document.querySelectorAll('.dropzone-advanced, .dropzone-advanced-not-allowed');
+
+    for (const dropzone of dropzones) {
+        const imageInDropzone = dropzone.querySelector('.dropped-img');
+
+        if (!imageInDropzone) continue;
+
+        const stageBefore = getPlayoffsStageBefore(dropzone.id);
+
+        const matchId = getPlayoffsMatchBeforeId(dropzone.id);
+
+        const stageBeforeElement = document.querySelector(stageBefore);
+
+        const match = [...stageBeforeElement.querySelectorAll('.match')].find(x => x.id === matchId);
+
+        const images = [...match.querySelectorAll('.dropped-img, .team-img')];
+
+        const image = images.find(x => x.src.split('/').pop() !== imageInDropzone.src.split('/').pop());
+
+        if (image) {
+            image.classList.add('eliminated');
+        }
+    }
+}
+
+function resetEliminatedImages() {
+    const dropzones = [...document.querySelectorAll('.team, .dropzone-advanced, .dropzone-advanced-not-allowed')];
+
+    for (const dropzone of dropzones.reverse()) {
+        const imageInDropzone = dropzone.querySelector('img');
+
+        if (!imageInDropzone) continue;
+
+        const pickAfterId = getPlayoffsPickAfterId(dropzone.id);
+
+        if (!pickAfterId) continue;
+
+        const pick = document.getElementById(pickAfterId);
+
+
+        const image = pick.querySelector('.dropped-img');
+
+
+        if (!image || imageInDropzone.src.split('/').pop() === image.src.split('/').pop())
+            imageInDropzone.classList.remove('eliminated')
+
+    }
+}
