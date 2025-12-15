@@ -235,22 +235,41 @@ function toggleCheckmark(index, resultImageSource) {
 
     if (picks.length == 0) return;
 
-    const threeZero = picks.slice(0, 2);
-    const threeOneThreeTwo = picks.slice(2, 8);
-    const zeroThree = picks.slice(8, 10);
-
     const dropzone = document.getElementById(`pick${index}`);
 
-    if (index === 0 || index === 1) {
-        showCheckmarkAndReduceResultOpacity(dropzone, threeZero, resultImageSource);
-    }
+    if (isPlayoffs) {
+        const champion = picks.slice(6, 7);
+        const finalists = picks.slice(4, 6);
+        const semiFinalists = picks.slice(0, 4);
 
-    else if (index === 8 || index === 9) {
-        showCheckmarkAndReduceResultOpacity(dropzone, zeroThree, resultImageSource);
-    }
+        if (index === 0 || index === 1 || index === 2 || index == 3) {
+            showCheckmarkAndReduceResultOpacity(dropzone, semiFinalists, resultImageSource);
+        }
 
+        if (index === 4 || index == 5) {
+            showCheckmarkAndReduceResultOpacity(dropzone, finalists, resultImageSource);
+        }
+
+        if (index === 6) {
+            showCheckmarkAndReduceResultOpacity(dropzone, champion, resultImageSource);
+        }
+    }
     else {
-        showCheckmarkAndReduceResultOpacity(dropzone, threeOneThreeTwo, resultImageSource);
+        const threeZero = picks.slice(0, 2);
+        const threeOneThreeTwo = picks.slice(2, 8);
+        const zeroThree = picks.slice(8, 10);
+
+        if (index === 0 || index === 1) {
+            showCheckmarkAndReduceResultOpacity(dropzone, threeZero, resultImageSource);
+        }
+
+        else if (index === 8 || index === 9) {
+            showCheckmarkAndReduceResultOpacity(dropzone, zeroThree, resultImageSource);
+        }
+
+        else {
+            showCheckmarkAndReduceResultOpacity(dropzone, threeOneThreeTwo, resultImageSource);
+        }
     }
 }
 
