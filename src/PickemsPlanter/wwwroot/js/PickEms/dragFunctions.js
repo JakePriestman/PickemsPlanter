@@ -100,6 +100,9 @@ function dragEnd() {
             resetCurrentDraggedElement();
         }
 
+        if (isPlayoffs)
+            resetEliminatedImages();
+
         toggleSelectionButtons(false);
     }
 }

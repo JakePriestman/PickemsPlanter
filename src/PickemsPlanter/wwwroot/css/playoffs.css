@@ -15,13 +15,13 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 1em;
     align-items: center;
     justify-content: center;
-    margin: 1em;
 }
 
-.bracket > div {
+.grand-final,
+.semi-finals,
+.quarter-finals {
     display: flex;
     justify-content: center;
     gap: 2em;
@@ -34,6 +34,7 @@
 .champion {
     flex-direction: column;
     align-items: center;
+    gap: 0;
 }
 
 .crown-image {
@@ -43,19 +44,46 @@
 }
 
 
-/*SEMI-FINALS*/
-.semi-finals .dropzone-advanced,
-.semi-finals .dropzone-advanced-not-allowed {
-    margin-left: 8.5em;
-    margin-right: 8.5em;
+/*grand-final*/
+.grand-final .dropzone-advanced,
+.grand-final .dropzone-advanced-not-allowed {
+    margin-left: 9em;
+    margin-right: 9em;
 }
 
+.grand-final .match {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+.grand-final .match .teams {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    width: 100%;
+    max-width: 800px;
+}
 
 /*QUERTER-FINALS*/
-.quarter-finals .dropzone-advanced,
-.quarter-finals .dropzone-advanced-not-allowed {
-    margin-left: 3em;
-    margin-right: 2.5em;
+.semi-finals .match {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+.semi-finals .match .teams {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    width: 100%;
+    max-width: 800px;
+}
+
+.semi-finals .dropzone-advanced,
+.semi-finals .dropzone-advanced-not-allowed {
+    margin-left: 3.1em;
+    margin-right: 3.1em;
 }
 
 
@@ -109,10 +137,37 @@
     transition: 0.3s ease;
 }
 
+.dropped-img.eliminated,
+.team-img.eliminated {
+    opacity: 0.5;
+    filter: brightness(50%);
+}
 
-/*ROUND-OF-EIGHT*/
-.round-of-eight {
+/*quarter-finals*/
+.quarter-finals {
     justify-content: space-between;
+}
+
+.quarter-finals .match {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+.quarter-finals .match .teams {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+    width: 100%;
+    max-width: 800px;
+}
+
+.match .lines {
+    display: flex;
+    border-top: 1px solid rgba(73,88,103,.65);
+    width: 50%;
+    border-right: 1px solid rgba(73,88,103,.65);
+    border-left: 1px solid rgba(73,88,103,.65);
 }
 
 .team {
@@ -121,11 +176,26 @@
     border-radius: 5px;
     cursor: grab;
     display: flex;
+    flex-direction: column-reverse;
     justify-content: center;
     align-items: center;
     background: var(--background-colour);
     user-select: none;
     box-shadow: var(--shadow-m);
+}
+
+.lines {
+    height: 18px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    border-radius: 4px 4px 0px 0px;
+}
+
+.line {
+    height: 18px;
+    display: flex;
+    border-right: 1px solid rgba(73,88,103,.65);
 }
 
 .team[disabled],
@@ -138,6 +208,10 @@
     height: 50px;
 }
 
+
+@media screen and (max-width: 990px) {
+
+}
 
 /*SHOW-RESULTS*/
 .show-results-div {
@@ -163,37 +237,42 @@
 
 @media screen and (max-width: 990px) {
 
-    .crown-image,
-    .match-dropzone-advanced,
-    .match-dropzone-advanced-not-allowed,
-    .team {
-        width: 25px;
-        height: 25px;
-    }
-
     .navbar h2 {
         font-size: 10px;
     }
 
-    .semi-finals .match-dropzone-advanced {
-        margin-left: 5em;
-        margin-right: 5em;
-    }
-
-    .quarter-finals .match-dropzone-advanced {
-        margin-left: 2em;
-        margin-right: 2em;
-    }
-
-    .match-dropzone-advanced,
-    .match-dropzone-advanced-not-allowed {
+    .team,
+    .dropzone-advanced,
+    .dropzone-advanced-not-allowed {
+        height: 32px;
+        width: 32px;
         font-size: 8px;
     }
 
-    .bracket > div {
-        gap: 1em;
-        width: 80vw;
+    .crown-image {
+        height: 32px;
+        width: 32px;
     }
+
+    .grand-final .dropzone-advanced,
+    .grand-final .dropzone-advanced-not-allowed {
+        margin-left: 11.5em;
+        margin-right: 11.5em;
+    }
+
+    .semi-finals .dropzone-advanced,
+    .semi-finals .dropzone-advanced-not-allowed {
+        margin-left: 4.5em;
+        margin-right: 4.5em;
+    }
+
+    .team-img,
+    .dropped-img {
+        width: 25px;
+        height: 25px;
+    }
+
+
 }
 
 .dropped-img.dragging,

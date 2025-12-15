@@ -45,6 +45,12 @@ function clearAllDropzones() {
         disableDrag(dz.id);
     });
 
+    if (isPlayoffs) {
+        const teams = document.querySelectorAll('.team-img');
+
+        teams.forEach(t => t.classList.remove('eliminated'));
+    }
+
     toggleSelectionButtons(false);
 
     enableTeamsFunctionality([]);
@@ -150,7 +156,10 @@ function placeImageInDropzone(imageSource, dropzone, isResults) {
         if (imageSource.includes('unknown')) {
             disableDrag(dropzone.id);
         }
+    }
 
+    if (isPlayoffs) {
+        greyOutImages();
     }
 
 
@@ -185,4 +194,3 @@ function returnCollidedDrozoneId(currentBoundingClientRect) {
 
     return null;
 }
-

@@ -164,8 +164,8 @@
     .dropzone-eliminated,
     .dropzone-advanced-not-allowed,
     .dropzone-eliminated-not-allowed {
-        height: 25px;
-        width: 25px;
+        height: 32px;
+        width: 32px;
         font-size: 10px;
     }
 
