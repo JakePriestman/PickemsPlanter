@@ -1,4 +1,4 @@
-﻿namespace PickemsPlanter.Models
+﻿namespace PickemsPlanter.Models.Event
 {
 	public enum Stages
 	{

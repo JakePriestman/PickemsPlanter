@@ -17,14 +17,14 @@ namespace PickemsPlanter.Pages.PickEms
 		[BindProperty(SupportsGet = true)]
 		public required string SteamId { get; init; }
 
+		[BindProperty(SupportsGet = true)]
+		public string? SelectedEvent { get; init; }
+
 		public IReadOnlyCollection<string>? Picks { get; set; }
 
 		public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
 		public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
-
-		[BindProperty(SupportsGet = true)]
-		public string? SelectedEvent { get; init; }
 
 		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 

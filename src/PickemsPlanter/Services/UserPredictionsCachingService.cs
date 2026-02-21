@@ -17,7 +17,7 @@ namespace PickemsPlanter.Services
 		void EmptyUserCache(string steamId, string eventId);
 	} 
 
-	public class UserPredictionsCachingService(IMemoryCache cache, ISteamAPI steamAPI, ITournamentCachingService tournamentCachingService, ITableStorageService tableService) : IUserPredictionsCachingService
+	public class UserPredictionsCachingService(IMemoryCache cache, ISteamAPI steamAPI, ITournamentCachingService tournamentCachingService, IUserEventsTableService tableService) : IUserPredictionsCachingService
 	{
 		public void CacheAuthCode(string eventId, string steamId, string authCode)
 		{

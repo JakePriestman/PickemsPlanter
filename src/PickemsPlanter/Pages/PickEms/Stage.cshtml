@@ -26,26 +26,26 @@
     <div class="pickem-layout">
         <section class="bracket">
             <nav class="stage-nav">
-                <a class="stage @(Model.Stage == PickemsPlanter.Models.Stages.Stage1 ? "active" : "")"
+                <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage1 ? "active" : "")"
                    asp-page="/PickEms/Stage"
                    asp-route-eventId="@Model.EventId"
                    asp-route-eventName="@Model.EventName"
                    asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Stages.Stage1">I</a>
+                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage1">I</a>
 
-                <a class="stage @(Model.Stage == PickemsPlanter.Models.Stages.Stage2 ? "active" : "")"
+                <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage2 ? "active" : "")"
                    asp-page="/PickEms/Stage"
                    asp-route-eventId="@Model.EventId"
                    asp-route-eventName="@Model.EventName"
                    asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Stages.Stage2">II</a>
+                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage2">II</a>
 
-                <a class="stage @(Model.Stage == PickemsPlanter.Models.Stages.Stage3 ? "active" : "")"
+                <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage3 ? "active" : "")"
                    asp-page="/PickEms/Stage"
                    asp-route-eventId="@Model.EventId"
                    asp-route-eventName="@Model.EventName"
                    asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Stages.Stage3">III</a>
+                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage3">III</a>
 
                 <a class="stage"
                    asp-page="/PickEms/Playoffs"
@@ -85,6 +85,7 @@
         <div class="buttons">
             <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
             <button class="random-picks" id="randomPicks" type="button" title="Randomly fill the empty dropzones"><img src="/Images/random_picks.png" /></button>
+            <button class="simulator" id="simulatorButton" type="button" title="Open Simulator"><img src="/Images/simulator.png" /></button>
         </div>
 
         <form method="post" class="save-form" id="saveForm">

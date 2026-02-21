@@ -1,11 +1,11 @@
 ﻿using Azure.Data.Tables;
 using Azure.Identity;
-using PickemsPlanter.APIs;
-using PickemsPlanter.Models;
-using PickemsPlanter.Models.Configurations;
-using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PickemsPlanter.APIs;
+using PickemsPlanter.Models.Configurations;
+using PickemsPlanter.Models.Event;
+using PickemsPlanter.Services;
 using System.Text.Json;
 
 namespace PickemsPlanter.Extensions
@@ -23,6 +23,7 @@ namespace PickemsPlanter.Extensions
 
 			services.AddRazorPages();
 			services.AddSingleton<IPickemsService, PickemsService>();
+			services.AddSingleton<ISeedsService, SeedsService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
 		}
 
@@ -49,8 +50,7 @@ namespace PickemsPlanter.Extensions
 			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 					.AddCookie(options =>
 					{
-						options.LoginPath = "/Login"; // Path to your login page
-						//options.AccessDeniedPath = "/Account/AccessDenied"; // Path for access denied
+						options.LoginPath = "/Login";
 					});
 		}
 
@@ -60,6 +60,7 @@ namespace PickemsPlanter.Extensions
 			services.AddSingleton<IUserPredictionsCachingService, UserPredictionsCachingService>();
 			services.AddSingleton<ITournamentCachingService, TournamentCachingService>();
 			services.AddHostedService<StartupCachingService>();
+			services.AddSingleton<ISeedsCachingService, SeedsCachingService>();
 		}
 
 		public static void AddJsonSerialization(this IServiceCollection services)
@@ -88,7 +89,9 @@ namespace PickemsPlanter.Extensions
 			if (tableStorageUrl is not null)
 				services.AddSingleton(new TableServiceClient(new Uri(tableStorageUrl), new DefaultAzureCredential()));
 
-			services.AddSingleton<ITableStorageService, TableStorageService>();
+			services.AddSingleton<IUserEventsTableService, UserEventsTableService>();
+
+			services.AddSingleton<ISeedsTableService, SeedsTableService>();
 		}
 	}
 }

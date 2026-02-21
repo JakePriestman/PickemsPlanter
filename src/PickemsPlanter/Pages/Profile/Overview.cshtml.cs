@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.TableStorage;
 using PickemsPlanter.Services;
 using System.Net;
@@ -9,7 +10,7 @@ using System.Security.Claims;
 
 namespace PickemsPlanter.Pages.Profile
 {
-	public class OverviewModel(ITableStorageService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
+	public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
 	{
 		[BindProperty]
 		public string SelectedEvent { get; set; } = string.Empty;
@@ -66,7 +67,7 @@ namespace PickemsPlanter.Pages.Profile
 
 			var firstActiveStage = await tournamentCachingService.GetFirstActiveStageOrDefaultAsync(SelectedEvent);
 
-			if (firstActiveStage == Models.Stages.Playoffs)
+			if (firstActiveStage == Stages.Playoffs)
 			{
 				return RedirectToPage("/PickEms/Playoffs", new
 				{
