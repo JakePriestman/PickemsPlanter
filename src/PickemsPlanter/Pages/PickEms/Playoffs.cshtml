@@ -1,7 +1,7 @@
 ﻿@page
 @model PickemsPlanter.Pages.PickEms.PlayoffsModel
 @{
-    ViewData["Title"] = $"Pick'Ems Planter - {PickemsPlanter.Models.Stages.Playoffs}";
+    ViewData["Title"] = $"Pick'Ems Planter - {PickemsPlanter.Models.Event.Stages.Playoffs}";
     Layout = "_Layout";
 }
 
@@ -31,21 +31,21 @@
                    asp-route-eventId="@Model.EventId"
                    asp-route-eventName="@Model.EventName"
                    asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Stages.Stage1">I</a>
+                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage1">I</a>
 
                 <a class="stage"
                    asp-page="/PickEms/Stage"
                    asp-route-eventId="@Model.EventId"
                    asp-route-eventName="@Model.EventName"
                    asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Stages.Stage2">II</a>
+                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage2">II</a>
 
                 <a class="stage"
                    asp-page="/PickEms/Stage"
                    asp-route-eventId="@Model.EventId"
                    asp-route-eventName="@Model.EventName"
                    asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Stages.Stage3">III</a>
+                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage3">III</a>
 
                 <a class="stage active"
                    asp-page="/PickEms/Playoffs"

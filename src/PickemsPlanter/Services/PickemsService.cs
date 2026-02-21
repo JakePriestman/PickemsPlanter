@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using PickemsPlanter.APIs;
-using PickemsPlanter.Models;
+using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
 using System.Text.Json;
 

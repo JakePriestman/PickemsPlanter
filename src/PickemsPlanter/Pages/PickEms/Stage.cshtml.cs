@@ -1,8 +1,8 @@
-using PickemsPlanter.Models;
 using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PickemsPlanter.Models.Event;
 
 namespace PickemsPlanter.Pages.PickEms
 {
@@ -20,14 +20,14 @@ namespace PickemsPlanter.Pages.PickEms
         [BindProperty(SupportsGet = true)]
         public required Stages Stage { get; init; }
 
+		[BindProperty(SupportsGet = true)]
+		public string? SelectedEvent { get; init; }
+
 		public IReadOnlyCollection<string>? Picks { get; set; }
 
         public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
         public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
-
-		[BindProperty(SupportsGet = true)]
-		public string? SelectedEvent { get; init; }
 
 		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 

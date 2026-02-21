@@ -331,7 +331,8 @@
 }
 
 .clear-all-picks,
-.random-picks {
+.random-picks,
+.simulator {
     margin: 1em;
     width: 32px;
     height: 32px;
@@ -342,19 +343,23 @@
 }
 
 .clear-all-picks img,
-.random-picks img{
+.random-picks img,
+.simulator img {
     width: 100%;
     height: auto;
 }
 
 .clear-all-picks:not([disabled]) img:hover,
-.random-picks:not([disabled]) img:hover {
+.random-picks:not([disabled]) img:hover,
+.simulator:not([disabled]) img:hover{
     transform: scale(1.1);
     transition: 0.5s ease;
+    cursor: pointer;
 }
 
 .clear-all-picks:disabled,
-.random-picks:disabled {
+.random-picks:disabled,
+.simulator:disabled {
     opacity: 0.2;
     cursor: not-allowed;
 }
@@ -421,7 +426,8 @@
     }
 
     .clear-all-picks,
-    .random-picks {
+    .random-picks,
+    .simulator {
         width: 24px;
         height: 24px;
     }

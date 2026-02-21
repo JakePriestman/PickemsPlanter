@@ -1,7 +1,7 @@
-﻿using PickemsPlanter.APIs;
-using PickemsPlanter.Models;
+﻿using Microsoft.Extensions.Caching.Memory;
+using PickemsPlanter.APIs;
+using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace PickemsPlanter.Services
 {

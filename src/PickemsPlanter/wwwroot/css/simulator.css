@@ -1,0 +1,200 @@
+
+.container {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--navbar-colour);
+    border-radius: 10px;
+    box-shadow: var(--shadow-s);
+    justify-content: center;
+    overflow: auto;
+    align-items: center;
+    width: 80%;
+    height: 80%;
+    max-height: 600px;
+    min-height: 530px;
+    overflow: hidden;
+    min-width: 887px;
+}
+
+.swiss-round {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 170px;
+    width: 100%;
+    position: relative;
+}
+
+.reset-button-container {
+    display: flex;
+    margin-right: 25px;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 10px;
+    height: 32px;
+    background: var(--foreground-colour);
+    box-shadow: var(--shadow-l);
+}
+
+.reset-button {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: center;
+    text-align: center;
+    line-height: 11px;
+    cursor: pointer;
+}
+
+.swiss-pool-terminal {
+    display: flex;
+    flex-direction: column;
+    margin-right: 25px;
+}
+
+.swiss-pool-wrapper-advanced,
+.swiss-pool-wrapper-eliminated {
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+}
+
+.swiss-pool-wrapper-advanced {
+    background-color: var(--submit-colour);
+}
+
+.swiss-pool-wrapper-eliminated {
+    background-color: var(--delete-colour);
+}
+
+.swiss-pool-title {
+    color: rgba(145,168,179,.65);
+    text-align: left;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.swiss-pool-wrapper-advanced .swiss-pool-title,
+.swiss-pool-wrapper-eliminated .swiss-pool-title {
+    text-align: center;
+}
+
+.swiss-pool-container {
+    display: flex;
+    justify-content: center;
+}
+
+.matchups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.swiss-pool-progression {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 25px;
+}
+
+.swiss-progression-up {
+    width: 40px;
+    height: 8px;
+    background: url(https://resources.hltv.org/img/static/gfx/swiss-advance.png) no-repeat top,linear-gradient(270deg, var(--submit-colour),#2d3844);
+        background-size: auto, auto;
+    background-size: 40px 8px;
+    position: relative;
+    left: -8px;
+    transform: rotate(-30deg);
+}
+
+.swiss-progression-down {
+    width: 40px;
+    height: 8px;
+    background: var(--delete-colour);
+    background: url(https://resources.hltv.org/img/static/gfx/swiss-eliminate.png) no-repeat top,linear-gradient(270deg, var(--delete-colour),#2d3844);
+        background-size: auto, auto;
+    background-size: 40px 8px;
+    position: relative;
+    left: -8px;
+    transform: rotate(30deg);
+}
+
+.matchup {
+    height: 38px;
+    background: var(--foreground-colour);
+    border-radius: 4px;
+    display: grid;
+    grid-template-columns: 1fr 12px 1fr;
+    gap: 2px;
+    align-items: center;
+    position: relative;
+    border: 1px solid transparent;
+    transition: .2s ease;
+    box-shadow: var(--shadow-l);
+}
+
+.matchup-team,
+.team {
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.05);
+    border: 1px solid hsla(0,0%,100%,.15);
+    display: inline-flex;
+    height: 30px;
+    width: 30px;
+    flex: 0 0 30px;
+    border-radius: 100px;
+    justify-self: center;
+    position: relative;
+}
+
+.team-img.unknown {
+    opacity: 0.5;
+}
+
+.team {
+    background: rgba(0,0,0,.35);
+}
+
+/* Get this to work only on filled with not unknown */
+.matchup-team:hover:not(:has(.team-img.unknown)) { 
+    background: #1d252f;
+    cursor: pointer;
+}
+
+.matchup-team.advanced {
+    border: solid #0e2912 1px;
+    background-color: var(--submit-colour);
+}
+
+.matchup-team.eliminated {
+    opacity: .5;
+    filter: saturate(0);
+}
+
+.teams-container {
+    flex-direction: row !important;
+    justify-content: center;
+    gap: 8px !important;
+    padding: 6px;
+    background: none !important;
+    border: none !important;
+    border-radius: 4px 0 4px 4px;
+    position: relative;
+    display: flex;
+    flex: 1;
+    z-index: 1;
+}
+
+.team-img {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 20px;
+}

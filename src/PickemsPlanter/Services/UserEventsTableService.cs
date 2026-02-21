@@ -3,7 +3,7 @@ using PickemsPlanter.Models.TableStorage;
 
 namespace PickemsPlanter.Services
 {
-	public interface ITableStorageService
+	public interface IUserEventsTableService
 	{
 		Task<bool> ExistsAsync(string steamId, string eventId);
 		Task CreateUserEventIfNotExistsAsync(string steamId, string eventId, string authCode);
@@ -13,7 +13,7 @@ namespace PickemsPlanter.Services
 		Task DeleteEntityIfExistsAsync(string steamId, string eventId);
 	}
 
-	public class TableStorageService(TableServiceClient tableServiceClient) : ITableStorageService
+	public class UserEventsTableService(TableServiceClient tableServiceClient) : IUserEventsTableService
 	{
 		private readonly TableClient _client = tableServiceClient.GetTableClient("userEvents");
 
