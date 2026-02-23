@@ -20,9 +20,9 @@ namespace PickemsPlanter.Services
 
 			var seedsForSimulator = new List<Seeds>();
 
-			foreach (var team in seeds)
+			foreach (var seed in seeds)
 			{
-				var logo = teams.FirstOrDefault(x => x.Name.Equals(team.RowKey, StringComparison.CurrentCultureIgnoreCase))?.Logo;
+				var logo = teams.FirstOrDefault(x => x.Name.Equals(seed.RowKey, StringComparison.CurrentCultureIgnoreCase))?.Logo;
 
 				var imageUrl = string.Empty;
 
@@ -33,7 +33,7 @@ namespace PickemsPlanter.Services
 
 				seedsForSimulator.Add(new Seeds
 				{
-					Seed = team.Rank.ToString(),
+					Seed = seed.Rank.ToString(),
 					Team = imageUrl
 				});
 			}

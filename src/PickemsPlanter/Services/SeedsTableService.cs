@@ -25,7 +25,7 @@ namespace PickemsPlanter.Services
 				results.Add(item); 
 			}
 
-			return results;
+			return [.. results.OrderBy(s => s.Rank)];
 		}
 	}
 }
