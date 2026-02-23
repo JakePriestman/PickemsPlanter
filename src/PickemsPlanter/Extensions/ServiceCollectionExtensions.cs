@@ -19,30 +19,11 @@ namespace PickemsPlanter.Extensions
 			services.AddJsonSerialization();
 			services.AddHttpClients(config);
 			services.AddTableStorage(config);
-			services.AddEvents();
 
 			services.AddRazorPages();
 			services.AddSingleton<IPickemsService, PickemsService>();
 			services.AddSingleton<ISeedsService, SeedsService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
-		}
-
-		public static void AddEvents(this IServiceCollection services)
-		{
-			string eventsJson = File.ReadAllText("events.json");
-
-			JsonSerializerOptions options = new ()
-			{
-				PropertyNameCaseInsensitive = true,
-			};
-
-			IReadOnlyCollection<Event>? events = JsonSerializer.Deserialize<IReadOnlyCollection<Event>>(eventsJson, options);
-
-			if (events is not null)
-			{
-				List<SelectListItem> eventOptions = [.. events.Select(x => new SelectListItem(x.Name, x.Id))];
-				services.AddSingleton(_ => eventOptions);
-			}
 		}
 
 		public static void AddAuth(this IServiceCollection services)
@@ -60,7 +41,6 @@ namespace PickemsPlanter.Extensions
 			services.AddSingleton<IUserPredictionsCachingService, UserPredictionsCachingService>();
 			services.AddSingleton<ITournamentCachingService, TournamentCachingService>();
 			services.AddHostedService<StartupCachingService>();
-			services.AddSingleton<ISeedsCachingService, SeedsCachingService>();
 		}
 
 		public static void AddJsonSerialization(this IServiceCollection services)
@@ -92,6 +72,7 @@ namespace PickemsPlanter.Extensions
 			services.AddSingleton<IUserEventsTableService, UserEventsTableService>();
 
 			services.AddSingleton<ISeedsTableService, SeedsTableService>();
+			services.AddSingleton<IEventTableService, EventTableService>();
 		}
 	}
 }

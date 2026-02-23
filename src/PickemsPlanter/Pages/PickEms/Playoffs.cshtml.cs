@@ -6,7 +6,7 @@ using PickemsPlanter.Services;
 namespace PickemsPlanter.Pages.PickEms
 {
 
-	public class PlayoffsModel(IPickemsService pickemsService, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor, IUserPredictionsCachingService cachingService) : PageModel
+	public class PlayoffsModel(IPickemsService pickemsService, IHttpContextAccessor httpContextAccessor, IUserPredictionsCachingService cachingService) : PageModel
 	{
 		[BindProperty(SupportsGet = true)]
 		public required string EventId { get; init; }
@@ -25,8 +25,6 @@ namespace PickemsPlanter.Pages.PickEms
 		public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
 		public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
-
-		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
 
 		public async Task<JsonResult> OnGetPicksAllowed()
 		{
@@ -58,7 +56,7 @@ namespace PickemsPlanter.Pages.PickEms
 			return RedirectToPage("/PickEms/Playoffs", new
 			{
 				EventId,
-				EventName = EventOptions.First(e => e.Value == EventId).Text,
+				EventName,
 				SteamId
 			});
 		}
