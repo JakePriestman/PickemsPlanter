@@ -5,15 +5,11 @@ using PickemsPlanter.Models.Event;
 
 namespace PickemsPlanter.Services
 {
-	public class StartupCachingService(IMemoryCache cache, ISteamAPI steamAPI, IWebHostEnvironment env, JsonSerializerOptions options) : IHostedService
+	public class StartupCachingService(IMemoryCache cache, ISteamAPI steamAPI, IEventTableService eventTableService) : IHostedService
 	{
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
-			var filePath = Path.Combine(env.ContentRootPath, "events.json");
-
-			using var stream = File.OpenRead(filePath);
-
-			var events = JsonSerializer.Deserialize<IReadOnlyCollection<Event>>(stream, options);
+			var events = await eventTableService.GetAllEventsAsync();
 
 			foreach (var @event in events!)
 			{

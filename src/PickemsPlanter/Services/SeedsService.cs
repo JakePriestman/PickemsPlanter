@@ -10,11 +10,11 @@ namespace PickemsPlanter.Services
 		Task<List<Seeds>> GetSeedImagesInStageAsync(Stages stage, string eventId);
 	}
 
-	public class SeedsService(ISeedsCachingService seedsCachingService, ITournamentCachingService tournamentCachingService) : ISeedsService
+	public class SeedsService(ISeedsTableService seedsTableService, ITournamentCachingService tournamentCachingService) : ISeedsService
 	{
 		public async Task<List<Seeds>> GetSeedImagesInStageAsync(Stages stage, string eventId)
 		{
-			IReadOnlyCollection<Seed> seeds = await seedsCachingService.GetSeedsInStageAsync(stage, eventId);
+			IReadOnlyCollection<Seed> seeds = await seedsTableService.GetSeedsInStageAsync(stage, eventId);
 
 			IReadOnlyCollection<Team> teams = await tournamentCachingService.GetTournamentTeamsAsync(eventId);
 

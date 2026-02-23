@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PickemsPlanter.Pages
 {
-    public class LogoutModel(List<SelectListItem> eventOptions, IUserPredictionsCachingService cachingService) : PageModel
+    public class LogoutModel(IEventTableService eventTableService, IUserPredictionsCachingService cachingService) : PageModel
     {
-		private List<SelectListItem> EventOptions { get; set; } = eventOptions;
+		private List<SelectListItem> EventOptions { get; set; } = [];
 
 		[BindProperty(SupportsGet = true)]
 		public required string SteamId { get; init; }
 
-		public async Task<IActionResult> OnGet()
+		public async Task<IActionResult> OnGetAsync()
         {
+			await LoadEventsAsync();
+
 			foreach (var @event in EventOptions)
 			{
 				cachingService.EmptyUserCache(SteamId, @event.Value);
@@ -25,5 +27,16 @@ namespace PickemsPlanter.Pages
 
             return Redirect("/Profile/Login");
 		}
-    }
+
+		private async Task LoadEventsAsync()
+		{
+			var events = await eventTableService.GetAllEventsAsync();
+
+			EventOptions = [.. events.Select(x => new SelectListItem
+			{
+				Text = x.Name,
+				Value = x.Id
+			})];
+		}
+	}
 }

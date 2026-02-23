@@ -10,7 +10,8 @@ using System.Security.Claims;
 
 namespace PickemsPlanter.Pages.Profile
 {
-	public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, List<SelectListItem> eventOptions, IHttpContextAccessor httpContextAccessor) : PageModel
+	public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
+		IEventTableService eventTableService) : PageModel
 	{
 		[BindProperty]
 		public string SelectedEvent { get; set; } = string.Empty;
@@ -21,15 +22,19 @@ namespace PickemsPlanter.Pages.Profile
 
 		public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
-		public List<SelectListItem> EventOptions { get; set; } = eventOptions;
+		public List<SelectListItem> EventOptions { get; set; } = [];
 
 		[BindProperty]
-		public Dictionary<string, string> AuthCodes { get; set; } = eventOptions.ToDictionary(key => key.Value, value => string.Empty);
+		public Dictionary<string, string> AuthCodes { get; set; } = [];
 
 		private const string FAKE_AUTH_CODE = "FAKE_AUTH_CODE";
 
 		public async Task OnGetAsync()
 		{
+			await LoadEventsAsync();
+
+			AuthCodes = EventOptions.ToDictionary(key => key.Value, value => string.Empty);
+
 			foreach (var key in AuthCodes.Keys)
 			{
 				bool tableEntityExists = await tableStorageService.ExistsAsync(SteamId, key);
@@ -41,6 +46,7 @@ namespace PickemsPlanter.Pages.Profile
 
 		public async Task<IActionResult> OnPostChooseEvent()
 		{
+			await LoadEventsAsync();
 
 			var eventName = EventOptions.First(x => x.Value == SelectedEvent).Text;
 
@@ -114,6 +120,17 @@ namespace PickemsPlanter.Pages.Profile
 			await cachingService.CacheUserTeamsAsync(SteamId, SelectedEvent);
 
 			memoryCache.Set($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE", authCode);
+		}
+
+		private async Task LoadEventsAsync()
+		{
+			var events = await eventTableService.GetAllEventsAsync();
+
+			EventOptions = [.. events.Select(x => new SelectListItem
+			{
+				Text = x.Name,
+				Value = x.Id
+			})];
 		}
 	}
 }
