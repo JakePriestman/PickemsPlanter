@@ -23,7 +23,7 @@ namespace PickemsPlanter.Services
 
 	public class PickemsService(IUserPredictionsCachingService cachingService, ISteamAPI steamAPI, ITournamentCachingService tournamentCachingService) : IPickemsService
 	{
-		private const string IMAGE_LOCATION = "/Images/teams";
+		private const string BlobContainerUrl = "https://sacs2.blob.core.windows.net/teamimages";
 
 		public async Task<bool> GetStagePicksAllowedAsync(Stages stage, string eventId)
 		{
@@ -45,9 +45,9 @@ namespace PickemsPlanter.Services
 				var logo = teams.FirstOrDefault(x => x.PickId == team.PickId)?.Logo;
 
 				if (logo is null)
-					imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
+					imageUrls.Add($"{BlobContainerUrl}/unknown.png");
 				else
-					imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
+					imageUrls.Add($"{BlobContainerUrl}/{logo}.png");
 			}
 
 			return imageUrls;
@@ -80,9 +80,9 @@ namespace PickemsPlanter.Services
 				var logo = teams.FirstOrDefault(x => x.PickId == pickId)?.Logo;
 
 				if (logo is null)
-					imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
+					imageUrls.Add($"{BlobContainerUrl}/unknown.png");
 				else
-					imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
+					imageUrls.Add($"{BlobContainerUrl}/{logo}.png");
 			}
 
 			return imageUrls;
@@ -128,9 +128,9 @@ namespace PickemsPlanter.Services
 			foreach (var pick in picksInGroup)
 			{
 				if (teamLookup.TryGetValue(pick.Pick, out var team) && team.Logo is not null)
-					imageUrls.Add($"{IMAGE_LOCATION}/{team.Logo}.png");
+					imageUrls.Add($"{BlobContainerUrl}/{team.Logo}.png");
 				else
-					imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
+					imageUrls.Add($"{BlobContainerUrl}/unknown.png");
 			}
 			return imageUrls;
 		}
@@ -159,9 +159,9 @@ namespace PickemsPlanter.Services
 					var logo = teams.FirstOrDefault(x => x.PickId == team.PickId)?.Logo;
 
 					if (logo is null)
-						imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
+						imageUrls.Add($"{BlobContainerUrl}/unknown.png");
 					else
-						imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
+						imageUrls.Add($"{BlobContainerUrl}/{logo}.png");
 				}
 			}
 			return imageUrls;
@@ -189,7 +189,7 @@ namespace PickemsPlanter.Services
 					{
 						var logo = teams.First(x => x.PickId == pick.Pick).Logo;
 
-						imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
+						imageUrls.Add($"{BlobContainerUrl}/{logo}.png");
 					}
 				}
 			}
@@ -224,9 +224,9 @@ namespace PickemsPlanter.Services
 				var logo = teams.FirstOrDefault(x => x.PickId == pickId)?.Logo;
 
 				if (logo is null)
-					imageUrls.Add($"{IMAGE_LOCATION}/unknown.png");
+					imageUrls.Add($"{BlobContainerUrl}/unknown.png");
 				else
-					imageUrls.Add($"{IMAGE_LOCATION}/{logo}.png");
+					imageUrls.Add($"{BlobContainerUrl}/{logo}.png");
 			}
 
 			return imageUrls;

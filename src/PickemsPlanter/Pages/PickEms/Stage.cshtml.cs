@@ -1,7 +1,6 @@
 using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using PickemsPlanter.Models.Event;
 
 namespace PickemsPlanter.Pages.PickEms
