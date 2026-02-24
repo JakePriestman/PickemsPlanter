@@ -56,7 +56,7 @@ module saIpRules 'updateStorageAccountIpRules.bicep' = {
 }
 
 resource keyVaultRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(keyVault.id, resourceGroup().id)
+  name: guid(keyVault.id, resourceGroup().id, appService.id)
   properties: {
     principalId: appService.identity.principalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '4633458b-17de-408a-b874-0445c86b69e6')
@@ -64,7 +64,7 @@ resource keyVaultRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 
 resource storageAccountRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(names.storageAccount, resourceGroup().id)
+  name: guid(names.storageAccount, resourceGroup().id, appService.id)
   properties: {
     principalId: appService.identity.principalId
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3')
