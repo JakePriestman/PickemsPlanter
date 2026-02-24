@@ -4,14 +4,16 @@ param storageAccountName string
 param sku resourceInput<'Microsoft.Storage/storageAccounts@2025-06-01'>.sku
 param kind resourceInput<'Microsoft.Storage/storageAccounts@2025-06-01'>.kind
 
+var existingIps = [ for rule in existingIpRules: rule.value ]
+
+var mergedIps = union(existingIps, appServiceOutboundAddresses)
+
 var newIpRules = [
-  for ip in appServiceOutboundAddresses: {
+  for ip in mergedIps: {
     action: 'Allow'
     value: ip
   }
 ]
-
-var mergedIpRules = union(existingIpRules, newIpRules)
 
 resource storageUpdate 'Microsoft.Storage/storageAccounts@2025-06-01' = {
   name: storageAccountName
@@ -22,7 +24,7 @@ resource storageUpdate 'Microsoft.Storage/storageAccounts@2025-06-01' = {
     networkAcls: {
       defaultAction: 'Deny'
       bypass: 'AzureServices'
-      ipRules: mergedIpRules
+      ipRules: newIpRules
     }
   }
 }
