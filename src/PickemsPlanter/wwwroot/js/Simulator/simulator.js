@@ -202,7 +202,7 @@ function fillInEmptyMatchupsWithUnknown() {
 
 function createTeamImage(imageSource, seed, buchholz) {
     const image = document.createElement("img");
-    image.src = `https://sapickemsplanter.blob.core.windows.net/teamimages/${imageSource}`;
+    image.src = `https://sacs2.blob.core.windows.net/teamimages/${imageSource}`;
     image.className = "team-img";
     image.setAttribute('seed', seed);
     image.setAttribute('buchholz', buchholz);
