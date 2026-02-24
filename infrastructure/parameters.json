@@ -4,9 +4,9 @@
   "parameters": {
     "names": {
         "value": {
-            "keyVault": "kvpickemsplanter",
-            "storageAccount": "sapickemsplanter",
-            "appServicePlan": "asp-pickemsplanter",
+            "keyVault": "kvcs2",
+            "storageAccount": "sacs2",
+            "appServicePlan": "asp-cs2",
             "appService": "app-pickemsplanter"
         }
     }

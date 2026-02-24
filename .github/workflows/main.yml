@@ -8,9 +8,13 @@ on:
       - "README.md"
   workflow_dispatch:
 
+permissions: 
+  id-token: write 
+  contents: read
+
 env:
   AZURE_WEBAPP_NAME: app-pickemsplanter
-  AZURE_RESOURCE_GROUP: rg-pickemsplanter
+  AZURE_RESOURCE_GROUP: rg-cs2
   BICEP_FILE: ./infrastructure/deploy.bicep
   PARAMETERS_FILE: ./infrastructure/parameters.json
   PACKAGE_PATH: ./publish
@@ -65,7 +69,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+         client-id: ${{ secrets.AZURE_CLIENT_ID }} 
+         tenant-id: ${{ vars.AZURE_TENANT_ID }} 
+         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy infrastructure using Bicep
         uses: azure/cli@v2

@@ -1,32 +1,16 @@
 param names namingType
 param location string = resourceGroup().location
 
-resource keyVault 'Microsoft.KeyVault/vaults@2024-11-01' = {
+resource keyVault 'Microsoft.KeyVault/vaults@2024-11-01' existing = {
   name: names.keyVault
-  location: location
-  properties: {
-    sku: {
-      name: 'standard'
-      family: 'A'
-    }
-    tenantId: tenant().tenantId
-    enableRbacAuthorization: true
-  }
 }
-resource appServicePlan 'Microsoft.Web/serverfarms@2024-04-01' = {
+
+resource appServicePlan 'Microsoft.Web/serverfarms@2024-04-01' existing = {
   name: names.appServicePlan
-  location: location
-  sku: {
-    name: 'F1'
-    tier: 'Free'
-    size: 'F1'
-    capacity: 1
-  }
-  properties: {
-    reserved: false
-    perSiteScaling: false
-    maximumElasticWorkerCount: 1
-  }
+}
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
+  name: names.storageAccount
 }
 
 resource appService 'Microsoft.Web/sites@2024-04-01' = {
@@ -57,10 +41,17 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2024-04-01' = {
 
 var appServiceOutboundAddresses = split(appService.properties.outboundIpAddresses, ',')
 
-module storageAccount 'storageAccount.bicep' = {
+var existingIpRules = storageAccount.properties.networkAcls.ipRules
+
+module saIpRules 'updateStorageAccountIpRules.bicep' = {
   params: {
-    allowedIpAddresses: appServiceOutboundAddresses
+    appServiceOutboundAddresses: appServiceOutboundAddresses
+    existingIpRules: existingIpRules
     storageAccountName: names.storageAccount
+    kind: storageAccount.kind
+    sku: {
+      name: storageAccount.sku.name
+    }
   }
 }
 
