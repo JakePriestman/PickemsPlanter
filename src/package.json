@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "bundle:pickems": "esbuild PickemsPlanter/wwwroot/js/PickEms/index.js --bundle --minify --outfile=PickemsPlanter/wwwroot/js/PickEms.bundle.min.js",
-    "bundle:stylingFunctions": "esbuild PickemsPlanter/wwwroot/js/PickEms/stylingFunctions.js --minify --outfile=PickemsPlanter/wwwroot/js/stylingFunctions.min.js",
+    "bundle:stylingFunctions": "esbuild PickemsPlanter/wwwroot/js/stylingFunctions.js --minify --outfile=PickemsPlanter/wwwroot/js/stylingFunctions.min.js",
     "bundle:playoffs": "esbuild PickemsPlanter/wwwroot/js/PickEms/playoffs.js --minify --outfile=PickemsPlanter/wwwroot/js/playoffs.min.js",
     "bundle:stage": "esbuild PickemsPlanter/wwwroot/js/PickEms/stage.js --minify --outfile=PickemsPlanter/wwwroot/js/stage.min.js",
     "bundle:login": "esbuild PickemsPlanter/wwwroot/js/Profile/login.js --minify --outfile=PickemsPlanter/wwwroot/js/login.min.js",
