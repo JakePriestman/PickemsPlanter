@@ -42,7 +42,8 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Install JS dependencies 
-        run: npm install 
+        run: npm install
+        working-directory: src
 
       - name: Bundle and minify JS
         run: npm run bundle:all
