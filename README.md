@@ -24,7 +24,7 @@ The goal is to recreate the experience of predicting match outcomes, tracking pr
 | Frontend | HTML, CSS, JavaScript |
 | Backend | .NET Razor Pages |
 | Cloud / Infra | Azure, Bicep, YAML (for pipelines & IaC) |
-| CI/CD | GitHub Actions + Azure DevOps (YAML pipelines) |
+| CI/CD | GitHub Actions |
 | Hosting | Azure App Service |
 
 ---
@@ -87,14 +87,6 @@ You can deploy PickemsPlanter to **Azure App Service** using deploy.bicep
 ## 📝 License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🧑‍💻 Author
-
-**Jake Priestman**  
-- GitHub: [@JakePriestman](https://github.com/JakePriestman)  
-- Project: [PickemsPlanter](https://github.com/JakePriestman/PickemsPlanter)
 
 ---
 
