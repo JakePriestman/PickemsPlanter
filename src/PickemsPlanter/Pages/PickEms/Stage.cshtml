@@ -123,14 +123,21 @@
             picks: [@Model.Picks]
         };
     </script>
-    <script src="~/js/PickEms/stylingFunctions.js"></script>
-    <script src="~/js/PickEms/utilities.js"></script>
-    <script src="~/js/PickEms/randomPicksFunctions.js"></script>
-    <script src="~/js/PickEms/dropzoneFunctions.js"></script>
-    <script src="~/js/PickEms/dropFunctions.js"></script>
-    <script src="~/js/PickEms/dragFunctions.js"></script>
-    <script src="~/js/PickEms/apiFunctions.js"></script>
-    <script src="~/js/PickEms/stagePlayoffs.js"></script>
-    <script src="~/js/PickEms/stage.js"></script>
+
+    <environment include="Development">
+        <script src="~/js/PickEms/stylingFunctions.js"></script>
+        <script src="~/js/PickEms/utilities.js"></script>
+        <script src="~/js/PickEms/randomPicksFunctions.js"></script>
+        <script src="~/js/PickEms/dropzoneFunctions.js"></script>
+        <script src="~/js/PickEms/dropFunctions.js"></script>
+        <script src="~/js/PickEms/dragFunctions.js"></script>
+        <script src="~/js/PickEms/apiFunctions.js"></script>
+        <script src="~/js/PickEms/stagePlayoffs.js"></script>
+        <script src="~/js/PickEms/stage.js"></script>
+    </environment>
+
+    <environment exclude="Development">
+        <script src="/js/PickEms.bundle.min.js"></script>
+    </environment>
 }
 

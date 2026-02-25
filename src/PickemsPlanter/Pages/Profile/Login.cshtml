@@ -32,6 +32,11 @@
 </footer>
 
 @section Scripts {
+    <environment include="Development">
+        <script src="~/js/Profile/login.js"></script>
+    </environment>
 
-    <script src="~/js/Profile/login.js"></script>
+    <environment exclude="Development">
+        <script src="~/js/Profile.bundle.min.js"></script>
+    </environment>
 }
