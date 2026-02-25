@@ -322,7 +322,7 @@ function createDroppedImage(imageSource) {
     return image;
 }
 
-function getEventSpecificStylesheet() {
+window.getEventSpecificStylesheet = function () {
     var link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = `/css/events/event-${eventId}.css`;

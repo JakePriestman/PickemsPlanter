@@ -1,10 +1,7 @@
-﻿import "./apiFunctions.js";
-import "./dragFunctions.js";
-import "./dropFunctions.js";
-import "./dropzoneFunctions.js";
-import "./playoffs.js";
+﻿import "./utilities.js";
 import "./randomPicksFunctions.js";
-import "./stage.js";
+import "./dropzoneFunctions.js";
+import "./dropFunctions.js";
+import "./dragFunctions.js";
+import "./apiFunctions.js";
 import "./stagePlayoffs.js";
-import "./stylingFunctions.js";
-import "./utilities.js";
