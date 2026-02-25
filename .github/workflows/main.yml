@@ -1,6 +1,13 @@
 name: Build, Test, and Deploy .NET App to Azure
 
 on:
+  pull_request:
+    branches:
+      - "**"
+    paths-ignore:
+      - "README.md"
+      - "LICENSE"
+
   push:
     branches:
       - main

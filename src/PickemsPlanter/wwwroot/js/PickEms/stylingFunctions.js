@@ -160,7 +160,7 @@ function updateSaveButton() {
             }
 
             saveButton.disabled = true;
-            saveButton.innerHTML = '<img src="/Images/lock.png"/> Picks already planted'; //COME BACK HERE FOR ADDING LOCK IMAGE.
+            saveButton.innerHTML = '<img src="/Images/lock.png"/> Picks already planted';
             return;
         }
 
