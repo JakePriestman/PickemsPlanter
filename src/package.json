@@ -4,12 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bundle:pickems": "esbuild wwwroot/js/PickEms/*.js --bundle --minify --outfile=wwwroot/js/PickEms.bundle.min.js",
-    "bundle:profile": "esbuild wwwroot/js/Profile/*.js --bundle --minify --outfile=wwwroot/js/Profile.bundle.min.js",
-    "bundle:simulator": "esbuild wwwroot/js/Simulator/*.js --bundle --minify --outfile=wwwroot/js/Simulator.bundle.min.js",
-    "bundle:error": "esbuild wwwroot/js/error.js --minify --outfile=wwwroot/js/error.min.js",
-    "bundle:site": "esbuild wwwroot/js/site.js --minify --outfile=wwwroot/js/site.min.js",
-    "bundle:all": "npm run bundle:pickems && npm run bundle:profile && npm run bundle:simulator && npm run bundle:error && npm run bundle:site"
+    "bundle:pickems": "esbuild PickemsPlanter/wwwroot/js/PickEms/index.js --bundle --minify --outfile=wwwroot/js/PickEms.bundle.min.js",
+    "bundle:login": "esbuild PickemsPlanter/wwwroot/js/Profile/login.js --minify --outfile=wwwroot/js/login.min.js",
+    "bundle:overview": "esbuild PickemsPlanter/wwwroot/js/Profile/overview.js --minify --outfile=wwwroot/js/overview.min.js",
+    "bundle:simulator": "esbuild PickemsPlanter/wwwroot/js/Simulator/simulator.js --minify --outfile=wwwroot/js/simulator.min.js",
+    "bundle:error": "esbuild PickemsPlanter/wwwroot/js/error.js --minify --outfile=wwwroot/js/error.min.js",
+    "bundle:site": "esbuild PickemsPlanter/wwwroot/js/site.js --minify --outfile=wwwroot/js/site.min.js",
+    "bundle:all": "npm run bundle:pickems && npm run bundle:login && npm run bundle:overview && npm run bundle:simulator && npm run bundle:error && npm run bundle:site"
   },
   "keywords": [],
   "author": "",
