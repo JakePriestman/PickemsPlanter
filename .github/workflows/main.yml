@@ -1,12 +1,19 @@
 name: Build, Test, and Deploy .NET App to Azure
 
 on:
+  pull_request:
+      branches:
+        - "**"
+      paths-ignore:
+        - "README.md"
+        - "LICENSE"
   push:
     branches:
       - main
     paths-ignore:
       - "README.md"
       - "LICENSE"
+ 
   workflow_dispatch:
 
 permissions: 
@@ -53,6 +60,7 @@ jobs:
           path: ${{ env.PACKAGE_PATH }}
 
   deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     needs: build
     environment: production
