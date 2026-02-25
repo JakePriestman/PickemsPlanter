@@ -160,7 +160,7 @@ function updateSaveButton() {
             }
 
             saveButton.disabled = true;
-            saveButton.innerHTML = '<img src="/Images/lock.png"/> Picks already planted'; //COME BACK HERE FOR ADDING LOCK IMAGE.
+            saveButton.innerHTML = '<img src="/Images/lock.png"/> Picks already planted';
             return;
         }
 
@@ -322,7 +322,7 @@ function createDroppedImage(imageSource) {
     return image;
 }
 
-window.getEventSpecificStylesheet = function () {
+function getEventSpecificStylesheet() {
     var link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = `/css/events/event-${eventId}.css`;

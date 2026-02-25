@@ -35,14 +35,7 @@
         </main>
 
         @RenderSection("Scripts", required: false)
-
-        <environment include="Development">
-            <script src="~/js/site.js"></script>
-        </environment>
-
-        <environment exclude="Development">
-            <script src="/js/site.min.js"></script>
-        </environment>
+        <script src="~/js/site.js"></script>
     </body>
 </html>
 

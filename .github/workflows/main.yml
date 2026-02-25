@@ -41,14 +41,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      - name: Install JS dependencies 
-        run: npm install
-        working-directory: src
-
-      - name: Bundle and minify JS
-        run: npm run bundle:all
-        working-directory: src
-
       - name: Restore NuGet packages
         run: dotnet restore src/${{env.PROJECT_NAME}}.sln
 
