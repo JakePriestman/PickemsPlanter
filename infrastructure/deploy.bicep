@@ -39,22 +39,6 @@ resource appServiceConfig 'Microsoft.Web/sites/config@2024-04-01' = {
   }
 }
 
-var appServiceOutboundAddresses = split(appService.properties.outboundIpAddresses, ',')
-
-var existingIpRules = storageAccount.properties.networkAcls.ipRules
-
-module saIpRules 'updateStorageAccountIpRules.bicep' = {
-  params: {
-    appServiceOutboundAddresses: appServiceOutboundAddresses
-    existingIpRules: existingIpRules
-    storageAccountName: names.storageAccount
-    kind: storageAccount.kind
-    sku: {
-      name: storageAccount.sku.name
-    }
-  }
-}
-
 resource keyVaultRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   name: guid(keyVault.id, resourceGroup().id, appService.id)
   properties: {
