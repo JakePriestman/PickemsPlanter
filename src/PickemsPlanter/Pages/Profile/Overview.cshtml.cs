@@ -8,130 +8,129 @@ using PickemsPlanter.Services;
 using System.Net;
 using System.Security.Claims;
 
-namespace PickemsPlanter.Pages.Profile
+namespace PickemsPlanter.Pages.Profile;
+
+public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
+	IEventTableService eventTableService) : PageModel
 {
-	public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
-		IEventTableService eventTableService) : PageModel
+	[BindProperty]
+	public string SelectedEvent { get; set; } = string.Empty;
+
+	public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
+
+	public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
+
+	public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+	public List<SelectListItem> EventOptions { get; set; } = [];
+
+	[BindProperty]
+	public Dictionary<string, string> AuthCodes { get; set; } = [];
+
+	private const string FAKE_AUTH_CODE = "FAKE_AUTH_CODE";
+
+	public async Task OnGetAsync()
 	{
-		[BindProperty]
-		public string SelectedEvent { get; set; } = string.Empty;
+		await LoadEventsAsync();
 
-		public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
+		AuthCodes = EventOptions.ToDictionary(key => key.Value, value => string.Empty);
 
-		public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
-
-		public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
-
-		public List<SelectListItem> EventOptions { get; set; } = [];
-
-		[BindProperty]
-		public Dictionary<string, string> AuthCodes { get; set; } = [];
-
-		private const string FAKE_AUTH_CODE = "FAKE_AUTH_CODE";
-
-		public async Task OnGetAsync()
+		foreach (var key in AuthCodes.Keys)
 		{
-			await LoadEventsAsync();
+			bool tableEntityExists = await tableStorageService.ExistsAsync(SteamId, key);
 
-			AuthCodes = EventOptions.ToDictionary(key => key.Value, value => string.Empty);
+			if (tableEntityExists)
+				AuthCodes[key] = FAKE_AUTH_CODE;
+		}
+	}
 
-			foreach (var key in AuthCodes.Keys)
-			{
-				bool tableEntityExists = await tableStorageService.ExistsAsync(SteamId, key);
+	public async Task<IActionResult> OnPostChooseEvent()
+	{
+		await LoadEventsAsync();
 
-				if (tableEntityExists)
-					AuthCodes[key] = FAKE_AUTH_CODE;
-			}
+		var eventName = EventOptions.First(x => x.Value == SelectedEvent).Text;
+
+		var encodedName = WebUtility.UrlEncode(eventName);
+
+		var authCode = AuthCodes[SelectedEvent];
+
+		if (authCode == FAKE_AUTH_CODE)
+		{
+			UserEvent? userEvent = await tableStorageService.GetEntryIfExistsAsync(SteamId, SelectedEvent);	
+
+			if (userEvent is null)
+				ArgumentNullException.ThrowIfNull(userEvent);
+
+			await CacheOnChooseEvent(userEvent.AuthCode);
 		}
 
-		public async Task<IActionResult> OnPostChooseEvent()
+		else
 		{
-			await LoadEventsAsync();
+			await tableStorageService.CreateUserEventIfNotExistsAsync(SteamId, SelectedEvent, authCode);
 
-			var eventName = EventOptions.First(x => x.Value == SelectedEvent).Text;
+			await CacheOnChooseEvent(authCode);
+		}
 
-			var encodedName = WebUtility.UrlEncode(eventName);
+		var firstActiveStage = await tournamentCachingService.GetFirstActiveStageOrDefaultAsync(SelectedEvent);
 
-			var authCode = AuthCodes[SelectedEvent];
-
-			if (authCode == FAKE_AUTH_CODE)
-			{
-				UserEvent? userEvent = await tableStorageService.GetEntryIfExistsAsync(SteamId, SelectedEvent);	
-
-				if (userEvent is null)
-					ArgumentNullException.ThrowIfNull(userEvent);
-
-				await CacheOnChooseEvent(userEvent.AuthCode);
-			}
-
-			else
-			{
-				await tableStorageService.CreateUserEventIfNotExistsAsync(SteamId, SelectedEvent, authCode);
-
-				await CacheOnChooseEvent(authCode);
-			}
-
-			var firstActiveStage = await tournamentCachingService.GetFirstActiveStageOrDefaultAsync(SelectedEvent);
-
-			if (firstActiveStage == Stages.Playoffs)
-			{
-				return RedirectToPage("/PickEms/Playoffs", new
-				{
-					eventId = SelectedEvent,
-					eventName,
-					SteamId
-				});
-			}
-
-			return RedirectToPage("/PickEms/Stage", new
+		if (firstActiveStage == Stages.Playoffs)
+		{
+			return RedirectToPage("/PickEms/Playoffs", new
 			{
 				eventId = SelectedEvent,
 				eventName,
-				SteamId,
-				stage = firstActiveStage
+				SteamId
 			});
 		}
 
-		public async Task<IActionResult> OnPostDelete()
+		return RedirectToPage("/PickEms/Stage", new
 		{
-			await tableStorageService.DeleteEntityIfExistsAsync(SteamId, SelectedEvent);
+			eventId = SelectedEvent,
+			eventName,
+			SteamId,
+			stage = firstActiveStage
+		});
+	}
 
-			memoryCache.Remove($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE");
-			memoryCache.Remove($"USER_{SteamId}_TOURNAMENT_{SelectedEvent}_PICKS");
+	public async Task<IActionResult> OnPostDelete()
+	{
+		await tableStorageService.DeleteEntityIfExistsAsync(SteamId, SelectedEvent);
 
-			return RedirectToPage("/Profile/Overview");
-		}
+		memoryCache.Remove($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE");
+		memoryCache.Remove($"USER_{SteamId}_TOURNAMENT_{SelectedEvent}_PICKS");
 
-		public async Task<IActionResult?> OnGetAuthCode(string eventId)
+		return RedirectToPage("/Profile/Overview");
+	}
+
+	public async Task<IActionResult?> OnGetAuthCode(string eventId)
+	{
+		var authCode = await tableStorageService.GetEntryIfExistsAsync(SteamId, eventId);
+
+		if (authCode == null) return NotFound();
+
+		return new JsonResult(new { authCode.AuthCode });
+	}
+
+	private async Task CacheOnChooseEvent(string authCode)
+	{
+		cachingService.CacheAuthCode(SelectedEvent, SteamId, authCode);
+
+		await cachingService.RefreshUserPredictionsAsync(SteamId, SelectedEvent);
+
+		await cachingService.CacheUserTeamsAsync(SteamId, SelectedEvent);
+
+		memoryCache.Set($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE", authCode);
+	}
+
+	private async Task LoadEventsAsync()
+	{
+		var events = await eventTableService.GetAllEventsAsync();
+
+		EventOptions = [.. events.Select(x => new SelectListItem
 		{
-			var authCode = await tableStorageService.GetEntryIfExistsAsync(SteamId, eventId);
-
-			if (authCode == null) return NotFound();
-
-			return new JsonResult(new { authCode.AuthCode });
-		}
-
-		private async Task CacheOnChooseEvent(string authCode)
-		{
-			cachingService.CacheAuthCode(SelectedEvent, SteamId, authCode);
-
-			await cachingService.RefreshUserPredictionsAsync(SteamId, SelectedEvent);
-
-			await cachingService.CacheUserTeamsAsync(SteamId, SelectedEvent);
-
-			memoryCache.Set($"TOURNAMENT_{SelectedEvent}_USER_{SteamId}_AUTHCODE", authCode);
-		}
-
-		private async Task LoadEventsAsync()
-		{
-			var events = await eventTableService.GetAllEventsAsync();
-
-			EventOptions = [.. events.Select(x => new SelectListItem
-			{
-				Text = x.Name,
-				Value = x.Id
-			})];
-		}
+			Text = x.Name,
+			Value = x.Id
+		})];
 	}
 }
 

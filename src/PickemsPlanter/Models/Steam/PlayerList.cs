@@ -1,7 +1,6 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class PlayerList
 {
-	public class PlayerList
-	{
-		public IReadOnlyCollection<PlayerSummery> Players { get; init; }
-	}
+	public IReadOnlyCollection<PlayerSummery> Players { get; init; } = [];
 }

@@ -1,7 +1,6 @@
-﻿namespace PickemsPlanter.Models.Configurations
+﻿namespace PickemsPlanter.Models.Configurations;
+
+public class SteamConfig
 {
-	public class SteamConfig
-	{
-		public required string WebApiKey { get; init;}
-	}
+	public required string WebApiKey { get; init;}
 }

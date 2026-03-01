@@ -1,7 +1,6 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class GetResponse<T>
 {
-	public class GetResponse<T>
-	{
-		public T Response { get; set; }
-	}
+	public required T Response { get; set; }
 }

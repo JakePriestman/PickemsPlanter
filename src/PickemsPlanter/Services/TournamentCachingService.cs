@@ -3,85 +3,84 @@ using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
 
-namespace PickemsPlanter.Services
+namespace PickemsPlanter.Services;
+
+public interface ITournamentCachingService
 {
-	public interface ITournamentCachingService
+	Task<Section> GetSectionAsync(string eventId, Stages stage);
+	Task<IReadOnlyCollection<Team>> GetTournamentTeamsAsync(string eventId);
+	Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId);
+	Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId);
+}
+
+public class TournamentCachingService(ISteamAPI steamAPI, IMemoryCache cache) : ITournamentCachingService
+{
+
+	public async Task<Section> GetSectionAsync(string eventId, Stages stage)
 	{
-		Task<Section> GetSectionAsync(string eventId, Stages stage);
-		Task<IReadOnlyCollection<Team>> GetTournamentTeamsAsync(string eventId);
-		Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId);
-		Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId);
+		string key = $"TOURNAMENT_{eventId}_{stage}";
+
+		if (!cache.TryGetValue(key, out Section? section))
+		{
+			var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
+			section = layout.Result.Sections[(int)stage];
+			cache.Set(key, section, TimeSpan.FromMinutes(10));
+		}
+
+		return section!;
 	}
 
-	public class TournamentCachingService(ISteamAPI steamAPI, IMemoryCache cache) : ITournamentCachingService
+	public async Task<IReadOnlyCollection<Team>> GetTournamentTeamsAsync(string eventId)
 	{
+		string key = $"TOURNAMENT_{eventId}_TEAMS";
 
-		public async Task<Section> GetSectionAsync(string eventId, Stages stage)
+		if (!cache.TryGetValue(key, out IReadOnlyCollection<Team>? teams) || teams is null)
 		{
-			string key = $"TOURNAMENT_{eventId}_{stage}";
-
-			if (!cache.TryGetValue(key, out Section? section))
-			{
-				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
-				section = layout.Result.Sections[(int)stage];
-				cache.Set(key, section, TimeSpan.FromMinutes(10));
-			}
-
-			return section!;
+			var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
+			teams = layout.Result.Teams;
+			cache.Set(key, teams);
 		}
 
-		public async Task<IReadOnlyCollection<Team>> GetTournamentTeamsAsync(string eventId)
+		return teams;
+	}
+
+	public async Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId)
+	{
+		string key = $"TOURNAMENT_{eventId}_{Stages.Playoffs}";
+
+		if (!cache.TryGetValue(key, out IReadOnlyCollection<Section>? sections))
 		{
-			string key = $"TOURNAMENT_{eventId}_TEAMS";
+			var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
 
-			if (!cache.TryGetValue(key, out IReadOnlyCollection<Team>? teams) || teams is null)
-			{
-				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
-				teams = layout.Result.Teams;
-				cache.Set(key, teams);
-			}
+			sections = [.. layout.Result.Sections.Skip(3)];
 
-			return teams;
+			cache.Set(key, sections, TimeSpan.FromMinutes(10));
 		}
 
-		public async Task<IReadOnlyCollection<Section>> GetPlayoffsAsync(string eventId)
+		return sections!;
+	}
+
+	public async Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId)
+	{
+		for (int i = 0; i < 4; i++)
 		{
-			string key = $"TOURNAMENT_{eventId}_{Stages.Playoffs}";
-
-			if (!cache.TryGetValue(key, out IReadOnlyCollection<Section>? sections))
+			if (i != 3)
 			{
-				var layout = await steamAPI.GetTournamentLayoutAsync(eventId);
+				var stage = (Stages)i;
+				var section = await GetSectionAsync(eventId, stage);
 
-				sections = [.. layout.Result.Sections.Skip(3)];
+				if (section.Groups.Any(x => x.PicksAllowed))
+					return stage;
 
-				cache.Set(key, sections, TimeSpan.FromMinutes(10));
+				continue;
 			}
 
-			return sections!;
+			var playoffs = await GetPlayoffsAsync(eventId);
+
+			if (playoffs.Any(x => x.Groups.Any(x => x.PicksAllowed)))
+				return Stages.Playoffs;
 		}
 
-		public async Task<Stages> GetFirstActiveStageOrDefaultAsync(string eventId)
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				if (i != 3)
-				{
-					var stage = (Stages)i;
-					var section = await GetSectionAsync(eventId, stage);
-
-					if (section.Groups.Any(x => x.PicksAllowed))
-						return stage;
-
-					continue;
-				}
-
-				var playoffs = await GetPlayoffsAsync(eventId);
-
-				if (playoffs.Any(x => x.Groups.Any(x => x.PicksAllowed)))
-					return Stages.Playoffs;
-			}
-
-			return Stages.Stage1;
-		}
+		return Stages.Stage1;
 	}
 }

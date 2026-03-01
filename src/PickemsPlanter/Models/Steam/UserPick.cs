@@ -1,9 +1,8 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class UserPick
 {
-	public class UserPick
-	{
-		public int GroupId { get; set; }
-		public int Index { get; set; }
-		public int Pick { get; set; }
-	}
+	public int GroupId { get; set; }
+	public int Index { get; set; }
+	public int Pick { get; set; }
 }

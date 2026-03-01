@@ -1,8 +1,7 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class Pick
 {
-	public class Pick
-	{
-		public int Index { get; init; }
-		public IEnumerable<int> PickIds { get; init; }
-	}
+	public int Index { get; init; }
+	public IEnumerable<int> PickIds { get; init; } = [];
 }

@@ -1,27 +1,26 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace PickemsPlanter.Pages
+namespace PickemsPlanter.Pages;
+
+public class ErrorModel(IHttpContextAccessor httpContextAccessor) : PageModel
 {
-    public class ErrorModel(IHttpContextAccessor httpContextAccessor) : PageModel
-    {
-		public string? RequestId { get; set; }
+	public string? RequestId { get; set; }
 
-		public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+	public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
-		private bool? IsAuthenticated => httpContextAccessor?.HttpContext?.User?.Identity?.IsAuthenticated;
+	private bool? IsAuthenticated => httpContextAccessor?.HttpContext?.User?.Identity?.IsAuthenticated;
 
-		public void OnGet()
-		{
-			RequestId = HttpContext.TraceIdentifier;
-		}
+	public void OnGet()
+	{
+		RequestId = HttpContext.TraceIdentifier;
+	}
 
-		public IActionResult OnPostOverview()
-		{
-			if (IsAuthenticated is false)
-				return RedirectToPage("/Profile/Login");
-			else 
-				return RedirectToPage("/Profile/Overview");
-		}
+	public IActionResult OnPostOverview()
+	{
+		if (IsAuthenticated is false)
+			return RedirectToPage("/Profile/Login");
+		else 
+			return RedirectToPage("/Profile/Overview");
 	}
 }
