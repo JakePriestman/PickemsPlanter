@@ -1,7 +1,6 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class UserPredictions
 {
-	public class UserPredictions
-	{
-		public List<UserPick> Picks { get; set; }
-	}
+	public List<UserPick> Picks { get; set; } = [];
 }

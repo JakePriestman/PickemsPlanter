@@ -1,7 +1,6 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class TournamentItems
 {
-	public class TournamentItems
-	{
-		public IEnumerable<Team> Items { get; set; }
-	}
+	public IEnumerable<Team> Items { get; set; } = [];
 }

@@ -5,38 +5,37 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace PickemsPlanter.Pages
+namespace PickemsPlanter.Pages;
+
+public class LogoutModel(IEventTableService eventTableService, IUserPredictionsCachingService cachingService) : PageModel
 {
-    public class LogoutModel(IEventTableService eventTableService, IUserPredictionsCachingService cachingService) : PageModel
-    {
-		private List<SelectListItem> EventOptions { get; set; } = [];
+	private List<SelectListItem> EventOptions { get; set; } = [];
 
-		[BindProperty(SupportsGet = true)]
-		public required string SteamId { get; init; }
+	[BindProperty(SupportsGet = true)]
+	public required string SteamId { get; init; }
 
-		public async Task<IActionResult> OnGetAsync()
+	public async Task<IActionResult> OnGetAsync()
         {
-			await LoadEventsAsync();
+		await LoadEventsAsync();
 
-			foreach (var @event in EventOptions)
-			{
-				cachingService.EmptyUserCache(SteamId, @event.Value);
-			}
+		foreach (var @event in EventOptions)
+		{
+			cachingService.EmptyUserCache(SteamId, @event.Value);
+		}
 
-			await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+		await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return Redirect("/Profile/Login");
-		}
+	}
 
-		private async Task LoadEventsAsync()
+	private async Task LoadEventsAsync()
+	{
+		var events = await eventTableService.GetAllEventsAsync();
+
+		EventOptions = [.. events.Select(x => new SelectListItem
 		{
-			var events = await eventTableService.GetAllEventsAsync();
-
-			EventOptions = [.. events.Select(x => new SelectListItem
-			{
-				Text = x.Name,
-				Value = x.Id
-			})];
-		}
+			Text = x.Name,
+			Value = x.Id
+		})];
 	}
 }

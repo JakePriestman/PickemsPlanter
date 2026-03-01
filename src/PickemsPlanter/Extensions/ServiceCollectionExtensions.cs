@@ -1,18 +1,18 @@
 ﻿using Azure.Data.Tables;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Configurations;
-using PickemsPlanter.Models.Event;
 using PickemsPlanter.Services;
 using System.Text.Json;
 
-namespace PickemsPlanter.Extensions
+namespace PickemsPlanter.Extensions;
+
+public static class ServiceCollectionExtensions
 {
-	public static class ServiceCollectionExtensions
+	extension (IServiceCollection services)
 	{
-		public static void ConfigureServices(this IServiceCollection services, IConfigurationRoot config)
+		public void ConfigureServices(IConfiguration config)
 		{
 			services.AddAuth();
 			services.AddCachingServices();
@@ -25,8 +25,7 @@ namespace PickemsPlanter.Extensions
 			services.AddSingleton<ISeedsService, SeedsService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
 		}
-
-		public static void AddAuth(this IServiceCollection services)
+		public void AddAuth()
 		{
 			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 					.AddCookie(options =>
@@ -35,7 +34,7 @@ namespace PickemsPlanter.Extensions
 					});
 		}
 
-		public static void AddCachingServices(this IServiceCollection services)
+		public void AddCachingServices()
 		{
 			services.AddMemoryCache();
 			services.AddSingleton<IUserPredictionsCachingService, UserPredictionsCachingService>();
@@ -43,7 +42,7 @@ namespace PickemsPlanter.Extensions
 			services.AddHostedService<StartupCachingService>();
 		}
 
-		public static void AddJsonSerialization(this IServiceCollection services)
+		public void AddJsonSerialization()
 		{
 			services.AddSingleton<JsonSerializerOptions>(_ => new()
 			{
@@ -51,7 +50,7 @@ namespace PickemsPlanter.Extensions
 			});
 		}
 
-		public static void AddHttpClients(this IServiceCollection services, IConfigurationRoot config)
+		public void AddHttpClients(IConfiguration config)
 		{
 			string? steamAPIURL = config["Steam:APIURL"];
 
@@ -62,7 +61,7 @@ namespace PickemsPlanter.Extensions
 			services.AddHttpClient<ILoginAPI, LoginAPI>(opt => opt.BaseAddress = new Uri(steamOpenIDURL!));
 		}
 
-		public static void AddTableStorage(this IServiceCollection services, IConfigurationRoot config)
+		public void AddTableStorage(IConfiguration config)
 		{
 			string? tableStorageUrl = config["TableStorage:URL"];
 

@@ -1,0 +1,816 @@
+{
+  "result": {
+    "event": 25,
+    "name": "StarLadder Budapest 2025 CS2 Major Championship",
+    "sections": [
+      {
+        "sectionid": 99,
+        "name": "Stage I | 1",
+        "groups": [
+          {
+            "groupid": 261,
+            "name": "Stage I | Stage I",
+            "points_per_pick": 1,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 140
+              },
+              {
+                "pickid": 132
+              },
+              {
+                "pickid": 135
+              },
+              {
+                "pickid": 6
+              },
+              {
+                "pickid": 1
+              },
+              {
+                "pickid": 142
+              },
+              {
+                "pickid": 113
+              },
+              {
+                "pickid": 61
+              },
+              {
+                "pickid": 87
+              },
+              {
+                "pickid": 121
+              },
+              {
+                "pickid": 126
+              },
+              {
+                "pickid": 143
+              },
+              {
+                "pickid": 144
+              },
+              {
+                "pickid": 115
+              },
+              {
+                "pickid": 127
+              },
+              {
+                "pickid": 131
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  132,
+                  140
+                ]
+              },
+              {
+                "index": 1,
+                "pickids": [
+                  132,
+                  140
+                ]
+              },
+              {
+                "index": 2,
+                "pickids": [
+                  1,
+                  6,
+                  61,
+                  113,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 3,
+                "pickids": [
+                  1,
+                  6,
+                  61,
+                  113,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 4,
+                "pickids": [
+                  1,
+                  6,
+                  61,
+                  113,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 5,
+                "pickids": [
+                  1,
+                  6,
+                  61,
+                  113,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 6,
+                "pickids": [
+                  1,
+                  6,
+                  61,
+                  113,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 7,
+                "pickids": [
+                  1,
+                  6,
+                  61,
+                  113,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 8,
+                "pickids": [
+                  127,
+                  131
+                ]
+              },
+              {
+                "index": 9,
+                "pickids": [
+                  127,
+                  131
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionid": 100,
+        "name": "Stage II | 2",
+        "groups": [
+          {
+            "groupid": 262,
+            "name": "Stage II | Stage II",
+            "points_per_pick": 2,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 12
+              },
+              {
+                "pickid": 61
+              },
+              {
+                "pickid": 135
+              },
+              {
+                "pickid": 113
+              },
+              {
+                "pickid": 142
+              },
+              {
+                "pickid": 48
+              },
+              {
+                "pickid": 133
+              },
+              {
+                "pickid": 28
+              },
+              {
+                "pickid": 1
+              },
+              {
+                "pickid": 140
+              },
+              {
+                "pickid": 60
+              },
+              {
+                "pickid": 6
+              },
+              {
+                "pickid": 134
+              },
+              {
+                "pickid": 74
+              },
+              {
+                "pickid": 80
+              },
+              {
+                "pickid": 132
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  12,
+                  61
+                ]
+              },
+              {
+                "index": 1,
+                "pickids": [
+                  12,
+                  61
+                ]
+              },
+              {
+                "index": 2,
+                "pickids": [
+                  28,
+                  48,
+                  113,
+                  133,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 3,
+                "pickids": [
+                  28,
+                  48,
+                  113,
+                  133,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 4,
+                "pickids": [
+                  28,
+                  48,
+                  113,
+                  133,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 5,
+                "pickids": [
+                  28,
+                  48,
+                  113,
+                  133,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 6,
+                "pickids": [
+                  28,
+                  48,
+                  113,
+                  133,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 7,
+                "pickids": [
+                  28,
+                  48,
+                  113,
+                  133,
+                  135,
+                  142
+                ]
+              },
+              {
+                "index": 8,
+                "pickids": [
+                  80,
+                  132
+                ]
+              },
+              {
+                "index": 9,
+                "pickids": [
+                  80,
+                  132
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionid": 101,
+        "name": "Stage III | 3",
+        "groups": [
+          {
+            "groupid": 263,
+            "name": "Stage III | Stage III",
+            "points_per_pick": 3,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 81
+              },
+              {
+                "pickid": 85
+              },
+              {
+                "pickid": 106
+              },
+              {
+                "pickid": 89
+              },
+              {
+                "pickid": 122
+              },
+              {
+                "pickid": 61
+              },
+              {
+                "pickid": 12
+              },
+              {
+                "pickid": 139
+              },
+              {
+                "pickid": 135
+              },
+              {
+                "pickid": 59
+              },
+              {
+                "pickid": 133
+              },
+              {
+                "pickid": 113
+              },
+              {
+                "pickid": 28
+              },
+              {
+                "pickid": 102
+              },
+              {
+                "pickid": 48
+              },
+              {
+                "pickid": 142
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  81,
+                  85
+                ]
+              },
+              {
+                "index": 1,
+                "pickids": [
+                  81,
+                  85
+                ]
+              },
+              {
+                "index": 2,
+                "pickids": [
+                  12,
+                  61,
+                  89,
+                  106,
+                  122,
+                  139
+                ]
+              },
+              {
+                "index": 3,
+                "pickids": [
+                  12,
+                  61,
+                  89,
+                  106,
+                  122,
+                  139
+                ]
+              },
+              {
+                "index": 4,
+                "pickids": [
+                  12,
+                  61,
+                  89,
+                  106,
+                  122,
+                  139
+                ]
+              },
+              {
+                "index": 5,
+                "pickids": [
+                  12,
+                  61,
+                  89,
+                  106,
+                  122,
+                  139
+                ]
+              },
+              {
+                "index": 6,
+                "pickids": [
+                  12,
+                  61,
+                  89,
+                  106,
+                  122,
+                  139
+                ]
+              },
+              {
+                "index": 7,
+                "pickids": [
+                  12,
+                  61,
+                  89,
+                  106,
+                  122,
+                  139
+                ]
+              },
+              {
+                "index": 8,
+                "pickids": [
+                  48,
+                  142
+                ]
+              },
+              {
+                "index": 9,
+                "pickids": [
+                  48,
+                  142
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionid": 102,
+        "name": "Quarterfinals | 4",
+        "groups": [
+          {
+            "groupid": 264,
+            "name": "Quarterfinal | Match 1",
+            "points_per_pick": 12,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 81
+              },
+              {
+                "pickid": 139
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  81
+                ]
+              }
+            ]
+          },
+          {
+            "groupid": 265,
+            "name": "Quarterfinal | Match 2",
+            "points_per_pick": 12,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 89
+              },
+              {
+                "pickid": 122
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  89
+                ]
+              }
+            ]
+          },
+          {
+            "groupid": 266,
+            "name": "Quarterfinal | Match 3",
+            "points_per_pick": 12,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 85
+              },
+              {
+                "pickid": 12
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  12
+                ]
+              }
+            ]
+          },
+          {
+            "groupid": 267,
+            "name": "Quarterfinal | Match 4",
+            "points_per_pick": 12,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 106
+              },
+              {
+                "pickid": 61
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  61
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionid": 103,
+        "name": "Semifinals | 5",
+        "groups": [
+          {
+            "groupid": 268,
+            "name": "Semifinal | Match 1",
+            "points_per_pick": 10,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 81
+              },
+              {
+                "pickid": 89
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  89
+                ]
+              }
+            ]
+          },
+          {
+            "groupid": 269,
+            "name": "Semifinal | Match 2",
+            "points_per_pick": 10,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 12
+              },
+              {
+                "pickid": 61
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  61
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "sectionid": 104,
+        "name": "Grand Final | 6",
+        "groups": [
+          {
+            "groupid": 270,
+            "name": "GrandFinal | Final",
+            "points_per_pick": 7,
+            "picks_allowed": false,
+            "teams": [
+              {
+                "pickid": 89
+              },
+              {
+                "pickid": 61
+              }
+            ],
+            "picks": [
+              {
+                "index": 0,
+                "pickids": [
+                  89
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "teams": [
+      {
+        "pickid": 1,
+        "logo": "nip",
+        "name": "Ninjas in Pyjamas"
+      },
+      {
+        "pickid": 6,
+        "logo": "fntc",
+        "name": "Fnatic"
+      },
+      {
+        "pickid": 12,
+        "logo": "navi",
+        "name": "Natus Vincere"
+      },
+      {
+        "pickid": 28,
+        "logo": "3dm",
+        "name": "3DMAX"
+      },
+      {
+        "pickid": 48,
+        "logo": "liq",
+        "name": "Team Liquid"
+      },
+      {
+        "pickid": 59,
+        "logo": "g2",
+        "name": "G2 Esports"
+      },
+      {
+        "pickid": 60,
+        "logo": "astr",
+        "name": "Astralis"
+      },
+      {
+        "pickid": 61,
+        "logo": "faze",
+        "name": "FaZe Clan"
+      },
+      {
+        "pickid": 74,
+        "logo": "tyl",
+        "name": "Tyloo"
+      },
+      {
+        "pickid": 80,
+        "logo": "mibr",
+        "name": "MIBR"
+      },
+      {
+        "pickid": 81,
+        "logo": "spir",
+        "name": "Team Spirit"
+      },
+      {
+        "pickid": 85,
+        "logo": "furi",
+        "name": "FURIA"
+      },
+      {
+        "pickid": 87,
+        "logo": "nrg",
+        "name": "NRG"
+      },
+      {
+        "pickid": 89,
+        "logo": "vita",
+        "name": "Vitality"
+      },
+      {
+        "pickid": 102,
+        "logo": "pain",
+        "name": "paiN Gaming"
+      },
+      {
+        "pickid": 106,
+        "logo": "mouz",
+        "name": "MOUZ"
+      },
+      {
+        "pickid": 113,
+        "logo": "imp",
+        "name": "Imperial Esports"
+      },
+      {
+        "pickid": 115,
+        "logo": "gl",
+        "name": "GamerLegion"
+      },
+      {
+        "pickid": 121,
+        "logo": "flux",
+        "name": "Fluxo"
+      },
+      {
+        "pickid": 122,
+        "logo": "mngz",
+        "name": "The MongolZ"
+      },
+      {
+        "pickid": 126,
+        "logo": "lgcy",
+        "name": "Legacy"
+      },
+      {
+        "pickid": 127,
+        "logo": "lynn",
+        "name": "Lynn Vision"
+      },
+      {
+        "pickid": 131,
+        "logo": "ratm",
+        "name": "Rare Atom"
+      },
+      {
+        "pickid": 132,
+        "logo": "fq",
+        "name": "Flyquest"
+      },
+      {
+        "pickid": 133,
+        "logo": "psnu",
+        "name": "Passion UA"
+      },
+      {
+        "pickid": 134,
+        "logo": "aura",
+        "name": "Aurora"
+      },
+      {
+        "pickid": 135,
+        "logo": "b8",
+        "name": "B8"
+      },
+      {
+        "pickid": 139,
+        "logo": "fal",
+        "name": "Falcons"
+      },
+      {
+        "pickid": 140,
+        "logo": "m80",
+        "name": "M80"
+      },
+      {
+        "pickid": 142,
+        "logo": "pari",
+        "name": "Parivision"
+      },
+      {
+        "pickid": 143,
+        "logo": "huns",
+        "name": "The Huns"
+      },
+      {
+        "pickid": 144,
+        "logo": "redc",
+        "name": "RED Canids"
+      }
+    ]
+  }
+}

@@ -1,7 +1,6 @@
-﻿namespace PickemsPlanter.Models.Steam
+﻿namespace PickemsPlanter.Models.Steam;
+
+public class GetResult<T>
 {
-	public class GetResult<T>
-	{
-		public T Result { get; init; }
-	}
+	public required T Result { get; init; }
 }
