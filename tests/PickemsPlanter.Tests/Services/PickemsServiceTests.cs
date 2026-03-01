@@ -413,7 +413,6 @@ public class PickemsServiceTests
 	{
 		//Arrange
 		string eventId = "25";
-		Stages stage = Stages.Stage1;
 
 		List<Team> teams =
 		[
