@@ -22,7 +22,7 @@ public class SeedsService(ISeedsTableService seedsTableService, ITournamentCachi
 
 		foreach (var seed in seeds)
 		{
-			var logo = teams.FirstOrDefault(x => x.Name.Equals(seed.RowKey, StringComparison.CurrentCultureIgnoreCase))?.Logo;
+			var logo = teams.FirstOrDefault(x => x.Name!.Equals(seed.RowKey, StringComparison.CurrentCultureIgnoreCase))?.Logo;
 
 			var imageUrl = string.Empty;
 
