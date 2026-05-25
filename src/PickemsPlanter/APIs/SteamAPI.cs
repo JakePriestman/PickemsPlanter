@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Extensions.Options;
 using PickemsPlanter.Models.Configurations;
 using PickemsPlanter.Models.Steam;
 using System.Text.Json;
@@ -49,6 +50,11 @@ public class SteamAPI(HttpClient httpClient, JsonSerializerOptions serializerOpt
 		HttpRequestMessage request = new(HttpMethod.Get, $"/ICSGOTournaments_730/GetTournamentLayout/v1?key={_config.WebApiKey}&event={eventId}");
 
 		var response = await httpClient.SendAsync(request);
+
+		if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+		{
+			throw new KeyNotFoundException("Tournament layout not found for the given event ID.");
+		}
 
 		response.EnsureSuccessStatusCode();
 
