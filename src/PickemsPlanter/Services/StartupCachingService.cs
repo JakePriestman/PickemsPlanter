@@ -13,21 +13,28 @@ public class StartupCachingService(IMemoryCache cache, ISteamAPI steamAPI, IEven
 
 		foreach (var @event in events!)
 		{
-			var tournamentLayout = await steamAPI.GetTournamentLayoutAsync(@event.Id);
-
-			if (tournamentLayout.Result is not null)
+			try
 			{
-				cache.Set($"TOURNAMENT_{@event.Id}_TEAMS", tournamentLayout.Result.Teams);
+				var tournamentLayout = await steamAPI.GetTournamentLayoutAsync(@event.Id);
 
-				cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Stage1}", tournamentLayout.Result.Sections[(int)Stages.Stage1]);
-				cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Stage2}", tournamentLayout.Result.Sections[(int)Stages.Stage2]);
-				cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Stage3}", tournamentLayout.Result.Sections[(int)Stages.Stage3]);
+				if (tournamentLayout.Result is not null)
+				{
+					cache.Set($"TOURNAMENT_{@event.Id}_TEAMS", tournamentLayout.Result.Teams);
 
-				tournamentLayout.Result.Sections.Remove(tournamentLayout.Result.Sections[0]);
-				tournamentLayout.Result.Sections.Remove(tournamentLayout.Result.Sections[0]);
-				tournamentLayout.Result.Sections.Remove(tournamentLayout.Result.Sections[0]);
+					cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Stage1}", tournamentLayout.Result.Sections[(int)Stages.Stage1]);
+					cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Stage2}", tournamentLayout.Result.Sections[(int)Stages.Stage2]);
+					cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Stage3}", tournamentLayout.Result.Sections[(int)Stages.Stage3]);
 
-				cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Playoffs}", tournamentLayout.Result.Sections);
+					tournamentLayout.Result.Sections.Remove(tournamentLayout.Result.Sections[0]);
+					tournamentLayout.Result.Sections.Remove(tournamentLayout.Result.Sections[0]);
+					tournamentLayout.Result.Sections.Remove(tournamentLayout.Result.Sections[0]);
+
+					cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Playoffs}", tournamentLayout.Result.Sections);
+				}
+			}
+			catch (KeyNotFoundException ex)
+			{
+				continue;
 			}
 		}
 	}
