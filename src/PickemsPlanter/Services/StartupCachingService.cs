@@ -32,7 +32,7 @@ public class StartupCachingService(IMemoryCache cache, ISteamAPI steamAPI, IEven
 					cache.Set($"TOURNAMENT_{@event.Id}_{Stages.Playoffs}", tournamentLayout.Result.Sections);
 				}
 			}
-			catch (KeyNotFoundException ex)
+			catch (KeyNotFoundException)
 			{
 				continue;
 			}
