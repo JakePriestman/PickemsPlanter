@@ -7,5 +7,5 @@ public class Event
 
 	public required string Name { get; init; }
 
-	public required bool Disabled { get; init; }
+	public required bool Disabled { get; set; }
 }
