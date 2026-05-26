@@ -132,20 +132,28 @@
             break;
         case "big":
             dropzone.title = "BIG";
+            break;
         case "sin":
             dropzone.title = "SINNERS";
+            break;
         case "shrk":
             dropzone.title = "Sharks";
+            break;
         case "gaim":
             dropzone.title = "Gamin Gladiators";
+            break;
         case "thun":
             dropzone.title = "THUNDER dOWNUNDER";
+            break;
         case "mont":
             dropzone.title = "Monte";
+            break;
         case "nine":
             dropzone.title = "9z";
+            break;
         case "fut":
             dropzone.title = "FUT";
+            break;
     }
 }
 
