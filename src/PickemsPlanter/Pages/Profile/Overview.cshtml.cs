@@ -130,7 +130,7 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 		{
 			Text = x.Name,
 			Value = x.Id
-		})];
+		}).Where(x => !x.Disbled)];
 	}
 }
 
