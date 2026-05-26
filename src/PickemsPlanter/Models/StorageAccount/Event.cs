@@ -9,5 +9,6 @@ public class Event: ITableEntity
 	public required string RowKey { get; set; }
 	public DateTimeOffset? Timestamp { get; set; }
 	public required string Name { get; init; }
+	public required bool Disabled { get; set; }
 	public ETag ETag { get; set; }
 }
