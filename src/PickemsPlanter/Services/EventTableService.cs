@@ -7,7 +7,7 @@ namespace PickemsPlanter.Services;
 public interface IEventTableService
 {
 	Task<IReadOnlyCollection<Event>> GetAllEventsAsync();
-	Task UpsertEventAsync(string eventId, string eventName);
+	Task UpsertEventAsync(string eventId, string eventName, bool disabled);
 }
 
 public class EventTableService(TableServiceClient tableServiceClient) : IEventTableService
@@ -25,7 +25,8 @@ public class EventTableService(TableServiceClient tableServiceClient) : IEventTa
 			var eventModel = new Event
 			{
 				Id = item.RowKey,
-				Name = item.Name
+				Name = item.Name,
+				Disabled = item.Disabled
 			};
 
 			results.Add(eventModel);
@@ -34,13 +35,14 @@ public class EventTableService(TableServiceClient tableServiceClient) : IEventTa
 		return results;
 	}
 
-	public async Task UpsertEventAsync(string eventId, string eventName)
+	public async Task UpsertEventAsync(string eventId, string eventName, bool disabled)
 	{
 		Models.StorageAccount.Event newEvent = new()
 		{
 			PartitionKey = "Event",
 			RowKey = eventId,
-			Name = eventName
+			Name = eventName,
+			Disabled = disabled
 		};
 
 		await _client.UpsertEntityAsync(newEvent);

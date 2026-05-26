@@ -27,7 +27,7 @@ public class StartupCachingServiceTests
 		//Arrange
 		List<Event> events =
 		[
-			new () { Id = "25", Name = "Event 1" },
+			new () { Id = "25", Name = "Event 1", Disabled = false },
 		];
 
 		_eventTableService.GetAllEventsAsync().Returns(events);
