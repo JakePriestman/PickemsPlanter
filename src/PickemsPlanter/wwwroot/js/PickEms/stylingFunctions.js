@@ -130,6 +130,22 @@
         case "wcrd":
             dropzone.title = "Wildcard";
             break;
+        case "big":
+            dropzone.title = "BIG";
+        case "sin":
+            dropzone.title = "SINNERS";
+        case "shrk":
+            dropzone.title = "Sharks";
+        case "gaim":
+            dropzone.title = "Gamin Gladiators";
+        case "thun":
+            dropzone.title = "THUNDER dOWNUNDER";
+        case "mont":
+            dropzone.title = "Monte";
+        case "nine":
+            dropzone.title = "9z";
+        case "fut":
+            dropzone.title = "FUT";
     }
 }
 
