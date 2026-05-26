@@ -126,11 +126,11 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 	{
 		var events = await eventTableService.GetAllEventsAsync();
 
-		EventOptions = [.. events.Select(x => new SelectListItem
+		EventOptions = [.. events.Where(x => !x.Disbled).Select(x => new SelectListItem
 		{
 			Text = x.Name,
 			Value = x.Id
-		}).Where(x => !x.Disbled)];
+		})];
 	}
 }
 
