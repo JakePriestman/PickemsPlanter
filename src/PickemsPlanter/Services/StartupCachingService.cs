@@ -15,6 +15,8 @@ public class StartupCachingService(IMemoryCache cache, ISteamAPI steamAPI, IEven
 		{
 			try
 			{
+				if (@event.Disabled) continue;
+			
 				var tournamentLayout = await steamAPI.GetTournamentLayoutAsync(@event.Id);
 
 				if (tournamentLayout.Result is not null)
@@ -34,6 +36,7 @@ public class StartupCachingService(IMemoryCache cache, ISteamAPI steamAPI, IEven
 			}
 			catch (KeyNotFoundException)
 			{
+				await eventTableService.UpsertEventAsync(@event.Id, @event.Name, true);
 				continue;
 			}
 		}
