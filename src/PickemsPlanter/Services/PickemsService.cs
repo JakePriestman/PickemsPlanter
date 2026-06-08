@@ -49,8 +49,8 @@ public class PickemsService(IUserPredictionsCachingService cachingService, IStea
 			else
 				imageUrls.Add($"{BlobContainerUrl}/{logo}.png");
 		}
-
-		return imageUrls;
+		
+		return imageUrls.Count > 16 ? imageUrls.Take(8).ToList() : imageUrls;
 	}
 
 	public async Task<List<string>> GetStageResultsAsync(Stages stage, string eventId)
