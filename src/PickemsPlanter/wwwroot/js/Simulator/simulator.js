@@ -18,8 +18,6 @@ const sixMatchupPriorities = [
 
 let { eventId, stage } = window.pageData;
 
-document.addEventListener("DOMContentLoaded", getEventSpecificStylesheet);
-
 document.addEventListener("DOMContentLoaded", LoadAsync);
 
 const resetButtons = document.querySelectorAll('.reset-button');

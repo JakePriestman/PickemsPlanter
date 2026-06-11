@@ -5,6 +5,7 @@
     --foreground-colour: #434C5E;
     --navbar-colour: #22252C;
     --submit-colour: #40703C;
+    --advance-colour: #5e8b4b;
     --delete-colour: #b06161;
     --disabled-colour: #808080;
     --shadow-s: inset 0 1px 2px #171A1E30, 0 1px 2px #0E101230, 0 2px 4px #0E101215;
@@ -237,21 +238,24 @@ footer p a {
     font-family: inherit;
 }
 
-@media screen and (max-width: 990px) {
+@media screen and (max-width: 1024px) {
     .navbar {
         height: 5%;
     }
 
-    .logout-text{
+    .logout-text,
+    .picks-not-allowed-text {
         font-size: 10px;
     }
 
     .confirm-logout-button,
-    .cancel-logout-button {
+    .cancel-logout-button,
+    .logout-buttons button,
+    .logout-buttons a,
+    .ok-button {
         font-size: 10px;
     }
 
-    
     footer {
         width: 50%;
     }
@@ -261,29 +265,55 @@ footer p a {
     }
 }
 
-@media screen and (max-width: 990px) {
-    .navbar {
-        height: 5%;
-    }
 
-    .logout-text,
-    .picks-not-allowed-text{
-        font-size: 10px;
-    }
+/*TOAST NOTIFICATIONS*/
+#toast-container {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast {
+    padding: 0.75em 1.25em;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    color: white;
+    box-shadow: var(--shadow-l);
+    opacity: 0;
+    transform: translateY(1rem);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    pointer-events: auto;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast-success { background-color: var(--submit-colour); }
+.toast-error   { background-color: var(--delete-colour); }
+.toast-info    { background-color: var(--foreground-colour); }
 
 
-    .logout-buttons button,
-    .logout-buttons a,
-    .ok-button {
-        font-size: 10px;
-    }
+/*SKELETON LOADING*/
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+}
 
+.skeleton {
+    animation: skeleton-pulse 1.4s ease infinite;
+    background-color: var(--foreground-colour) !important;
+    border-radius: inherit;
+    pointer-events: none;
+}
 
-    footer {
-        width: 50%;
-    }
-
-    .github img {
-        width: 32px;
-    }
+.skeleton img {
+    opacity: 0;
 }

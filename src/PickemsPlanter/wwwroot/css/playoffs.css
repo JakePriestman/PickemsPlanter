@@ -41,6 +41,7 @@
     max-width: 64px;
     max-height: 64px;
     padding: 0;
+    filter: brightness(0) invert(1);
 }
 
 
@@ -209,7 +210,7 @@
 }
 
 
-@media screen and (max-width: 990px) {
+@media screen and (max-width: 1024px) {
 
 }
 
@@ -223,6 +224,20 @@
 }
 
 
+@media screen and (max-width: 640px) {
+    .playoff-bracket {
+        overflow-x: auto;
+        align-items: flex-start;
+        padding: 0 1em;
+        top: 5%;
+        transform: none;
+    }
+
+    .bracket {
+        min-width: 580px;
+    }
+}
+
 @media screen and (max-height: 824px) {
     .save-button:enabled,
     .save-button:disabled {
@@ -235,7 +250,7 @@
     }
 }
 
-@media screen and (max-width: 990px) {
+@media screen and (max-width: 1024px) {
 
     .navbar h2 {
         font-size: 10px;

@@ -1,160 +1,6 @@
 ﻿function mapElementTitle(image, dropzone) {
-    let name = image.split('/').pop();
-
-    name = name.split('.');
-
-    switch (name[0]) {
-        case "3dm":
-            dropzone.title = "3DMAX";
-            break;
-        case "astr":
-            dropzone.title = "Astralis";
-            break;
-        case "aura":
-            dropzone.title = "Aurora";
-            break;
-        case "b8":
-            dropzone.title = "B8";
-            break;
-        case "bb":
-            dropzone.title = "BetBoom";
-            break;
-        case "chin":
-            dropzone.title = "Chinggis Warriors";
-            break;
-        case "cplx":
-            dropzone.title = "Complexity";
-            break;
-        case "fal":
-            dropzone.title = "Falcons";
-            break;
-        case "faze":
-            dropzone.title = "FaZe";
-            break;
-        case "flux":
-            dropzone.title = "Fluxo";
-            break;
-        case "fntc":
-            dropzone.title = "fnatic";
-            break;
-        case "fq":
-            dropzone.title = "FlyQuest";
-            break;
-        case "furi":
-            dropzone.title = "FURIA";
-            break;
-        case "g2":
-            dropzone.title = "G2";
-            break;
-        case "gl":
-            dropzone.title = "GamerLegion";
-            break;
-        case "hero":
-            dropzone.title = "Heroic";
-            break;
-        case "huns":
-            dropzone.title = "The Huns";
-            break;
-        case "imp":
-            dropzone.title = "Imperial";
-            break;
-        case "lgcy":
-            dropzone.title = "Legacy";
-            break;
-        case "liq":
-            dropzone.title = "Liquid";
-            break;
-        case "lynn":
-            dropzone.title = "Lynn Vision";
-            break;
-        case "m80":
-            dropzone.title = "M80";
-            break;
-        case "meti":
-            dropzone.title = "Metizport";
-            break;
-        case "mibr":
-            dropzone.title = "MIBR";
-            break;
-        case "mngz":
-            dropzone.title = "The MongolZ";
-            break;
-        case "mouz":
-            dropzone.title = "MOUZ";
-            break;
-        case "navi":
-            dropzone.title = "Natus Vincere";
-            break;
-        case "nemi":
-            dropzone.title = "Nemiga";
-            break;
-        case "nip":
-            dropzone.title = "Ninjas in Pyjamas";
-            break;
-        case "nrg":
-            dropzone.title = "NRG";
-            break;
-        case "og":
-            dropzone.title = "OG";
-            break;
-        case "pain":
-            dropzone.title = "paiN";
-            break;
-        case "pari":
-            dropzone.title = "PARIVISION";
-            break;
-        case "psnu":
-            dropzone.title = "Passion UA";
-            break;
-        case "ratm":
-            dropzone.title = "Rare Atom";
-            break;
-        case "redc":
-            dropzone.title = "RED Canids";
-            break;
-        case "spir":
-            dropzone.title = "Spirit";
-            break;
-        case "tyl":
-            dropzone.title = "TYLOO";
-            break;
-        case "unknown":
-            dropzone.title = "unknown";
-            break;
-        case "vita":
-            dropzone.title = "Vitality";
-            break;
-        case "vp":
-            dropzone.title = "Virtus.pro";
-            break;
-        case "wcrd":
-            dropzone.title = "Wildcard";
-            break;
-        case "big":
-            dropzone.title = "BIG";
-            break;
-        case "sin":
-            dropzone.title = "SINNERS";
-            break;
-        case "shrk":
-            dropzone.title = "Sharks";
-            break;
-        case "gaim":
-            dropzone.title = "Gamin Gladiators";
-            break;
-        case "thun":
-            dropzone.title = "THUNDER dOWNUNDER";
-            break;
-        case "mont":
-            dropzone.title = "Monte";
-            break;
-        case "nine":
-            dropzone.title = "9z";
-            break;
-        case "fut":
-            dropzone.title = "FUT";
-            break;
-    }
+    const logo = image.split('/').pop().split('.')[0];
+    dropzone.title = (typeof teamNameMap !== 'undefined' ? teamNameMap[logo] : null) ?? logo;
 }
 
 function updateSaveButton() {
@@ -346,31 +192,19 @@ function createDroppedImage(imageSource) {
     return image;
 }
 
-function getEventSpecificStylesheet() {
-    var link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `/css/events/event-${eventId}.css`;
-    document.head.appendChild(link);
-}
 
 function handleNavBarStyling() {
     const navigation = document.getElementById("navigation");
-
     const dropdown = document.getElementById("dropDown");
 
-    switch (dropdown.style.display) {
-        case "flex":
-            dropdown.style.display = "";
-            navigation.style.borderRadius = "inherit";
-            break;
-        case "none":
-            dropdown.style.display = "flex";
-            navigation.style.borderRadius = "0px 45% 0px 0px";
-            break;
-        case "":
-            dropdown.style.display = "flex";
-            navigation.style.borderRadius = "0px 45% 0px 0px";
-            break;
+    const isOpen = dropdown.classList.contains('open');
+
+    if (isOpen) {
+        dropdown.classList.remove('open');
+        navigation.style.borderRadius = "inherit";
+    } else {
+        dropdown.classList.add('open');
+        navigation.style.borderRadius = "0px 45% 0px 0px";
     }
 }
 
