@@ -177,8 +177,6 @@
 
 .stage.active {
     transform: scale(1.5);
-    border-color: var(--submit-colour);
-    color: var(--submit-colour);
 }
 
 
