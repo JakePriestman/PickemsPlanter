@@ -3,6 +3,7 @@ let dragOriginElement = null;
 let isDragging = false;
 let picksAllowed = false;
 let isPlayoffs = false;
+let teamNameMap = {};
 let { eventId, steamId, stage, picks } = window.pageData;
 
 function openSimulator(url, width, height) {
@@ -31,7 +32,6 @@ if (stage) {
 }
 document.getElementById('saveForm').addEventListener('submit', getImageNamesAndParseToJson);
 
-document.addEventListener("DOMContentLoaded", getEventSpecificStylesheet);
 
 document.getElementById("profileImage").addEventListener('click', handleNavBarStyling);
 

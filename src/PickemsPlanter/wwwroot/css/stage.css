@@ -122,7 +122,7 @@
     filter: brightness(8%);
 }
 
-@media screen and (max-height: 990px) {
+@media screen and (max-height: 1024px) {
     .save-button:enabled,
     .save-button:disabled {
         margin: 0;
@@ -140,10 +140,32 @@
     }
 }
 
-@media screen and (max-width: 990px) {
+@media screen and (min-width: 641px) and (max-width: 1024px) {
+    .pickem-layout {
+        top: 15%;
+        transform: translateY(-15%);
+    }
+
+    .team,
+    .dropzone-advanced,
+    .dropzone-eliminated,
+    .dropzone-advanced-not-allowed,
+    .dropzone-eliminated-not-allowed {
+        height: 48px;
+        width: 48px;
+        font-size: 14px;
+    }
+
+    .teams-section {
+        grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+    }
+}
+
+@media screen and (max-width: 640px) {
     .pickem-layout {
         top: 25%;
     }
+
     .bracket {
         gap: 0;
     }
@@ -156,6 +178,7 @@
         margin: 0.5em;
         gap: 1em;
     }
+
     .picks > div {
         gap: 1em;
     }
@@ -174,4 +197,10 @@
         gap: 1em;
         grid-template-columns: repeat(auto-fit, minmax(32px, 1fr));
     }
+}
+
+.team.mobile-selected {
+    outline: 2px solid var(--text-colour);
+    transform: scale(1.12);
+    transition: outline 0.15s ease, transform 0.15s ease;
 }

@@ -91,12 +91,21 @@
     }
 
     .dropdown {
-        display: none;
         position: absolute;
         top: 95px;
         flex-direction: column-reverse;
         margin-right: 2rem;
         padding: 0.5rem;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.25s ease, opacity 0.2s ease;
+        display: flex;
+    }
+
+    .dropdown.open {
+        max-height: 200px;
+        opacity: 1;
     }
 
     .profile {
@@ -118,7 +127,6 @@
 
     .dropdown a:hover {
         background-color: var(--background-colour);
-        transition: text-decoration 0.3s ease;
         box-shadow: var(--shadow-s);
         transition: 0.6s ease;
         cursor: pointer;
@@ -169,6 +177,8 @@
 
 .stage.active {
     transform: scale(1.5);
+    border-color: var(--submit-colour);
+    color: var(--submit-colour);
 }
 
 
@@ -395,7 +405,7 @@
 }
 
 
-@media screen and (max-height: 1050px) {
+@media screen and (max-height: 1024px) {
     .buttons {
         position: absolute;
         flex-direction: column;
@@ -404,7 +414,7 @@
     }
 }
 
-@media screen and (max-width: 990px) {
+@media screen and (max-width: 1024px) {
     .bracket {
         gap: 0;
     }

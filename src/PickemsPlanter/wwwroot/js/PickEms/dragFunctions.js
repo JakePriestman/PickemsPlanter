@@ -79,6 +79,8 @@ function dragEnd() {
         if (collidedDropzoneId) {
             const collidedDropzone = document.getElementById(collidedDropzoneId);
             drop(collidedDropzone);
+            window._dragJustCompleted = true;
+            requestAnimationFrame(() => { window._dragJustCompleted = false; });
         }
 
         else if (dragOriginElement.id.includes('pick')) {

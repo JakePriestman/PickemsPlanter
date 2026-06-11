@@ -31,6 +31,11 @@ public class PlayoffsModel(IPickemsService pickemsService, IHttpContextAccessor 
 		return new JsonResult(picksAllowed);
 	}
 
+	public async Task<JsonResult> OnGetTeamNames()
+	{
+		return new JsonResult(await pickemsService.GetTeamNameMapAsync(EventId));
+	}
+
 	public async Task<JsonResult> OnGetImages()
     {
 		return new JsonResult(await pickemsService.GetTeamsInPlayoffsAsync(EventId));

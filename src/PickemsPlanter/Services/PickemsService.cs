@@ -14,6 +14,8 @@ public interface IPickemsService
 	Task<List<string>> GetStageResultsAsync(Stages stage, string eventId);
 	Task PostStagePickemsAsync(Stages stage, string droppedImagesData, string steamId, string eventId, string authCode);
 
+	Task<Dictionary<string, string>> GetTeamNameMapAsync(string eventId);
+
 	Task<bool> GetPlayoffsPicksAllowedAsync(string eventId);
 	Task<List<string>> GetTeamsInPlayoffsAsync(string eventId);
 	Task<List<string>> GetPlayoffPicksAsync(string steamId, string eventId);
@@ -133,6 +135,15 @@ public class PickemsService(IUserPredictionsCachingService cachingService, IStea
 				imageUrls.Add($"{BlobContainerUrl}/unknown.png");
 		}
 		return imageUrls;
+	}
+
+	public async Task<Dictionary<string, string>> GetTeamNameMapAsync(string eventId)
+	{
+		IReadOnlyCollection<Team> teams = await tournamentCachingService.GetTournamentTeamsAsync(eventId);
+
+		return teams
+			.Where(t => t.Logo is not null && t.Name is not null)
+			.ToDictionary(t => t.Logo!, t => t.Name!);
 	}
 
 	public async Task<bool> GetPlayoffsPicksAllowedAsync(string eventId)

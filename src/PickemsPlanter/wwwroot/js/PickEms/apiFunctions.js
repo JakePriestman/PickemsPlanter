@@ -7,10 +7,21 @@
     return await response.json();
 }
 
+async function loadTeamNamesAsync() {
+    const url = isPlayoffs ?
+        `/PickEms/Playoffs?handler=TeamNames&eventId=${eventId}` :
+        `/PickEms/Stage?handler=TeamNames&eventId=${eventId}&stage=${stage}`;
+
+    const response = await fetch(url);
+    teamNameMap = await response.json();
+}
+
 async function LoadImagesAsync() {
     const url = isPlayoffs ?
         `/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}` :
         `/PickEms/Stage?handler=Images&eventId=${eventId}&steamId=${steamId}&stage=${stage}`;
+
+    document.querySelectorAll('.team').forEach(t => t.classList.add('skeleton'));
 
     const imagesResponse = await fetch(url);
     const imageUrls = await imagesResponse.json();
@@ -18,6 +29,7 @@ async function LoadImagesAsync() {
     for (const [index, imageSource] of imageUrls.entries()) {
         const container = document.getElementById(`team${index}`);
         if (container) {
+            container.classList.remove('skeleton');
 
             if (isPlayoffs)
                 container.innerHTML = "";
@@ -32,6 +44,8 @@ async function LoadImagesAsync() {
             container.addEventListener('dragstart', (e) => e.preventDefault());
         }
     }
+
+    document.querySelectorAll('.team.skeleton').forEach(t => t.classList.remove('skeleton'));
 
     if (!picksAllowed)
         togglePicksNotAllowedConfirmation();
@@ -129,6 +143,8 @@ async function LoadResultsAsync() {
 }
 
 async function LoadTeamsAndPicksAsync() {
+    await loadTeamNamesAsync();
+
     picksAllowed = await getPicksAllowedAsync(isPlayoffs);
 
     await LoadImagesAsync(isPlayoffs);

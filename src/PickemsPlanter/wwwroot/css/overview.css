@@ -88,14 +88,12 @@
     box-shadow: var(--shadow-l);
 }
 
-@media screen and (max-width: 1920px) {
-    .information-button {
-        left: 50%;
-    }
+.information-button {
+    left: 50%;
+}
 
-    .extra-information {
-        right: 6%;
-    }
+.extra-information {
+    right: 6%;
 }
 
 .extra-information.show {
@@ -318,7 +316,7 @@
 }
 
 
-@media screen and (max-width: 990px) {
+@media screen and (max-width: 1024px) {
     .event-form {
         padding: 1em 2em 0 2em;
     }

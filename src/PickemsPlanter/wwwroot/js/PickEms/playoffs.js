@@ -25,6 +25,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     isPlayoffs = true;
     await LoadTeamsAndPicksAsync();
+    initMobileTapMode();
 });
 
 const showResultsCheckmark = document.getElementById("showResults");
@@ -34,9 +35,11 @@ showResultsCheckmark.addEventListener('change', async () => {
 });
 
 document.getElementById("clearAllPicks").addEventListener('click', () => {
-    clearAllDropzones()
+    clearAllDropzones();
+    showToast('Picks cleared', 'info');
 });
 
 document.getElementById("randomPicks").addEventListener('click', () => {
-    selectRandomPicks()
+    selectRandomPicks();
+    showToast('Random picks applied', 'info');
 });
