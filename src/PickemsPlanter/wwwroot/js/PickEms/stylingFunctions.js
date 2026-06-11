@@ -1,6 +1,6 @@
 ﻿function mapElementTitle(image, dropzone) {
     const logo = image.split('/').pop().split('.')[0];
-    dropzone.title = teamNameMap[logo] ?? logo;
+    dropzone.title = (typeof teamNameMap !== 'undefined' ? teamNameMap[logo] : null) ?? logo;
 }
 
 function updateSaveButton() {
