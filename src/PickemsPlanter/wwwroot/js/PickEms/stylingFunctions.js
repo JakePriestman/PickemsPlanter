@@ -30,7 +30,7 @@ function updateSaveButton() {
             }
 
             saveButton.disabled = true;
-            saveButton.innerHTML = '<img src="/Images/lock.png" style="filter:brightness(0) invert(1)"/> Picks already planted';
+            saveButton.innerHTML = '<img src="/Images/lock.png"/> Picks already planted';
             return;
         }
 
