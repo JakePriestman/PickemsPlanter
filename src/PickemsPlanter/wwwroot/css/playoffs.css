@@ -41,6 +41,7 @@
     max-width: 64px;
     max-height: 64px;
     padding: 0;
+    filter: brightness(0) invert(1);
 }
 
 

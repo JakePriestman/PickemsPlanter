@@ -357,6 +357,7 @@
 .simulator img {
     width: 100%;
     height: auto;
+    filter: brightness(0) invert(1);
 }
 
 .clear-all-picks:not([disabled]) img:hover,
