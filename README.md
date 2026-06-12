@@ -98,12 +98,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 📸 Screenshots
 
-<img width="3838" height="1917" alt="image" src="https://github.com/user-attachments/assets/900efced-de01-4706-ad57-7fda3135df5f" />
-<img width="3839" height="1914" alt="image" src="https://github.com/user-attachments/assets/f57601d2-b38a-4ce0-9531-1dc73cd10795" />
-<img width="3839" height="1915" alt="image" src="https://github.com/user-attachments/assets/a1bdcbb3-4a8e-4fed-88bf-7174de031045" />
-<img width="3839" height="1917" alt="image" src="https://github.com/user-attachments/assets/9698e284-4c1a-4f51-a333-e3cdb2d13b52" />
-<img width="3839" height="1921" alt="image" src="https://github.com/user-attachments/assets/737427d1-6d4d-493d-a9c7-a1e0a1b3e08a" />
-
-
-
-
+<img width="1604" height="948" alt="Screenshot 2026-06-12 at 12 59 13" src="https://github.com/user-attachments/assets/8240d477-869e-4ce2-b5a4-fb019a8659d4" />
+<img width="1604" height="948" alt="Screenshot 2026-06-12 at 12 59 44" src="https://github.com/user-attachments/assets/a872b9c0-2779-47d8-a9a6-9179a184151a" />
+<img width="1604" height="948" alt="Screenshot 2026-06-12 at 13 00 18" src="https://github.com/user-attachments/assets/c31d3951-5c0f-4980-8bd8-bec6ce98407f" />
+<img width="1604" height="948" alt="Screenshot 2026-06-12 at 13 00 40" src="https://github.com/user-attachments/assets/660533b9-0be9-4d5c-b809-e84c473b0f1a" />
