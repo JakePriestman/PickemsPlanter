@@ -60,6 +60,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     isPlayoffs = false;
     await LoadTeamsAndPicksAsync();
     initMobileTapMode();
+
+    const toastContainer = document.getElementById('toast-container');
+    const picksDiv = document.querySelector('.picks');
+    if (toastContainer && picksDiv) picksDiv.appendChild(toastContainer);
 });
 
 const showResultsCheckmark = document.getElementById("showResults");

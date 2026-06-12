@@ -1,73 +1,83 @@
-﻿/*NAVBAR*/
+/*NAVBAR*/
 .navbar h1 {
     margin-right: auto;
+    padding-left: 0.5em;
+    font-size: clamp(16px, 2vw, 26px);
 }
 
 .logout {
     font-family: inherit;
     text-decoration: none;
-    color: inherit;
-    margin-right: 1em;
-    padding: 1em;
-    font-size: 20px;
+    color: rgba(232, 234, 240, 0.6);
+    margin-right: 0.5em;
+    padding: 0.6em 1.1em;
+    font-size: 15px;
     border-radius: 50px;
-    cursor: default;
+    transition: color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
 }
 
 .logout:hover {
-    background-color: var(--background-colour);
-    transition: text-decoration 0.3s ease;
-    box-shadow: var(--shadow-s);
-    transition: 0.6s ease;
-    cursor: default;
+    color: var(--text-colour);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+    transition: color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
 }
 
 .profile-image {
     font-size: 16px;
     border: none;
-    border-radius: inherit;
+    border-radius: 50%;
     outline: none;
     color: white;
-    padding: 1em 1em 1em 2em;
-    background-color: inherit;
+    padding: 0.6em 0.6em 0.6em 1em;
+    background-color: transparent;
     font-family: inherit;
     margin: 0;
 }
 
 .profile-image img {
     width: auto;
-    height: 4em;
-    border-radius: inherit;
+    height: 3em;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
 }
 
 .profile-image img:hover {
-    outline: 2px solid var(--text-colour);
-    transition: outline 0.1s ease;
+    border-color: var(--accent-colour);
+    outline: none;
 }
 
 
 /*EVENT FORM*/
 .event-form {
     position: relative;
-    padding: 5em;
+    padding: 2em 2em 5em;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 1.25em;
+    overflow-y: auto;
+    flex: 1;
 }
 
 .information-button {
     background-color: transparent;
     filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
     border: none;
-    position: relative;
-    width: 32px;
-    left: 30%;
-    z-index: 10;
+    cursor: pointer;
+    width: 22px;
+    align-self: flex-end;
+    margin-right: 2%;
+    opacity: 0.4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .information-button:hover {
-    transform: scale(1.3);
-    transition: transform 1s ease;
+    opacity: 1;
+    transform: scale(1.15);
 }
 
 .information-button img {
@@ -76,142 +86,69 @@
 }
 
 .extra-information {
-    position: absolute;
+    position: fixed;
     visibility: hidden;
-    background-color: var(--navbar-colour);
-    right: 22%;
-    top: 20%;
-    width: 250px;
-    height: 770px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    right: 2em;
+    top: 5em;
+    width: 280px;
+    height: auto;
+    padding: 1em;
     text-align: center;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: var(--shadow-l);
-}
-
-.information-button {
-    left: 50%;
-}
-
-.extra-information {
-    right: 6%;
+    z-index: 100;
 }
 
 .extra-information.show {
     visibility: visible;
-    -webkit-animation: fadeIn 0.5s;
-    animation: fadeIn 0.5s;
-}
-
-@-webkit-keyframes fadeIn {
-    from {
-        opacity: 0;
-        width: 0;
-        height: 0px;
-    }
-
-    to {
-        opacity: 1;
-        width: 250px;
-        height: 770px;
-    }
+    animation: fadeIn 0.2s ease forwards;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        width: 0;
-        height: 0px;
-    }
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
 
-    to {
-        opacity: 1;
-        width: 250px;
-        height: 770px;
-    }
+.extra-information-close {
+    position: absolute;
+    top: 0.5em;
+    right: 0.6em;
+    background: transparent;
+    border: none;
+    color: rgba(232, 234, 240, 0.45);
+    font-size: 14px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.2em 0.4em;
+    border-radius: 4px;
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.extra-information-close:hover {
+    color: var(--text-colour);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .information-paragraph {
     visibility: hidden;
-    padding: 1em;
-    font-size: 20px;
+    padding: 0.4em 0.5em;
+    font-size: 13px;
     font-family: inherit;
-}
-
-@media screen and (max-height: 960px) {
-    .extra-information {
-        right: 6%;
-        width: 500px;
-        height: 350px;
-    }
-    .information-paragraph {
-        padding: 0 1em 0 1em;
-    }
-
-
-    @-webkit-keyframes fadeIn {
-        from {
-            opacity: 0;
-            width: 0;
-            height: 0px;
-        }
-
-        to {
-            opacity: 1;
-            width: 500px;
-            height: 350px;
-        }
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            width: 0;
-            height: 0px;
-        }
-
-        to {
-            opacity: 1;
-            width: 500px;
-            height: 350px;
-        }
-    }
+    line-height: 1.55;
+    color: rgba(232, 234, 240, 0.75);
 }
 
 .information-paragraph a {
-    color: lightblue;
+    color: var(--accent-colour);
     text-decoration: none;
 }
 
 .extra-information.show .information-paragraph {
     visibility: visible;
-    -webkit-animation: fadeTextIn 0.5s;
-    animation: fadeTextIn 0.5s;
-}
-
-@-webkit-keyframes fadeTextIn {
-    0% {
-        opacity: 0;
-    }
-    90% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes fadeTextIn {
-    0% {
-        opacity: 0;
-    }
-    90% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
 }
 
 
@@ -221,18 +158,38 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    max-width: 700px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5em;
+    box-shadow: var(--shadow-m);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.event:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-l);
 }
 
 .event h2 {
-    font-size: 40px;
+    font-size: clamp(15px, 1.8vw, 26px);
     text-align: center;
+    margin: 0 0 1em 0;
+    color: var(--text-colour);
+    letter-spacing: 0.02em;
 }
 
 .inputs {
     display: flex;
     align-items: center;
-    max-width: 760px;
-    padding: 1em;
+    width: 100%;
+    gap: 0.5em;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .event-button-select {
@@ -246,32 +203,20 @@
 .event-button-delete,
 .event-button-select {
     color: white;
-    padding: 1em 1em;
+    padding: 0.6em 1.1em;
     border: none;
-    border-radius: 10px;
-    font-size: 1.1em;
-    margin: 0 1em 0 1em;
-    box-shadow: var(--shadow-m)
-}
-
-@keyframes blink {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.7;
-    }
-
-    100% {
-        opacity: 1;
-    }
+    border-radius: 50px;
+    font-size: 0.9em;
+    font-family: inherit;
+    box-shadow: var(--shadow-s);
+    cursor: pointer;
+    transition: filter 0.15s ease, transform 0.15s ease;
 }
 
 .event-button-delete:hover:enabled,
 .event-button-select:hover:enabled {
-    animation: blink 1s;
-    animation-iteration-count: infinite;
+    filter: brightness(1.2);
+    transform: scale(1.04);
 }
 
 .event-button-delete:disabled,
@@ -279,35 +224,47 @@
 .show-auth-code:disabled {
     opacity: 0.3;
     background-color: var(--disabled-colour);
-    border-radius: 10px;
+    border-radius: 50px;
     border: none;
-    cursor: help;
+    cursor: not-allowed;
 }
 
 .show-auth-code:disabled {
-    border-radius: 5px;
+    border-radius: 8px;
 }
 
 .auth-code {
-    padding: 1em 1em;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1em;
-    margin: 0 1em 0 1em;
-    box-shadow: var(--shadow-m)
+    padding: 0.6em 0.9em;
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-family: 'Courier New', Courier, monospace;
+    background: rgba(14, 17, 23, 0.6);
+    color: var(--text-colour);
+    box-shadow: var(--shadow-s);
+    width: 15ch;
+    flex-shrink: 0;
+    transition: border-color 0.2s ease;
+}
+
+.auth-code:focus {
+    outline: none;
+    border-color: rgba(75, 156, 226, 0.45);
 }
 
 .show-auth-code {
-    min-width: 24px;
-    min-height: 24px;
-    max-width: 32px;
-    max-height: 32px;
-    box-shadow: var(--shadow-m)
+    width: 26px;
+    height: 26px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    transition: opacity 0.2s ease;
 }
 
 .show-auth-code:hover:enabled {
     opacity: 0.7;
-    transition: opacity 0.3s ease;
 }
 
 .show-auth-code img {
@@ -319,83 +276,47 @@
 
 @media screen and (max-width: 1024px) {
     .event-form {
-        padding: 1em 2em 0 2em;
-    }
-    .navbar h1 {
-        font-size: 25px;
+        padding: 1em 1em 4em;
     }
 
-    .information-button {
-        right: 0%;
-        width: 24px;
+    .navbar h1 {
+        font-size: 18px;
     }
 
     .extra-information {
-        top: 25%;
-        width: 300px;
-        height: 210px;
+        top: 4em;
+        right: 1em;
+        width: 240px;
     }
 
     .extra-information p {
-        font-size: 12px;
-    }
-
-    @-webkit-keyframes fadeIn {
-        from {
-            opacity: 0;
-            width: 0;
-            height: 0px;
-        }
-
-        to {
-            opacity: 1;
-            width: 300px;
-            height: 210px;
-        }
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            width: 0;
-            height: 0px;
-        }
-
-        to {
-            opacity: 1;
-            width: 300px;
-            height: 210px;
-        }
+        font-size: 11px;
     }
 
     .profile-image {
-        display: flex;
-        align-items: center;
-        height: 5%;
-        padding: 5px 20px 5px 5px;
+        padding: 0.4em 0.4em 0.4em 0.6em;
     }
 
     .profile-image img {
-        width: 30px;
-        height: 30px;
+        height: 2.2em;
     }
+
     .event h2 {
-        width: 100%;
-        font-size: 100%;
+        font-size: 15px;
     }
 
     .event-button-select,
     .event-button-delete {
-        font-size: 8px;
+        font-size: 11px;
     }
 
     .auth-code {
         font-size: 10px;
+        width: 15ch;
     }
 
     .logout {
-        padding: 10px;
-        font-size: 15px;
-        margin-right: 5px;
+        padding: 0.5em 0.75em;
+        font-size: 12px;
     }
 }

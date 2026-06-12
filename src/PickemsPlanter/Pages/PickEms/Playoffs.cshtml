@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model PickemsPlanter.Pages.PickEms.PlayoffsModel
 @{
     ViewData["Title"] = $"Pick'Ems Planter - {PickemsPlanter.Models.Event.Stages.Playoffs}";
@@ -6,8 +6,8 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/stagePlayoffs.css" />
-    <link rel="stylesheet" href="~/css/playoffs.css" />
+    <link rel="stylesheet" href="~/css/stagePlayoffs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/playoffs.css" asp-append-version="true" />
 }
 
 <div class="pickem-container">
@@ -16,134 +16,131 @@
         <div class="navigation" id="navigation">
             <div class="dropdown" id="dropDown">
                 <a class="logout" onclick="toggleLogoutConfirmation()">Logout</a>
-                <a class="profile" asp-page="/Profile/Overview">@Model.PersonaName</a>
+                <a class="profile" asp-page="/Profile/Overview">Event Overview</a>
             </div>
             <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
             <a class="profile-image-hidden" id="profileImage"><img src="@Model.Avatar" /></a>
         </div>
     </div>
 
-    <div class="playoff-bracket">
-        <div class="bracket">
-            <nav class="stage-nav">
-                <a class="stage"
-                   asp-page="/PickEms/Stage"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage1">I</a>
+    <div class="playoff-layout">
+        <nav class="stage-nav">
+            <a class="stage"
+               asp-page="/PickEms/Stage"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId"
+               asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage1">I</a>
 
-                <a class="stage"
-                   asp-page="/PickEms/Stage"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage2">II</a>
+            <a class="stage"
+               asp-page="/PickEms/Stage"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId"
+               asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage2">II</a>
 
-                <a class="stage"
-                   asp-page="/PickEms/Stage"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage3">III</a>
+            <a class="stage"
+               asp-page="/PickEms/Stage"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId"
+               asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage3">III</a>
 
-                <a class="stage active"
-                   asp-page="/PickEms/Playoffs"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId">IV</a>
-            </nav>
+            <a class="stage active"
+               asp-page="/PickEms/Playoffs"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId">IV</a>
+        </nav>
 
-            <div class="champion">
-                <img class="crown-image" src="~/Images/crown.png" />
-                <div class="dropzone-advanced" id="pick6" title="Winner">Winner</div>
+        <div class="playoff-bracket">
+            <div class="picks-locked-badge picks-locked-card" id="picksLockedBadge">
+                <img src="/Images/lock.png" />
+                Picks locked
             </div>
-            <div class="grand-final">
-                <div class="match" id="match0">
-                    <div class="teams">
-                        <div class="dropzone-advanced" id="pick4" title="Semi final 1">GF</div>
-                        <div class="dropzone-advanced" id="pick5" title="Semi final 2">GF</div>
+            <div class="bracket">
+                <div class="champion">
+                    <div class="match-card champion-card">
+                        <img class="crown-image" src="~/Images/crown.png" />
+                        <div class="dropzone-advanced" id="pick6" title="Winner">Winner</div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
                 </div>
-            </div>
-            <div class="semi-finals">
-                <div class="match" id="match0">
-                    <div class="teams">
-                        <div class="dropzone-advanced" id="pick0" title="Quarter final 3">S1</div>
-                        <div class="dropzone-advanced" id="pick1" title="Quarter final 4">S1</div>
+                <div class="grand-final">
+                    <div class="match-card">
+                        <span class="match-label" data-short="GF">Grand Final</span>
+                        <div class="teams">
+                            <div class="dropzone-advanced" id="pick4" title="Semi final 1">GF</div>
+                            <div class="dropzone-advanced" id="pick5" title="Semi final 2">GF</div>
+                        </div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
                 </div>
-
-                <div class="match" id="match1">
-                    <div class="teams" >
-                        <div class="dropzone-advanced" id="pick2" title="Quarter final 3">S2</div>
-                        <div class="dropzone-advanced" id="pick3" title="Quarter final 4">S2</div>
+                <div class="semi-finals">
+                    <div class="match-card">
+                        <span class="match-label" data-short="SF 1">Semi Final 1</span>
+                        <div class="teams">
+                            <div class="dropzone-advanced" id="pick0" title="Quarter final 1">S1</div>
+                            <div class="dropzone-advanced" id="pick1" title="Quarter final 2">S1</div>
+                        </div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
-                </div>
-            </div>
-
-            <div class="quarter-finals">
-                <div class="match" id="match0">
-                    <div class="teams">
-                        <div class="team" id="team0">Q1</div>
-                        <div class="team" id="team1">Q1</div>
+                    <div class="match-card">
+                        <span class="match-label" data-short="SF 2">Semi Final 2</span>
+                        <div class="teams">
+                            <div class="dropzone-advanced" id="pick2" title="Quarter final 3">S2</div>
+                            <div class="dropzone-advanced" id="pick3" title="Quarter final 4">S2</div>
+                        </div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
                 </div>
 
-                <div class="match" id="match1">
-                    <div class="teams">
-                        <div class="team" id="team2">Q2</div>
-                        <div class="team" id="team3">Q2</div>
+                <div class="quarter-finals">
+                    <div class="match-card">
+                        <span class="match-label" data-short="QF 1">Quarter Final 1</span>
+                        <div class="teams">
+                            <div class="team" id="team0">Q1</div>
+                            <div class="team" id="team1">Q1</div>
+                        </div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
-                </div>
-
-                <div class="match" id="match2">
-                    <div class="teams">
-                        <div class="team" id="team4">Q3</div>
-                        <div class="team" id="team5">Q3</div>
+                    <div class="match-card">
+                        <span class="match-label" data-short="QF 2">Quarter Final 2</span>
+                        <div class="teams">
+                            <div class="team" id="team2">Q2</div>
+                            <div class="team" id="team3">Q2</div>
+                        </div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
-                </div>
-
-                <div class="match" id="match3">
-                    <div class="teams">
-                        <div class="team" id="team6">Q4</div>
-                        <div class="team" id="team7">Q4</div>
+                    <div class="match-card">
+                        <span class="match-label" data-short="QF 3">Quarter Final 3</span>
+                        <div class="teams">
+                            <div class="team" id="team4">Q3</div>
+                            <div class="team" id="team5">Q3</div>
+                        </div>
                     </div>
-                    <div class="lines"></div>
-                    <div class="line"></div>
+                    <div class="match-card">
+                        <span class="match-label" data-short="QF 4">Quarter Final 4</span>
+                        <div class="teams">
+                            <div class="team" id="team6">Q4</div>
+                            <div class="team" id="team7">Q4</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <div class="bottom-bar">
             <div class="show-results-div">
-                <label for="showResults">
-                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults" />
-                    <span class="checkbox" title="Show the results from the stage"></span>
-                    Show results from stage
+                <label class="toggle-label" title="Show the results from the stage">
+                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults"/>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    Show results
                 </label>
             </div>
+            <div class="buttons">
+                <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
+                <button class="random-picks" id="randomPicks" type="button" title="Randomly fill the empty dropzones"><img src="/Images/random_picks.png" /></button>
+            </div>
+            <form method="post" class="save-form" id="saveForm">
+                <input type="hidden" name="picksToPost" id="picksToPost" />
+                <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" asp-route-eventName="@Model.EventName">Save All Picks</button>
+            </form>
         </div>
-
-        <div class="buttons">
-            <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
-            <button class="random-picks" id="randomPicks" type="button" title="Randomly fill the empty dropzones"><img src="/Images/random_picks.png" /></button>
-        </div>
-    
-        <form method="post" class="save-form" id="saveForm">
-            <input type="hidden" name="picksToPost" id="picksToPost" />
-            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" asp-route-eventName="@Model.EventName">Save All Picks</button>
-        </form>
     </div>
 </div>
 

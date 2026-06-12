@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
         @RenderSection("Styles", required: false)
 
@@ -25,12 +25,6 @@
                 </form>
             </div>
 
-        <div class="picks-not-allowed-confirmation" id="picksNotAllowedConfirmation">
-            <div class="picks-not-allowed-box">
-                <p class="picks-not-allowed-text">Picks are not allowed on this stage as of now.</p>
-                <a class="ok-button" onclick="togglePicksNotAllowedConfirmation()">Ok</a>
-            </div>
-        </div>
             @RenderBody()
         </main>
 

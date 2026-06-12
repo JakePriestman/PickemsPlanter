@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model PickemsPlanter.Pages.PickEms.StageModel
 @{
     ViewData["Title"] = $"Pick'Ems Planter - {Model.Stage}";
@@ -6,8 +6,8 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/stagePlayoffs.css" />
-    <link rel="stylesheet" href="~/css/stage.css" />
+    <link rel="stylesheet" href="~/css/stagePlayoffs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/stage.css" asp-append-version="true" />
 }
 
 <div class="pickem-container">
@@ -16,7 +16,7 @@
         <div class="navigation" id="navigation">
             <div class="dropdown" id="dropDown">
                 <a class="logout" onclick="toggleLogoutConfirmation()">Logout</a>
-                <a class="profile" asp-page="/Profile/Overview">@Model.PersonaName</a>
+                <a class="profile" asp-page="/Profile/Overview">Event Overview</a>
             </div>
             <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
             <a class="profile-image-hidden" id="profileImage"><img src="@Model.Avatar" /></a>
@@ -24,93 +24,105 @@
     </div>
 
     <div class="pickem-layout">
-        <section class="bracket">
-            <nav class="stage-nav">
-                <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage1 ? "active" : "")"
-                   asp-page="/PickEms/Stage"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage1">I</a>
+        <nav class="stage-nav">
+            <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage1 ? "active" : "")"
+               asp-page="/PickEms/Stage"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId"
+               asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage1">I</a>
 
-                <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage2 ? "active" : "")"
-                   asp-page="/PickEms/Stage"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage2">II</a>
+            <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage2 ? "active" : "")"
+               asp-page="/PickEms/Stage"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId"
+               asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage2">II</a>
 
-                <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage3 ? "active" : "")"
-                   asp-page="/PickEms/Stage"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId"
-                   asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage3">III</a>
+            <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage3 ? "active" : "")"
+               asp-page="/PickEms/Stage"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId"
+               asp-route-stage="@PickemsPlanter.Models.Event.Stages.Stage3">III</a>
 
-                <a class="stage"
-                   asp-page="/PickEms/Playoffs"
-                   asp-route-eventId="@Model.EventId"
-                   asp-route-eventName="@Model.EventName"
-                   asp-route-steamId="@Model.SteamId">IV</a>
-            </nav>
-            <div class="picks">
-                <div class="three-zero">
-                    <div class="dropzone-advanced" id="pick0" title="3-0">3-0</div>
-                    <div class="dropzone-advanced" id="pick1" title="3-0">3-0</div>
-                </div>
-                <div class="three-one">
-                    <div class="dropzone-advanced" id="pick2" title="3-1">3-1</div>
-                    <div class="dropzone-advanced" id="pick3" title="3-1">3-1</div>
-                    <div class="dropzone-advanced" id="pick4" title="3-1">3-1</div>
-                </div>
-                <div class="three-two">
-                    <div class="dropzone-advanced" id="pick5" title="3-2">3-2</div>
-                    <div class="dropzone-advanced" id="pick6" title="3-2">3-2</div>
-                    <div class="dropzone-advanced" id="pick7" title="3-2">3-2</div>
-                </div>
-                <div class="zero-three">
-                    <div class="dropzone-eliminated" id="pick8" title="0-3">0-3</div>
-                    <div class="dropzone-eliminated" id="pick9" title="0-3">0-3</div>
-                </div>
-            </div>
-            <div class="show-results-div">
-                <label for="showResults">
-                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults"/>
-                    <span class="checkbox" title="Show the results from the stage"></span>
-                    Show results from stage
-                </label>
-            </div>
-        </section>
+            <a class="stage"
+               asp-page="/PickEms/Playoffs"
+               asp-route-eventId="@Model.EventId"
+               asp-route-eventName="@Model.EventName"
+               asp-route-steamId="@Model.SteamId">IV</a>
+        </nav>
 
-        <div class="buttons">
-            <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
-            <button class="random-picks" id="randomPicks" type="button" title="Randomly fill the empty dropzones"><img src="/Images/random_picks.png" /></button>
-            <button class="simulator" id="simulatorButton" type="button" title="Open Simulator"><img src="/Images/simulator.png" /></button>
+        <div class="content-row">
+            <section class="teams-section" id="teamSection">
+                <div class="picks-not-allowed-overlay" id="picksNotAllowedConfirmation">
+                    <div class="picks-locked-card">
+                        <img src="/Images/lock.png" />
+                        Picks locked
+                    </div>
+                </div>
+                <div class="team" id="team0"></div>
+                <div class="team" id="team1"></div>
+                <div class="team" id="team2"></div>
+                <div class="team" id="team3"></div>
+                <div class="team" id="team4"></div>
+                <div class="team" id="team5"></div>
+                <div class="team" id="team6"></div>
+                <div class="team" id="team7"></div>
+                <div class="team" id="team8"></div>
+                <div class="team" id="team9"></div>
+                <div class="team" id="team10"></div>
+                <div class="team" id="team11"></div>
+                <div class="team" id="team12"></div>
+                <div class="team" id="team13"></div>
+                <div class="team" id="team14"></div>
+                <div class="team" id="team15"></div>
+            </section>
+
+            <section class="bracket">
+                <div class="picks">
+                    <div class="three-zero">
+                        <div class="dropzone-advanced" id="pick0" title="3-0">3-0</div>
+                        <div class="dropzone-advanced" id="pick1" title="3-0">3-0</div>
+                    </div>
+                    <div class="three-one-two">
+                        <div class="three-one">
+                            <div class="dropzone-advanced" id="pick2" title="3-1">3-1</div>
+                            <div class="dropzone-advanced" id="pick3" title="3-1">3-1</div>
+                            <div class="dropzone-advanced" id="pick4" title="3-1">3-1</div>
+                        </div>
+                        <div class="three-two">
+                            <div class="dropzone-advanced" id="pick5" title="3-2">3-2</div>
+                            <div class="dropzone-advanced" id="pick6" title="3-2">3-2</div>
+                            <div class="dropzone-advanced" id="pick7" title="3-2">3-2</div>
+                        </div>
+                    </div>
+                    <div class="zero-three">
+                        <div class="dropzone-eliminated" id="pick8" title="0-3">0-3</div>
+                        <div class="dropzone-eliminated" id="pick9" title="0-3">0-3</div>
+                    </div>
+                </div>
+            </section>
         </div>
 
-        <form method="post" class="save-form" id="saveForm">
-            <input type="hidden" name="picksToPost" id="picksToPost" />
-            <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" asp-route-stage="@Model.Stage" asp-route-eventName="@Model.EventName" disabled>Plant Picks</button>
-        </form>
-
-        <section class="teams-section" id="teamSection">
-            <div class="team" id="team0"></div>
-            <div class="team" id="team1"></div>
-            <div class="team" id="team2"></div>
-            <div class="team" id="team3"></div>
-            <div class="team" id="team4"></div>
-            <div class="team" id="team5"></div>
-            <div class="team" id="team6"></div>
-            <div class="team" id="team7"></div>
-            <div class="team" id="team8"></div>
-            <div class="team" id="team9"></div>
-            <div class="team" id="team10"></div>
-            <div class="team" id="team11"></div>
-            <div class="team" id="team12"></div>
-            <div class="team" id="team13"></div>
-            <div class="team" id="team14"></div>
-            <div class="team" id="team15"></div>
-        </section>
+        <div class="bottom-bar">
+            <div class="show-results-div">
+                <label class="toggle-label" title="Show the results from the stage">
+                    <input type="checkbox" class="show-results" id="showResults" asp-page-handler="GetResults"/>
+                    <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                    Show results
+                </label>
+            </div>
+            <div class="buttons">
+                <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
+                <button class="random-picks" id="randomPicks" type="button" title="Randomly fill the empty dropzones"><img src="/Images/random_picks.png" /></button>
+                <button class="simulator" id="simulatorButton" type="button" title="Open Simulator"><img src="/Images/simulator.png" /></button>
+            </div>
+            <form method="post" class="save-form" id="saveForm">
+                <input type="hidden" name="picksToPost" id="picksToPost" />
+                <button class="save-button" type="submit" id="saveButton" title="Save your picks" asp-page-handler="SendPicks" asp-route-eventId="@Model.EventId" asp-route-steamId="@Model.SteamId" asp-route-stage="@Model.Stage" asp-route-eventName="@Model.EventName" disabled>Plant Picks</button>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -134,4 +146,3 @@
     <script src="~/js/PickEms/mobileFunctions.js"></script>
     <script src="~/js/PickEms/stage.js"></script>
 }
-

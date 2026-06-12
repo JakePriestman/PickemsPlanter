@@ -138,7 +138,16 @@ function placeImageInDropzone(imageSource, dropzone, isResults) {
             const allowDrop = allowPlayoffDrop(dragOriginElement.id, dropzone.id);
 
             if (!allowDrop) {
-                //Optionally throw and error or show something to the user.
+                dropzone.classList.remove('drag-hover');
+                if (dragOriginElement.id.includes('pick')) {
+                    const src = currentDraggedElement.src;
+                    resetCurrentDraggedElement();
+                    dragOriginElement.innerHTML = '';
+                    dragOriginElement.appendChild(createDroppedImage(src));
+                    enableDrag(dragOriginElement.id);
+                } else {
+                    resetCurrentDraggedElement();
+                }
                 return;
             }
         }

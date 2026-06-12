@@ -1,154 +1,243 @@
-﻿.login-page {
-    width: clamp(490px, 80%, 1425px);
-    height: clamp(500px, 80%, 1300px);
+.login-page {
+    width: clamp(400px, 75%, 900px);
+    height: clamp(340px, 52%, 560px);
     position: relative;
+    display: flex;
+    flex-direction: row;
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-l);
+    overflow: hidden;
+}
+
+/* dot grid overlay */
+.login-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(75, 156, 226, 0.12) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 0;
+}
+
+/* accent line at top */
+.login-page::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-colour), transparent);
+    border-radius: 20px 20px 0 0;
+    z-index: 1;
+}
+
+.login-bomb-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--glass-border);
+    position: relative;
+    z-index: 1;
+}
+
+.login-content-panel {
+    flex: 1.2;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: #0E1012;
-    border-radius: 25px;
-    box-shadow: var(--shadow-m);
+    padding: 2.5em;
+    position: relative;
+    z-index: 1;
 }
+
 
 /*BOMB IMAGE*/
 .bomb-div {
     position: relative;
+    width: 160px;
+    height: 160px;
 }
 
 .bomb-img {
     position: absolute;
-    max-width: 250px;
-    max-height: 253px;
-    min-height: 100px;
-    min-width: 100px;
+    width: 160px;
+    height: 160px;
     filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
+    opacity: 0.8;
 }
 
 .bomb-blinker-img {
-    max-width: 250px;
-    max-height: 253px;
-    min-height: 100px;
-    min-width: 100px;
+    width: 160px;
+    height: 160px;
     filter: invert(98%) sepia(0%) saturate(18%) hue-rotate(151deg) brightness(98%) contrast(81%);
+    opacity: 0.8;
 }
 
 @keyframes blink {
-    0% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
+    0%, 100% { opacity: 0.8; }
+    50%       { opacity: 0; }
 }
 
 .bomb-blinking-img {
-    max-width: 250px;
-    max-height: 253px;
-    min-height: 100px;
-    min-width: 100px;
-    filter: invert(39%) sepia(11%) saturate(1869%) hue-rotate(68deg) brightness(92%) contrast(87%);
-    animation: blink 1s;
-    animation-iteration-count: infinite;
+    width: 160px;
+    height: 160px;
+    filter: invert(39%) sepia(11%) saturate(1869%) hue-rotate(68deg) brightness(110%) contrast(90%);
+    animation: blink 0.8s step-end infinite;
 }
 
 
 /*TEXT*/
 .login-page h1 {
-    display: flex;
-    flex-direction: column;
     text-align: center;
-    font-weight: 1000;
-    font-size: clamp(40px, 60px, 120px);
+    font-weight: 800;
+    font-size: clamp(24px, 2.2vw, 38px);
     color: var(--text-colour);
-    padding: 1rem;
+    margin: 0 0 0.3em 0;
+    letter-spacing: 0.02em;
 }
 
 .login-page h2 {
-    display: flex;
-    flex-direction: column;
     text-align: center;
-    font-weight: 1000;
-    font-size: clamp(20px, 20px, 30px);
-    color: var(--text-colour);
-    padding: 1rem;
+    font-weight: 400;
+    font-size: clamp(10px, 0.85vw, 14px);
+    color: rgba(232, 234, 240, 0.45);
+    margin: 0 0 2em 0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
+
 
 /*FORM*/
 .login-form {
     display: flex;
     justify-content: center;
-    height: 3em;
 }
 
 .login-button {
+    position: relative;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: var(--foreground-colour);
-    border-radius: 25px;
-    border: hidden;
-    height: 5em;
-    width: 10rem;
-    box-shadow: inset var(--submit-colour) 0 0;
+    background: var(--foreground-colour);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    height: 3em;
+    width: 11rem;
     font-family: inherit;
     color: var(--text-colour);
-    font-size: 16px;
-    font-weight: 525;
-    padding: 1em;
-    background-image: linear-gradient(to top, var(--submit-colour) 50%, transparent 50%);
-    background-size: 100% 200%;
-    background-position: top;
-    transition: background-position 1.5s ease;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    overflow: hidden;
     box-shadow: var(--shadow-m);
+    transition: border-color 0.25s ease;
+}
+
+.login-button::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent-colour);
+    opacity: 0;
+    border-radius: inherit;
+    transition: opacity 0.3s ease;
+}
+
+.login-button:hover::before {
+    opacity: 0.18;
 }
 
 .login-button:hover {
-    background-position: bottom;
+    border-color: rgba(75, 156, 226, 0.45);
 }
 
-.login-button:hover .text{
-    display: none;
+.text {
+    position: relative;
+    z-index: 1;
+    transition: opacity 0.1s ease;
+}
+
+.login-button:hover .text {
+    opacity: 0;
+    pointer-events: none;
+}
+
+
+/*TYPEWRITER*/
+@keyframes typewriter {
+    from { width: 0; }
+    to   { width: 7ch; }
+}
+
+@keyframes cursor-blink {
+    0%, 100% { border-right-color: var(--text-colour); }
+    50%       { border-right-color: transparent; }
 }
 
 .bomb-code {
-    opacity: 0;
-    position: absolute;
-    width: 0;
-    transition: width 20s ease;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: normal;
     overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    display: block;
+    opacity: 0;
+    border-right: 2px solid transparent;
+    position: absolute;
+    /* anchor left so text grows left-to-right and sits centered when complete */
+    left: calc(50% - 3.5ch - 1px);
+    z-index: 1;
 }
 
 .login-button:hover .bomb-code {
     opacity: 1;
-    width: 100%;
-    font-size: 20px;
+    animation: typewriter 0.5s steps(7, end) forwards,
+               cursor-blink 0.7s step-end infinite 0.5s;
 }
 
 
-
-@media screen and (max-width: 1024px) {
-
+@media screen and (max-width: 700px) {
     .login-page {
-        height: 60%;
-        width: 80%;
+        flex-direction: column;
+        width: 85%;
+        height: auto;
+        min-height: 60%;
     }
 
-    .bomb-blinker-img,
+    .login-bomb-panel {
+        flex: 0 0 auto;
+        padding: 2em 0 1.5em;
+        border-right: none;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .login-content-panel {
+        flex: 1;
+        padding: 1.5em 1.5em 2em;
+    }
+
+    .bomb-div,
     .bomb-img,
+    .bomb-blinker-img,
     .bomb-blinking-img {
         width: 100px;
         height: 100px;
     }
 
     .login-page h1 {
-        font-size: 20px;
+        font-size: 22px;
     }
 
     .login-page h2 {
@@ -156,11 +245,12 @@
     }
 
     .login-button {
-        width: 8em;
-        font-size: 10px;
+        height: 2.5em;
+        width: 9rem;
+        font-size: 12px;
     }
 
-    .login-button:hover .bomb-code {
-        font-size: 10px;
+    .bomb-code {
+        font-size: 16px;
     }
 }
