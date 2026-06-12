@@ -236,14 +236,17 @@
 /*SHOW-RESULTS*/
 .checkmark {
     position: absolute;
+    bottom: 3px;
+    right: 3px;
+    width: 40%;
+    height: 40%;
     display: none;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: solid #0e2912 3px;
-    background-color: var(--submit-colour);
+    border-radius: 4px;
+    background: rgba(61, 110, 57, 0.88);
+    border: 1px solid rgba(94, 139, 75, 0.55);
+    box-shadow: var(--shadow-s);
 }
 
 .checkmark.show {
@@ -252,12 +255,11 @@
 }
 
 .check {
-    position: absolute;
-    width: 5px;
-    height: 10px;
-    border: solid white;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
+    width: 38%;
+    height: 62%;
+    border: solid rgba(185, 235, 170, 0.95);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) translate(-10%, -15%);
 }
 
 .show-results-div {
@@ -347,17 +349,16 @@
 }
 
 .save-button:enabled {
-    background-color: var(--submit-colour);
-    color: white;
+    background: rgba(61, 110, 57, 0.15);
+    border: 1px solid rgba(94, 139, 75, 0.4);
+    color: rgba(160, 215, 148, 0.9);
     padding: 0.7em 2em;
-    border: none;
     border-radius: 50px;
     font-size: 1em;
     font-family: inherit;
-    box-shadow: var(--shadow-m);
     cursor: pointer;
     letter-spacing: 0.04em;
-    transition: filter 0.15s ease, transform 0.15s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
 .save-button:disabled {
@@ -367,11 +368,10 @@
     border-radius: 50px;
     font-size: 1em;
     font-family: inherit;
-    border: 1px dashed rgba(94, 139, 75, 0.45);
+    border: 1px dashed rgba(94, 139, 75, 0.25);
     cursor: help;
-    box-shadow: var(--shadow-s);
-    color: rgba(94, 139, 75, 0.55);
-    background: rgba(64, 112, 60, 0.1);
+    color: rgba(160, 215, 148, 0.35);
+    background: rgba(61, 110, 57, 0.06);
 }
 
 .save-button:disabled img {
@@ -379,12 +379,15 @@
     width: 18px;
     height: 18px;
     padding-right: 5px;
-    filter: brightness(0) saturate(100%) invert(37%) sepia(38%) saturate(550%) hue-rotate(68deg) brightness(93%) contrast(90%);
+    filter: brightness(0) invert(1);
+    opacity: 0.35;
 }
 
 .save-button:hover:enabled {
-    filter: brightness(1.2);
-    transform: scale(1.04);
+    background: rgba(61, 110, 57, 0.28);
+    border-color: rgba(94, 139, 75, 0.65);
+    color: rgb(185, 235, 170);
+    transform: translateY(-1px);
 }
 
 .buttons {
@@ -518,7 +521,7 @@
     }
 
     .save-button:disabled {
-        border: dashed var(--submit-colour) 1px;
+        border: 1px dashed rgba(94, 139, 75, 0.25);
     }
 }
 
@@ -566,10 +569,13 @@
     }
 
     .clear-all-picks,
-    .random-picks,
-    .simulator {
+    .random-picks {
         width: 24px;
         height: 24px;
         margin: 0 0.4em;
+    }
+
+    .simulator {
+        display: none;
     }
 }

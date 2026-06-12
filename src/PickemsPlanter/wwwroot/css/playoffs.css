@@ -190,6 +190,7 @@
 /*PICKS / DROPZONES*/
 .dropzone-advanced,
 .dropzone-advanced-not-allowed {
+    position: relative;
     width: clamp(36px, 6dvh, 64px);
     height: clamp(36px, 6dvh, 64px);
     border-radius: 8px;
@@ -256,6 +257,7 @@
 
 /*TEAMS*/
 .team {
+    position: relative;
     width: clamp(36px, 6dvh, 64px);
     height: clamp(36px, 6dvh, 64px);
     border-radius: 8px;

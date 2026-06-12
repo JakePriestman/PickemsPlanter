@@ -54,6 +54,11 @@ async function LoadImagesAsync() {
 }
 
 async function LoadPicksAsync() {
+    if (isPlayoffs) {
+        document.querySelectorAll('.team .checkmark').forEach(el => el.remove());
+        document.querySelectorAll('.team .team-img').forEach(el => el.classList.remove('reduced-opacity'));
+    }
+
     const url = isPlayoffs ?
         `/PickEms/Playoffs?handler=Picks&eventId=${eventId}&steamId=${steamId}` :
         `/PickEms/Stage?handler=Picks&eventId=${eventId}&steamId=${steamId}&stage=${stage}`;

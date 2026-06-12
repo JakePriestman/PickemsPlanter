@@ -105,38 +105,61 @@ function toggleCheckmark(index, resultImageSource) {
 
     if (picks.length == 0) return;
 
-    const dropzone = document.getElementById(`pick${index}`);
-
     if (isPlayoffs) {
-        const champion = picks.slice(6, 7);
-        const finalists = picks.slice(4, 6);
+        const champion    = picks.slice(6, 7);
+        const finalists   = picks.slice(4, 6);
         const semiFinalists = picks.slice(0, 4);
 
-        if (index === 0 || index === 1 || index === 2 || index == 3) {
-            showCheckmarkAndReduceResultOpacity(dropzone, semiFinalists, resultImageSource);
+        if (index >= 0 && index <= 3) {
+            // Semi-finalist: tick the QF team tile this team came from
+            if (!semiFinalists.includes(resultImageSource)) return;
+
+            const matchId    = getPlayoffsMatchBeforeId(`pick${index}`);
+            const matchIndex = parseInt(matchId.replace('match', ''), 10);
+            const qfSection  = document.querySelector('.quarter-finals');
+            const match      = qfSection.querySelectorAll('.match-card')[matchIndex];
+
+            const teamImage = Array.from(match.querySelectorAll('.team-img'))
+                .find(img => img.src.split('/').pop() === resultImageSource);
+
+            if (teamImage) {
+                const teamDiv     = teamImage.closest('.team');
+                const checkmarkEl = document.createElement('div');
+                checkmarkEl.className = 'checkmark show';
+                checkmarkEl.innerHTML = '<div class="check"></div>';
+                teamDiv.appendChild(checkmarkEl);
+                teamImage.classList.add('reduced-opacity');
+            }
         }
 
-        if (index === 4 || index == 5) {
-            showCheckmarkAndReduceResultOpacity(dropzone, finalists, resultImageSource);
+        else if (index === 4 || index === 5) {
+            // Finalist: tick the SF dropzone (pick0–3) this team came from
+            if (!finalists.includes(resultImageSource)) return;
+
+            const prevDropzone = findPickByImage(resultImageSource, ['pick0', 'pick1', 'pick2', 'pick3']);
+            if (prevDropzone) showCheckmarkAndReduceResultOpacity(prevDropzone, finalists, resultImageSource);
         }
 
-        if (index === 6) {
-            showCheckmarkAndReduceResultOpacity(dropzone, champion, resultImageSource);
+        else if (index === 6) {
+            // Champion: tick the GF dropzone (pick4–5) this team came from
+            if (!champion.includes(resultImageSource)) return;
+
+            const prevDropzone = findPickByImage(resultImageSource, ['pick4', 'pick5']);
+            if (prevDropzone) showCheckmarkAndReduceResultOpacity(prevDropzone, champion, resultImageSource);
         }
     }
     else {
-        const threeZero = picks.slice(0, 2);
+        const dropzone = document.getElementById(`pick${index}`);
+        const threeZero       = picks.slice(0, 2);
         const threeOneThreeTwo = picks.slice(2, 8);
-        const zeroThree = picks.slice(8, 10);
+        const zeroThree       = picks.slice(8, 10);
 
         if (index === 0 || index === 1) {
             showCheckmarkAndReduceResultOpacity(dropzone, threeZero, resultImageSource);
         }
-
         else if (index === 8 || index === 9) {
             showCheckmarkAndReduceResultOpacity(dropzone, zeroThree, resultImageSource);
         }
-
         else {
             showCheckmarkAndReduceResultOpacity(dropzone, threeOneThreeTwo, resultImageSource);
         }
