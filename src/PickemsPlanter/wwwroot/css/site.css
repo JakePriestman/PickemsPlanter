@@ -23,7 +23,7 @@ body {
     padding: 0;
     color: var(--text-colour);
     width: 100%;
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -62,76 +62,112 @@ img {
 /*LOGOUT CONFIRMATION*/
 .logout-confirmation {
     position: fixed;
-    width: 100vw;
-    height: 100vh;
+    width: 100dvw;
+    height: 100dvh;
     z-index: 1000;
     display: none;
     justify-content: center;
     align-items: center;
-    background-color: rgba(var(--background-colour-rgb), 0.85);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background-color: rgba(var(--background-colour-rgb), 0.7);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 
 .logout-confirmation.show {
     display: flex;
+    animation: fadeIn 0.15s ease forwards;
 }
 
 .logout-form {
+    position: relative;
     background: var(--glass-bg);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
     border: 1px solid var(--glass-border);
-    width: fit-content;
-    height: fit-content;
+    width: clamp(260px, 88vw, 340px);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
+    border-radius: 20px;
     box-shadow: var(--shadow-l);
+    overflow: hidden;
 }
 
-.logout-text {
-    padding: 1.5em 2em 0.5em;
+.logout-form::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(168, 85, 85, 0.55), transparent);
+}
+
+.logout-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3em;
+    padding: 1.75em 1.75em 1.25em;
+}
+
+.logout-title {
     font-family: inherit;
-    font-size: 18px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-colour);
+    letter-spacing: 0.02em;
+    margin: 0;
+}
+
+.logout-subtitle {
+    font-family: inherit;
+    font-size: 13px;
+    color: rgba(232, 234, 240, 0.45);
+    margin: 0;
 }
 
 .logout-buttons {
     display: flex;
-    padding: 1em 1.5em 1.5em;
-    gap: 0.75em;
+    padding: 1em 1.25em 1.25em;
+    gap: 0.6em;
+    border-top: 1px solid var(--glass-border);
 }
 
 .logout-buttons button,
 .logout-buttons a {
-    padding: 0.6em 1.4em;
-    border: none;
+    flex: 1;
+    padding: 0.65em 1em;
     border-radius: 50px;
-    font-size: 1em;
+    font-size: 0.9em;
     font-family: inherit;
-    box-shadow: var(--shadow-s);
-    color: white;
     cursor: pointer;
-    transition: filter 0.15s ease, transform 0.15s ease;
-}
-
-.logout-buttons button:hover,
-.logout-buttons a:hover,
-.ok-button:hover {
-    filter: brightness(1.2);
-    transform: scale(1.04);
-    cursor: pointer;
-}
-
-.confirm-logout-button {
-    background-color: var(--submit-colour);
+    text-align: center;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
 }
 
 .cancel-logout-button {
-    background-color: var(--delete-colour);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    color: rgba(232, 234, 240, 0.6);
+}
+
+.confirm-logout-button {
+    background: rgba(168, 85, 85, 0.12);
+    border: 1px solid rgba(168, 85, 85, 0.35);
+    color: rgba(230, 165, 165, 0.9);
+}
+
+.cancel-logout-button:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: var(--text-colour);
+    transform: translateY(-1px);
+}
+
+.confirm-logout-button:hover {
+    background: rgba(168, 85, 85, 0.25);
+    border-color: rgba(168, 85, 85, 0.6);
+    color: rgb(240, 190, 190);
+    transform: translateY(-1px);
 }
 
 
@@ -245,17 +281,6 @@ footer p a:hover {
 }
 
 @media screen and (max-width: 1024px) {
-    .logout-text {
-        font-size: 13px;
-    }
-
-    .confirm-logout-button,
-    .cancel-logout-button,
-    .logout-buttons button,
-    .logout-buttons a {
-        font-size: 12px;
-    }
-
     footer {
         width: 50%;
         left: 25%;

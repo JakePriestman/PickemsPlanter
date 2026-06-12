@@ -129,6 +129,7 @@
 .dropzone-eliminated,
 .dropzone-advanced-not-allowed,
 .dropzone-eliminated-not-allowed {
+    position: relative;
     font-size: 20px;
     border-radius: 8px;
     height: 72px;
@@ -289,5 +290,21 @@
 
     .navbar h2 {
         font-size: 11px;
+    }
+}
+
+@media screen and (max-width: 768px) and (max-height: 874px) {
+    .teams-section {
+        overflow-y: auto;
+        align-content: start;
+        scrollbar-width: none;
+    }
+
+    .teams-section::-webkit-scrollbar {
+        display: none;
+    }
+
+    .teams-section:has(.picks-not-allowed-overlay.show) {
+        overflow-y: hidden;
     }
 }

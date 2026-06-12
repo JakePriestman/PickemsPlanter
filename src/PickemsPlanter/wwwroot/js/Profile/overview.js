@@ -16,12 +16,12 @@ async function showAuthCodeAsync(event, button) {
 
     if (input.type === "text") {
         input.type = "password";
-        button.querySelector("img").src = "/Images/showpassword.png";
+        button.classList.remove("is-visible");
     } else {
         const authCode = await getAuthCodeAsync(idSuffix);
         input.type = "text";
         input.value = authCode === null ? input.value : authCode.authCode;
-        button.querySelector("img").src = "/Images/hidepassword.png";
+        button.classList.add("is-visible");
     }
 }
 

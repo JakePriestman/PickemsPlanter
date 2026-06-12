@@ -15,15 +15,17 @@
     <body>
         <main role="main" class="container">
         <div class="logout-confirmation" id="logoutConfirmation">
-                <form class="logout-form">
-                <p class="logout-text">Are you sure you want to logout?</p>
-
-                <div class="logout-buttons">
-                    <button class="confirm-logout-button" asp-page="/Profile/Logout">Logout</button>
-                    <a class="cancel-logout-button" onclick="toggleLogoutConfirmation()">Cancel</a>
+            <form class="logout-form">
+                <div class="logout-header">
+                    <p class="logout-title">Sign out</p>
+                    <p class="logout-subtitle">Are you sure you want to log out?</p>
                 </div>
-                </form>
-            </div>
+                <div class="logout-buttons">
+                    <a class="cancel-logout-button" onclick="toggleLogoutConfirmation()">Cancel</a>
+                    <button class="confirm-logout-button" asp-page="/Profile/Logout">Log out</button>
+                </div>
+            </form>
+        </div>
 
             @RenderBody()
         </main>

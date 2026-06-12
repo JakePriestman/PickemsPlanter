@@ -164,3 +164,13 @@ function getPlayoffsPickAfterId(id) {
             return "pick3";
     }
 }
+
+function findPickByImage(filename, pickIds) {
+    for (const id of pickIds) {
+        const dropzone = document.getElementById(id);
+        if (!dropzone) continue;
+        const img = dropzone.querySelector('.dropped-img');
+        if (img && img.src.split('/').pop() === filename) return dropzone;
+    }
+    return null;
+}
