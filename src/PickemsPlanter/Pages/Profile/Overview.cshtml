@@ -6,7 +6,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/overview.css" />
+    <link rel="stylesheet" href="~/css/overview.css" asp-append-version="true" />
 }
 
 <div class="pickem-container">
@@ -19,6 +19,7 @@
     <form method="post" class="event-form">
         <div class="information-button" onclick="toggleExtraInformation()"><img src="~/Images/information.png" /></div>
         <div class="extra-information" id="extraInformation">
+            <button class="extra-information-close" onclick="toggleExtraInformation()" type="button" title="Close">✕</button>
             <p class="information-paragraph">Game authentication codes are used to allow third-party websites to manage your game without running the client.</p>
             <p class="information-paragraph">Click <a href="https://help.steampowered.com/en/wizard/HelpWithGameIssue/?appid=730&issueid=128" target="_blank">here</a> to create
                 and manage your game authentication codes.</p>

@@ -66,3 +66,12 @@ function toggleExtraInformation() {
     var popup = document.getElementById("extraInformation");
     popup.classList.toggle("show");
 }
+
+document.addEventListener("click", function (e) {
+    var popup = document.getElementById("extraInformation");
+    var btn = document.querySelector(".information-button");
+    if (popup && popup.classList.contains("show") &&
+        !popup.contains(e.target) && !btn.contains(e.target)) {
+        popup.classList.remove("show");
+    }
+});

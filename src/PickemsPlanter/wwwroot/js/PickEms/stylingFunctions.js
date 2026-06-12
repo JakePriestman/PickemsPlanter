@@ -16,7 +16,7 @@ function updateSaveButton() {
 
         if (!picksAllowed) {
             saveButton.disabled = true;
-            saveButton.textContent = "Picks not allowed";
+            saveButton.textContent = "Picks locked";
             return;
         }
 
@@ -222,7 +222,8 @@ function greyOutImages() {
 
         const stageBeforeElement = document.querySelector(stageBefore);
 
-        const match = [...stageBeforeElement.querySelectorAll('.match')].find(x => x.id === matchId);
+        const matchIndex = parseInt(matchId.replace('match', ''), 10);
+        const match = stageBeforeElement.querySelectorAll('.match-card')[matchIndex];
 
         const images = [...match.querySelectorAll('.dropped-img, .team-img')];
 

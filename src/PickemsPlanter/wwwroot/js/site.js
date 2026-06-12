@@ -10,7 +10,7 @@ function togglePicksNotAllowedConfirmation() {
     const picksNotAllowedConfirmation = document.getElementById('picksNotAllowedConfirmation');
 
     if (picksNotAllowedConfirmation) {
-        picksNotAllowedConfirmation.classList.toggle('show');
+        picksNotAllowedConfirmation.classList.add('show');
     }
 }
 
