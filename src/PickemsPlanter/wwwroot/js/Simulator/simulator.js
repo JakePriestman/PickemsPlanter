@@ -27,6 +27,76 @@ async function LoadAsync() {
     await createInitialMatchupsAsync();
 
     fillInEmptyMatchupsWithUnknown();
+
+    await autoFillFromResultsAsync();
+}
+
+async function autoFillFromResultsAsync() {
+    const teamImages = document.querySelectorAll('.team-img');
+
+    // Seeding isn't fully known yet — stay fully manual, same gate createInitialMatchupsAsync uses for clicks.
+    if ([...teamImages].some(x => x.src.includes('unknown'))) return;
+
+    const url = `/Simulator?handler=Results&eventId=${eventId}&stage=${stage}`;
+
+    let results;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) return;
+
+        results = await response.json();
+    } catch {
+        return;
+    }
+
+    if (!Array.isArray(results) || results.length === 0) return;
+
+    const byRound = new Map();
+
+    for (const result of results) {
+        if (!byRound.has(result.round)) byRound.set(result.round, []);
+        byRound.get(result.round).push(result);
+    }
+
+    const maxRound = Math.max(...byRound.keys());
+
+    for (let round = 1; round <= maxRound; round++) {
+        const matchesThisRound = byRound.get(round) || [];
+
+        for (const match of matchesThisRound) {
+            const winnerTeam = findUndecidedMatchupTeam(match.winnerTeam, match.loserTeam);
+
+            if (winnerTeam) selectTeam(winnerTeam);
+        }
+    }
+}
+
+function findUndecidedMatchupTeam(winnerSrc, loserSrc) {
+    const matchups = document.querySelectorAll('.matchup');
+
+    for (const matchup of matchups) {
+        const teamEls = [...matchup.querySelectorAll('.matchup-team')];
+
+        if (teamEls.length !== 2) continue;
+        if (teamEls.some(t => t.classList.contains('advanced') || t.classList.contains('eliminated'))) continue;
+
+        const imgs = teamEls.map(t => t.querySelector('img'));
+
+        if (imgs.some(i => !i)) continue;
+
+        const srcs = imgs.map(i => i.src.split('/').pop());
+
+        const winnerIndex = srcs.indexOf(winnerSrc);
+        const loserIndex = srcs.indexOf(loserSrc);
+
+        if (winnerIndex !== -1 && loserIndex !== -1 && winnerIndex !== loserIndex) {
+            return teamEls[winnerIndex];
+        }
+    }
+
+    return null;
 }
 
 resetButtons.forEach(rb => {

@@ -8,6 +8,7 @@ public interface IEventTableService
 {
 	Task<IReadOnlyCollection<Event>> GetAllEventsAsync();
 	Task UpsertEventAsync(string eventId, string eventName, bool disabled);
+	Task SetPandaScoreTournamentIdsAsync(string eventId, int? stage1TournamentId, int? stage2TournamentId, int? stage3TournamentId);
 }
 
 public class EventTableService(TableServiceClient tableServiceClient) : IEventTableService
@@ -26,7 +27,10 @@ public class EventTableService(TableServiceClient tableServiceClient) : IEventTa
 			{
 				Id = item.RowKey,
 				Name = item.Name,
-				Disabled = item.Disabled
+				Disabled = item.Disabled,
+				PandaScoreStage1TournamentId = item.PandaScoreStage1TournamentId,
+				PandaScoreStage2TournamentId = item.PandaScoreStage2TournamentId,
+				PandaScoreStage3TournamentId = item.PandaScoreStage3TournamentId
 			};
 
 			results.Add(eventModel);
@@ -46,5 +50,18 @@ public class EventTableService(TableServiceClient tableServiceClient) : IEventTa
 		};
 
 		await _client.UpsertEntityAsync(newEvent);
+	}
+
+	public async Task SetPandaScoreTournamentIdsAsync(string eventId, int? stage1TournamentId, int? stage2TournamentId, int? stage3TournamentId)
+	{
+		// Merge (not the strongly-typed Event) so Name/Disabled are left untouched.
+		TableEntity entity = new("Event", eventId)
+		{
+			{ nameof(Models.StorageAccount.Event.PandaScoreStage1TournamentId), stage1TournamentId },
+			{ nameof(Models.StorageAccount.Event.PandaScoreStage2TournamentId), stage2TournamentId },
+			{ nameof(Models.StorageAccount.Event.PandaScoreStage3TournamentId), stage3TournamentId }
+		};
+
+		await _client.UpsertEntityAsync(entity, TableUpdateMode.Merge);
 	}
 }
