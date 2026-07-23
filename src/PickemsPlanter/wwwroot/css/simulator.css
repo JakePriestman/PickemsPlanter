@@ -2,9 +2,10 @@
 .container {
     display: flex;
     flex-direction: row;
-    background-color: var(--navbar-colour);
-    border-radius: 10px;
-    box-shadow: var(--shadow-s);
+    background: rgba(14, 17, 23, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-m);
     justify-content: center;
     overflow: auto;
     align-items: center;
@@ -27,13 +28,8 @@
 
 .reset-button-container {
     display: flex;
+    justify-content: flex-end;
     margin-right: 25px;
-    border-radius: 4px;
-    overflow: hidden;
-    font-size: 10px;
-    height: 32px;
-    background: var(--foreground-colour);
-    box-shadow: var(--shadow-l);
 }
 
 .reset-button {
@@ -43,8 +39,23 @@
     gap: 4px;
     justify-content: center;
     text-align: center;
-    line-height: 11px;
+    padding: 0.35em 0.9em;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--glass-border);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(232, 234, 240, 0.5);
     cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.reset-button:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.14);
+    color: var(--text-colour);
 }
 
 .swiss-pool-terminal {
@@ -57,28 +68,42 @@
 .swiss-pool-wrapper-eliminated {
     display: flex;
     flex-direction: column;
-    border-radius: 4px;
+    border-radius: 8px;
+    padding: 0.4em 0.5em 0.5em;
+    border: 1px solid transparent;
 }
 
 .swiss-pool-wrapper-advanced {
-    background-color: var(--submit-colour);
+    background: rgba(94, 139, 75, 0.05);
+    border-color: rgba(94, 139, 75, 0.3);
 }
 
 .swiss-pool-wrapper-eliminated {
-    background-color: var(--delete-colour);
+    background: rgba(168, 85, 85, 0.05);
+    border-color: rgba(168, 85, 85, 0.3);
 }
 
 .swiss-pool-title {
-    color: rgba(145,168,179,.65);
     text-align: left;
-    font-size: 14px;
+    font-size: 10px;
     font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    color: rgba(232, 234, 240, 0.3);
 }
 
 .swiss-pool-wrapper-advanced .swiss-pool-title,
 .swiss-pool-wrapper-eliminated .swiss-pool-title {
     text-align: center;
+    margin-bottom: 0.3em;
+}
+
+.swiss-pool-wrapper-advanced .swiss-pool-title {
+    color: rgba(94, 139, 75, 0.8);
+}
+
+.swiss-pool-wrapper-eliminated .swiss-pool-title {
+    color: rgba(168, 85, 85, 0.8);
 }
 
 .swiss-pool-container {
@@ -102,80 +127,78 @@
     width: 25px;
 }
 
-.swiss-progression-up {
-    width: 40px;
-    height: 8px;
-    background: url(https://resources.hltv.org/img/static/gfx/swiss-advance.png) no-repeat top,linear-gradient(270deg, var(--submit-colour),#2d3844);
-        background-size: auto, auto;
-    background-size: 40px 8px;
+.swiss-progression-up,
+.swiss-progression-down {
+    width: 34px;
+    height: 3px;
     position: relative;
     left: -8px;
+    clip-path: polygon(0 0, 78% 0, 100% 50%, 78% 100%, 0 100%);
+}
+
+.swiss-progression-up {
+    background: var(--advance-colour);
     transform: rotate(-30deg);
 }
 
 .swiss-progression-down {
-    width: 40px;
-    height: 8px;
     background: var(--delete-colour);
-    background: url(https://resources.hltv.org/img/static/gfx/swiss-eliminate.png) no-repeat top,linear-gradient(270deg, var(--delete-colour),#2d3844);
-        background-size: auto, auto;
-    background-size: 40px 8px;
-    position: relative;
-    left: -8px;
     transform: rotate(30deg);
 }
 
 .matchup {
     height: 38px;
-    background: var(--foreground-colour);
-    border-radius: 4px;
+    background: rgba(14, 17, 23, 0.2);
+    border-radius: 8px;
     display: grid;
     grid-template-columns: 1fr 12px 1fr;
     gap: 2px;
     align-items: center;
     position: relative;
-    border: 1px solid transparent;
+    border: 1px solid var(--glass-border);
     transition: .2s ease;
-    box-shadow: var(--shadow-l);
+    box-shadow: var(--shadow-s);
 }
 
 .matchup-team,
 .team {
     align-items: center;
     justify-content: center;
-    background: rgba(0,0,0,.05);
-    border: 1px solid hsla(0,0%,100%,.15);
+    background: var(--foreground-colour);
+    box-shadow: var(--shadow-s);
     display: inline-flex;
     height: 30px;
     width: 30px;
     flex: 0 0 30px;
-    border-radius: 100px;
+    border-radius: 8px;
     justify-self: center;
     position: relative;
+    transition: box-shadow 0.15s ease;
 }
 
 .team-img.unknown {
     opacity: 0.5;
 }
 
-.team {
-    background: rgba(0,0,0,.35);
-}
-
 /* Get this to work only on filled with not unknown */
-.matchup-team:hover:not(:has(.team-img.unknown)) { 
-    background: #1d252f;
+.matchup-team:hover:not(:has(.team-img.unknown)) {
+    box-shadow: var(--shadow-s), 0 0 0 1px rgba(75, 156, 226, 0.5);
     cursor: pointer;
 }
 
+.matchup-team:hover:not(:has(.team-img.unknown)) .team-img {
+    transform: scale(1.15);
+    transition: 0.2s ease;
+}
+
 .matchup-team.advanced {
-    border: solid #0e2912 1px;
-    background-color: var(--submit-colour);
+    background-color: var(--advance-colour);
+    box-shadow: var(--shadow-m);
 }
 
 .matchup-team.eliminated {
-    opacity: .5;
-    filter: saturate(0);
+    opacity: .4;
+    filter: brightness(40%);
 }
 
 .teams-container {
@@ -197,4 +220,6 @@
     display: flex;
     justify-content: center;
     width: 20px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
 }
