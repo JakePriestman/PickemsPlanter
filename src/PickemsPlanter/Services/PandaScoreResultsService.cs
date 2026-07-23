@@ -65,10 +65,31 @@ public partial class PandaScoreResultsService(IPandaScoreResultsCachingService c
 		if (pandaScoreTeamName is null)
 			return null;
 
-		var logo = teams.FirstOrDefault(x => x.Name!.Equals(pandaScoreTeamName, StringComparison.CurrentCultureIgnoreCase))?.Logo;
+		var exactMatches = teams.Where(x => x.Name!.Equals(pandaScoreTeamName, StringComparison.CurrentCultureIgnoreCase)).ToList();
 
-		return logo is null ? null : $"{logo}.png";
+		if (exactMatches.Count == 1)
+			return $"{exactMatches[0].Logo}.png";
+
+		// PandaScore and Steam sometimes use slightly different variants of the same org's name
+		// (eg. "Liquid" vs "Team Liquid", "BetBoom Team" vs "BetBoom") — fall back to a
+		// normalized substring match, but only commit when it resolves to exactly one candidate.
+		string normalizedPandaScoreName = Normalize(pandaScoreTeamName);
+
+		var fuzzyMatches = teams
+			.Where(x =>
+			{
+				string normalizedTeamName = Normalize(x.Name!);
+				return normalizedTeamName == normalizedPandaScoreName
+					|| normalizedTeamName.Contains(normalizedPandaScoreName)
+					|| normalizedPandaScoreName.Contains(normalizedTeamName);
+			})
+			.ToList();
+
+		return fuzzyMatches.Count == 1 ? $"{fuzzyMatches[0].Logo}.png" : null;
 	}
+
+	private static string Normalize(string name) =>
+		string.Concat(name.Where(char.IsLetterOrDigit)).ToLowerInvariant();
 
 	private static int? ParseRound(string matchName)
 	{
