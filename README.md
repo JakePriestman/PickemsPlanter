@@ -92,7 +92,7 @@ You can deploy PickemsPlanter to **Azure App Service** using deploy.bicep
 
 ## 📝 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is source-available under the **[PolyForm Strict License 1.0.0](https://polyformproject.org/licenses/strict/1.0.0)** — see the [LICENSE](LICENSE) file for details. Personal, noncommercial use (reading, running, learning from the code) is permitted; distributing it, building a product or service on it, or any commercial use is not, without permission from the author.
 
 ---
 
