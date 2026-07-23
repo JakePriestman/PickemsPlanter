@@ -32,10 +32,15 @@ async function LoadAsync() {
 }
 
 async function autoFillFromResultsAsync() {
-    const teamImages = document.querySelectorAll('.team-img');
+    // Only round0 holds the actual seeding at this point — rounds 1-4 are always
+    // pre-filled with "unknown" placeholders by fillInEmptyMatchupsWithUnknown()
+    // until they're generated, so checking the whole document here would always
+    // find an "unknown" and skip auto-fill even when seeding is fully known.
+    const round0 = document.getElementById('round0');
+    const seedImages = round0.querySelectorAll('.team-img');
 
     // Seeding isn't fully known yet — stay fully manual, same gate createInitialMatchupsAsync uses for clicks.
-    if ([...teamImages].some(x => x.src.includes('unknown'))) return;
+    if ([...seedImages].some(x => x.src.includes('unknown'))) return;
 
     const url = `/Simulator?handler=Results&eventId=${eventId}&stage=${stage}`;
 
