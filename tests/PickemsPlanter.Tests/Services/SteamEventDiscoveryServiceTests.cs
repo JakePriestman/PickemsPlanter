@@ -185,6 +185,64 @@ public class SteamEventDiscoveryServiceTests
 	}
 
 	[Fact]
+	public async Task RunDiscoveryAsync_ResolvesMapping_ForAlreadyKnownEventMissingIt()
+	{
+		// Arrange — event "26" already exists in the table (e.g. it predates this feature),
+		// so it's never a "candidate" in the discovery loop, but it's still missing its mapping.
+		Event @event = new() { Id = "26", Name = "IEM Cologne 2026 CS2 Major Championship", Disabled = false };
+
+		_eventTableService.GetAllEventsAsync().Returns([@event]);
+		_steamAPI.GetTournamentLayoutAsync(Arg.Any<string>()).ThrowsAsync<KeyNotFoundException>();
+		_steamAPI.GetTournamentLayoutAsync("26").Returns(Layout("IEM Cologne 2026 CS2 Major Championship"));
+
+		PandaScoreSeries series = new()
+		{
+			Id = 10488,
+			Name = "Cologne Major",
+			Year = 2026,
+			Tournaments =
+			[
+				new() { Id = 20708, Name = "Stage 1" },
+				new() { Id = 20709, Name = "Stage 2" },
+				new() { Id = 21115, Name = "Stage 3" }
+			]
+		};
+
+		_pandaScoreApi.SearchSeriesAsync(Arg.Any<string>()).Returns([series]);
+
+		// Act
+		await _service.RunDiscoveryAsync();
+
+		// Assert
+		await _eventTableService.Received(1).SetPandaScoreTournamentIdsAsync("26", 20708, 20709, 21115);
+	}
+
+	[Fact]
+	public async Task RunDiscoveryAsync_DoesNotResolveMapping_ForAlreadyKnownEventWithFullMapping()
+	{
+		// Arrange
+		Event @event = new()
+		{
+			Id = "26",
+			Name = "IEM Cologne 2026 CS2 Major Championship",
+			Disabled = false,
+			PandaScoreStage1TournamentId = 20708,
+			PandaScoreStage2TournamentId = 20709,
+			PandaScoreStage3TournamentId = 21115
+		};
+
+		_eventTableService.GetAllEventsAsync().Returns([@event]);
+		_steamAPI.GetTournamentLayoutAsync(Arg.Any<string>()).ThrowsAsync<KeyNotFoundException>();
+		_steamAPI.GetTournamentLayoutAsync("26").Returns(Layout("IEM Cologne 2026 CS2 Major Championship"));
+
+		// Act
+		await _service.RunDiscoveryAsync();
+
+		// Assert
+		await _pandaScoreApi.DidNotReceiveWithAnyArgs().SearchSeriesAsync(default!);
+	}
+
+	[Fact]
 	public async Task RunDiscoveryAsync_DoesNotResolveMapping_WhenNoYearInName()
 	{
 		// Arrange

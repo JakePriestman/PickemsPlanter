@@ -73,6 +73,7 @@ public partial class SteamEventDiscoveryService(
 
 		await RetireStaleEventsAsync(events);
 		await DiscoverNewEventsAsync(events);
+		await ResolveMissingMappingsAsync(events);
 	}
 
 	private async Task RetireStaleEventsAsync(IReadOnlyCollection<Event> events)
@@ -124,6 +125,19 @@ public partial class SteamEventDiscoveryService(
 			await TryAutoResolvePandaScoreMappingAsync(candidateEventId, name);
 		}
 	}
+
+	private async Task ResolveMissingMappingsAsync(IReadOnlyCollection<Event> events)
+	{
+		foreach (var @event in events.Where(e => !e.Disabled && IsMissingAnyStageMapping(e)))
+		{
+			await TryAutoResolvePandaScoreMappingAsync(@event.Id, @event.Name);
+		}
+	}
+
+	private static bool IsMissingAnyStageMapping(Event @event) =>
+		@event.PandaScoreStage1TournamentId is null
+		|| @event.PandaScoreStage2TournamentId is null
+		|| @event.PandaScoreStage3TournamentId is null;
 
 	private async Task TryAutoResolvePandaScoreMappingAsync(string eventId, string eventName)
 	{
