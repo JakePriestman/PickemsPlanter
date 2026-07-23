@@ -406,12 +406,16 @@ function createRoundTwoMatchups(swissRound) {
 
     const previousContainers = swissRound.querySelectorAll('.swiss-pool-container');
 
+    // Each branch below only fires once its full expected team count is present. Since
+    // createNextMatchups() runs the moment ANY single sibling bracket finishes (not the
+    // whole round), a plain "> 0" check can fire while a combined-source bracket is only
+    // partially decided, building a corrupted-size pool for buildSwissMatchups().
     const twoZeroTeams = previousContainers[0].querySelectorAll('.matchup-team.advanced');
     const twoZero = containers[0].querySelectorAll('.matchup');
-    if (twoZeroTeams.length > 0)
+    if (twoZeroTeams.length === 4)
         calculateMatchups(twoZeroTeams, twoZero);
 
-    const oneOneTeams = [...previousContainers[0].querySelectorAll('.matchup-team.eliminated'), 
+    const oneOneTeams = [...previousContainers[0].querySelectorAll('.matchup-team.eliminated'),
                         ...previousContainers[1].querySelectorAll('.matchup-team.advanced')];
     const oneOne = containers[1].querySelectorAll('.matchup');
     if (oneOneTeams.length === 8)
@@ -421,7 +425,7 @@ function createRoundTwoMatchups(swissRound) {
 
     const zeroTwo = containers[2].querySelectorAll('.matchup');
 
-    if (zeroTwoTeams.length > 0) {
+    if (zeroTwoTeams.length === 4) {
         calculateMatchups(zeroTwoTeams, zeroTwo);
     }
 
@@ -437,24 +441,24 @@ function createRoundThreeMatchups(swissRound) {
 
     const threeZeroTeams = previousContainers[0].querySelectorAll('.matchup-team.advanced');
     const threeZero = containers[0].querySelectorAll('.team');
-    if (threeZeroTeams.length > 0)
+    if (threeZeroTeams.length === 2)
         fillAdvancedOrEliminatedTeams(threeZeroTeams, threeZero);
 
-    const twoOneTeams = [...previousContainers[0].querySelectorAll('.matchup-team.eliminated'), 
+    const twoOneTeams = [...previousContainers[0].querySelectorAll('.matchup-team.eliminated'),
                             ...previousContainers[1].querySelectorAll('.matchup-team.advanced')];
     const twoOne = containers[1].querySelectorAll('.matchup');
-    if (twoOneTeams.length > 0)
+    if (twoOneTeams.length === 6)
         calculateMatchups(twoOneTeams, twoOne);
 
-    const oneTwoTeams = [...previousContainers[1].querySelectorAll('.matchup-team.eliminated'), 
+    const oneTwoTeams = [...previousContainers[1].querySelectorAll('.matchup-team.eliminated'),
                             ...previousContainers[2].querySelectorAll('.matchup-team.advanced')];
     const oneTwo = containers[2].querySelectorAll('.matchup');
-    if (oneTwoTeams.length > 0)
+    if (oneTwoTeams.length === 6)
         calculateMatchups(oneTwoTeams, oneTwo);
 
     const zeroThreeTeams = previousContainers[2].querySelectorAll('.matchup-team.eliminated');
     const zeroThree = containers[3].querySelectorAll('.team');
-    if (zeroThreeTeams.length > 0)
+    if (zeroThreeTeams.length === 2)
         fillAdvancedOrEliminatedTeams(zeroThreeTeams, zeroThree);
 
     resetStyles(nextRound);
@@ -469,19 +473,19 @@ function createRoundFourMatchups(swissRound) {
 
     const threeOneTeams = previousContainers[1].querySelectorAll('.matchup-team.advanced');
     const threeOne = containers[0].querySelectorAll('.team');
-    if (threeOneTeams.length > 0)
+    if (threeOneTeams.length === 3)
         fillAdvancedOrEliminatedTeams(threeOneTeams, threeOne);
 
     const twoTwoTeams = [...previousContainers[1].querySelectorAll('.matchup-team.eliminated'),
                             ...previousContainers[2].querySelectorAll('.matchup-team.advanced')]
-    const twoTwo = containers[2].querySelectorAll('.matchup');      
-    
-    if(twoTwoTeams.length > 0)
+    const twoTwo = containers[2].querySelectorAll('.matchup');
+
+    if(twoTwoTeams.length === 6)
         calculateMatchups(twoTwoTeams, twoTwo);
 
     const oneThreeTeams = previousContainers[2].querySelectorAll('.matchup-team.eliminated');
     const oneThree = containers[4].querySelectorAll('.team');
-    if (oneThreeTeams.length > 0)
+    if (oneThreeTeams.length === 3)
         fillAdvancedOrEliminatedTeams(oneThreeTeams, oneThree);
 
     resetStyles(nextRound);
