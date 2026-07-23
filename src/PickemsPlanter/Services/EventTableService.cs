@@ -41,15 +41,17 @@ public class EventTableService(TableServiceClient tableServiceClient) : IEventTa
 
 	public async Task UpsertEventAsync(string eventId, string eventName, bool disabled)
 	{
-		Models.StorageAccount.Event newEvent = new()
+		// Merge a partial entity (not the strongly-typed Event) so any previously-set
+		// PandaScoreStage{1,2,3}TournamentId fields aren't clobbered — Azure Table Storage's
+		// Merge treats an explicit null property as "delete it," and the strongly-typed
+		// Event always serializes every property, including the ones this call isn't setting.
+		TableEntity entity = new("Event", eventId)
 		{
-			PartitionKey = "Event",
-			RowKey = eventId,
-			Name = eventName,
-			Disabled = disabled
+			{ nameof(Models.StorageAccount.Event.Name), eventName },
+			{ nameof(Models.StorageAccount.Event.Disabled), disabled }
 		};
 
-		await _client.UpsertEntityAsync(newEvent);
+		await _client.UpsertEntityAsync(entity, TableUpdateMode.Merge);
 	}
 
 	public async Task SetPandaScoreTournamentIdsAsync(string eventId, int? stage1TournamentId, int? stage2TournamentId, int? stage3TournamentId)

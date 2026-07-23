@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
 			services.AddSingleton<IPandaScoreResultsService, PandaScoreResultsService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
 			services.AddOptions<PandaScoreConfig>().Bind(config.GetSection(nameof(PandaScoreConfig)));
+			services.AddOptions<EventDiscoveryConfig>().Bind(config.GetSection(nameof(EventDiscoveryConfig)));
 		}
 		public void AddAuth()
 		{
@@ -46,6 +47,8 @@ public static class ServiceCollectionExtensions
 			services.AddSingleton<PandaScoreResultsCachingService>();
 			services.AddSingleton<IPandaScoreResultsCachingService>(sp => sp.GetRequiredService<PandaScoreResultsCachingService>());
 			services.AddHostedService(sp => sp.GetRequiredService<PandaScoreResultsCachingService>());
+
+			services.AddHostedService<SteamEventDiscoveryService>();
 		}
 
 		public void AddJsonSerialization()
