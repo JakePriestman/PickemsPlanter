@@ -47,6 +47,13 @@
     height: 110px;
 }
 
+.coin-rim-text {
+    font-family: inherit;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    fill: var(--coin-dark);
+}
+
 .coin-tier-name {
     margin: 0;
     font-size: 1.3em;

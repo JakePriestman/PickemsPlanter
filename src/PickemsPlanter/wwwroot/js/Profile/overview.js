@@ -82,11 +82,12 @@ async function toggleCoinProgress(eventId) {
     }
 
     const progress = await response.json();
+    const eventName = eventContainer.querySelector("h2")?.textContent ?? "";
 
-    panel.innerHTML = renderCoinProgress(progress);
+    panel.innerHTML = renderCoinProgress(progress, eventName);
 }
 
-function renderCoinProgress(progress) {
+function renderCoinProgress(progress, eventName) {
     const tierClass = progress.tier.toLowerCase();
     const percent = progress.totalChallenges === 0 ? 0 : (100 * progress.completedChallenges / progress.totalChallenges).toFixed(2);
 
@@ -108,10 +109,25 @@ function renderCoinProgress(progress) {
                                 <stop offset="55%" stop-color="var(--coin-base)" />
                                 <stop offset="100%" stop-color="var(--coin-dark)" />
                             </radialGradient>
+                            <!-- Sweep-flag 1 from the left point through the top to the right point keeps
+                                 the "CS2 MAJOR" text upright; the bottom arc runs the opposite direction
+                                 (right-to-left through the bottom) so the event name is upright too, not
+                                 mirrored/upside-down. -->
+                            <path id="coinTopArc-${tierClass}" d="M 9,50 A 41,41 0 0 1 91,50" />
+                            <path id="coinBottomArc-${tierClass}" d="M 91,50 A 41,41 0 0 1 9,50" />
+                            <path id="coinStar-${tierClass}" d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" />
                         </defs>
                         <circle cx="50" cy="50" r="46" fill="url(#coinFace-${tierClass})" stroke="var(--coin-dark)" stroke-width="3" />
                         <circle cx="50" cy="50" r="38" fill="none" stroke="var(--coin-light)" stroke-width="1.5" opacity="0.55" />
-                        <path d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" fill="var(--coin-dark)" opacity="0.85" />
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.85" />
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(16,50) scale(0.2) translate(-50,-50)" />
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(84,50) scale(0.2) translate(-50,-50)" />
+                        <text class="coin-rim-text" font-size="8">
+                            <textPath href="#coinTopArc-${tierClass}" startOffset="50%" text-anchor="middle">CS2 MAJOR</textPath>
+                        </text>
+                        <text class="coin-rim-text" font-size="7">
+                            <textPath href="#coinBottomArc-${tierClass}" startOffset="50%" text-anchor="middle">${eventName.toUpperCase()}</textPath>
+                        </text>
                     </svg>
                 </div>
                 <p class="coin-tier-name coin-tier-${tierClass}">${progress.tier}</p>
