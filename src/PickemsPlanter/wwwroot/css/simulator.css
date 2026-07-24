@@ -17,6 +17,13 @@
     min-width: 887px;
 }
 
+/* Scoping wrapper for simulator.js's document-wide queries (see bracketRoot() in
+   simulator.js) — must not affect layout, since .container expects the swiss-round
+   divs as its direct flex children. */
+#bracketProgression {
+    display: contents;
+}
+
 .swiss-round {
     display: flex;
     flex-direction: column;

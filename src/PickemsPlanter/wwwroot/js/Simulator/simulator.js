@@ -18,7 +18,19 @@ const sixMatchupPriorities = [
 
 let { eventId, stage } = window.pageData;
 
-document.addEventListener("DOMContentLoaded", LoadAsync);
+// The Bracket View on /PickEms/Stage embeds this engine read-only and lazy-loads it
+// itself (only once the user actually opens Bracket View) rather than on every page load.
+if (!window.bracketViewLazyInit) {
+    document.addEventListener("DOMContentLoaded", LoadAsync);
+}
+
+// On /PickEms/Stage this markup sits alongside Simple View's own .team/.team-img elements,
+// so document-wide queries for those classes must be scoped to this engine's own bracket
+// markup rather than the whole page. #bracketProgression wraps the bracket on that page;
+// on /Simulator (no such wrapper) this just falls back to the whole document.
+function bracketRoot() {
+    return document.getElementById('bracketProgression') || document;
+}
 
 const resetButtons = document.querySelectorAll('.reset-button');
 
@@ -162,11 +174,13 @@ function finalise(teamsInRound, round) {
 
         addMatchupsToBracket(matchups, matchupDivs);
 
-        const matchupTeams = bracket.querySelectorAll('.matchup-team');
+        if (!window.bracketViewReadOnly) {
+            const matchupTeams = bracket.querySelectorAll('.matchup-team');
 
-        matchupTeams.forEach(mt => {
-            addClickEvent(mt);
-        });
+            matchupTeams.forEach(mt => {
+                addClickEvent(mt);
+            });
+        }
     }
 }
 
@@ -200,7 +214,7 @@ function resetStyles(swissRound) {
                                 ...teamContainers[2].querySelectorAll('.team')];
         teamsToReset.forEach(t => {
             t.innerHTML = "";
-            const image = createTeamImage('unknown.png', 0, 0);
+            const image = createBracketTeamImage('unknown.png', 0, 0);
 
             t.appendChild(image);
         });
@@ -216,7 +230,7 @@ function resetStyles(swissRound) {
         matchupTeams.forEach(mt => {
             mt.innerHTML = "";
             mt.className = "matchup-team";
-            const image = createTeamImage('unknown.png', 0, 0);
+            const image = createBracketTeamImage('unknown.png', 0, 0);
 
             if (mt._selectHandler) {
                 mt.removeEventListener('click', mt._selectHandler);
@@ -229,7 +243,7 @@ function resetStyles(swissRound) {
         const teams = round.querySelectorAll('.team');
         teams.forEach(t => {
             t.innerHTML = "";
-            const image = createTeamImage('unknown.png', 0, 0);
+            const image = createBracketTeamImage('unknown.png', 0, 0);
             t.appendChild(image);
         });
     }
@@ -265,15 +279,15 @@ function switchStyle(winner, loser) {
 }
 
 function fillInEmptyMatchupsWithUnknown() {
-    const emptyTeams = Array.from(document.querySelectorAll('.matchup-team, .team')).filter(x => x.innerHTML == "");
+    const emptyTeams = Array.from(bracketRoot().querySelectorAll('.matchup-team, .team')).filter(x => x.innerHTML == "");
 
     for (const team of emptyTeams) {
-        const image = createTeamImage('unknown.png', 0, 0);
+        const image = createBracketTeamImage('unknown.png', 0, 0);
         team.appendChild(image);
     }
 }
 
-function createTeamImage(imageSource, seed, buchholz) {
+function createBracketTeamImage(imageSource, seed, buchholz) {
     const image = document.createElement("img");
     image.src = `https://sacs2.blob.core.windows.net/teamimages/${imageSource}`;
     image.className = "team-img";
@@ -329,8 +343,8 @@ async function createInitialMatchupsAsync() {
         const higherSeed = seeds[index];
         const lowerSeed = seeds[j];
 
-        const higherSeedImg = createTeamImage(higherSeed.team, higherSeed.seed, 0);
-        const lowerSeedImg = createTeamImage(lowerSeed.team, lowerSeed.seed, 0);
+        const higherSeedImg = createBracketTeamImage(higherSeed.team, higherSeed.seed, 0);
+        const lowerSeedImg = createBracketTeamImage(lowerSeed.team, lowerSeed.seed, 0);
 
         teams[0].appendChild(higherSeedImg);
         teams[1].appendChild(lowerSeedImg);
@@ -338,11 +352,11 @@ async function createInitialMatchupsAsync() {
 
     const matchupsTeams = swissRound.querySelectorAll('.matchup-team');
 
-    const teamImages = document.querySelectorAll('.team-img');
+    const teamImages = bracketRoot().querySelectorAll('.team-img');
 
     const arrayFromTeams = Array.from(teamImages);
 
-    if (arrayFromTeams.every(x => !x.src.includes("unknown"))) {
+    if (!window.bracketViewReadOnly && arrayFromTeams.every(x => !x.src.includes("unknown"))) {
 
         matchupsTeams.forEach(mt => {
             mt.addEventListener('click', () => {
@@ -535,10 +549,10 @@ function addMatchupsToBracket(matchups, bracket) {
 
         const matchupTeams = matchup.querySelectorAll('.matchup-team');
 
-        const firstTeamImg = createTeamImage(teams[0].src.split('/').pop(),
+        const firstTeamImg = createBracketTeamImage(teams[0].src.split('/').pop(),
             teams[0].getAttribute('seed'),
             teams[0].getAttribute('buchholz'));
-        const secondTeamImg = createTeamImage(teams[1].src.split('/').pop(),
+        const secondTeamImg = createBracketTeamImage(teams[1].src.split('/').pop(),
             teams[1].getAttribute('seed'),
             teams[1].getAttribute('buchholz'));
 
@@ -550,8 +564,8 @@ function fillAdvancedOrEliminatedTeams(incomingTeams, bracket) {
 
     let teams = Array.from(incomingTeams).map(at => at.querySelector('img'));
 
-    const firstTeam = createTeamImage(teams[0].src.split('/').pop(), teams[0].getAttribute('seed'));
-    const secondTeam = createTeamImage(teams[1].src.split('/').pop(), teams[1].getAttribute('seed'));
+    const firstTeam = createBracketTeamImage(teams[0].src.split('/').pop(), teams[0].getAttribute('seed'));
+    const secondTeam = createBracketTeamImage(teams[1].src.split('/').pop(), teams[1].getAttribute('seed'));
 
     bracket[0].innerHTML = "";
     bracket[0].appendChild(firstTeam);
@@ -560,7 +574,7 @@ function fillAdvancedOrEliminatedTeams(incomingTeams, bracket) {
     bracket[1].appendChild(secondTeam);
 
     if (incomingTeams.length === 3) {
-        const thirdTeam = createTeamImage(teams[2].src.split('/').pop(), teams[2].getAttribute('seed'));
+        const thirdTeam = createBracketTeamImage(teams[2].src.split('/').pop(), teams[2].getAttribute('seed'));
         bracket[2].innerHTML = "";
         bracket[2].appendChild(thirdTeam);
     }
