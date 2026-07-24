@@ -88,7 +88,9 @@ async function autoFillFromResultsAsync() {
             if (winnerTeam) {
                 selectTeam(winnerTeam);
 
-                if (match.score) {
+                // Score display is a Bracket View (/PickEms/Stage) feature only — /Simulator
+                // stays exactly as it was before scores were added.
+                if (match.score && window.bracketViewReadOnly) {
                     const matchup = winnerTeam.closest('.matchup');
 
                     if (matchup) {

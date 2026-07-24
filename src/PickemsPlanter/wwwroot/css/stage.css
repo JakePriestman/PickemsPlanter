@@ -201,8 +201,11 @@
     /* Explicit viewport-relative width, not just max-width — .pickem-container's ancestor
        chain (site.css) centers with align-items:center rather than stretching, so this row
        is shrink-to-fit by default and a bare max-width is never actually reached. */
-    width: min(1500px, 96vw);
-    max-width: 1500px;
+    width: min(1650px, 97vw);
+    max-width: 1650px;
+    /* align-items:stretch (the parent's default) doesn't center an explicitly-sized flex
+       item — without this it sits flush against the start of the cross axis instead. */
+    align-self: center;
     grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
 }
 
@@ -239,8 +242,8 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-width: 230px;
-    min-width: 170px;
+    max-width: 280px;
+    min-width: 220px;
     width: 100%;
     flex: 1 1 0;
     position: relative;
@@ -306,7 +309,7 @@
 .bracket-progression .matchups-container {
     display: flex;
     flex-direction: column;
-    gap: 16px; /* wider than simulator.css's 4px — leaves room for .matchup-score below each box */
+    gap: 18px; /* wider than simulator.css's 4px — leaves room for .matchup-score below each box */
     flex: 1;
     position: relative;
     z-index: 1;
@@ -314,10 +317,10 @@
 
 .bracket-progression .matchup-score {
     position: absolute;
-    bottom: -13px;
+    bottom: -15px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 8px;
+    font-size: 9px;
     font-weight: 600;
     color: rgba(232, 234, 240, 0.55);
     white-space: nowrap;
@@ -351,12 +354,12 @@
 }
 
 .bracket-progression .matchup {
-    height: 38px;
+    height: 50px;
     background: rgba(14, 17, 23, 0.2);
     border-radius: 8px;
     display: grid;
-    grid-template-columns: 1fr 12px 1fr;
-    gap: 2px;
+    grid-template-columns: 1fr 16px 1fr;
+    gap: 4px;
     align-items: center;
     position: relative;
     border: 1px solid var(--glass-border);
@@ -369,9 +372,9 @@
     background: var(--foreground-colour);
     box-shadow: var(--shadow-s);
     display: inline-flex;
-    height: 30px;
-    width: 30px;
-    flex: 0 0 30px;
+    height: 42px;
+    width: 42px;
+    flex: 0 0 42px;
     border-radius: 8px;
     justify-self: center;
     position: relative;
@@ -409,7 +412,7 @@
     position: relative;
     display: flex;
     justify-content: center;
-    width: 20px;
+    width: 28px;
     object-fit: contain;
     filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
 }
@@ -421,11 +424,11 @@
 .bracket-progression .dropzone-eliminated,
 .bracket-progression .dropzone-advanced-not-allowed,
 .bracket-progression .dropzone-eliminated-not-allowed {
-    height: 36px;
-    width: 36px;
-    font-size: 9px;
-    padding: 2px;
-    border-radius: 6px;
+    height: 46px;
+    width: 46px;
+    font-size: 10px;
+    padding: 3px;
+    border-radius: 7px;
 }
 
 .bracket-progression .dropzone-advanced.drag-hover,
