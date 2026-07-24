@@ -473,6 +473,16 @@
     display: none;
 }
 
+/* #2-3/#1-3 (above) stay visible rather than hidden, but they're still just a display-only
+   bracket slot — getTeamSourceElements() already excludes anything inside #bracketProgression
+   from drag activation (see utilities.js), so nothing here is actually draggable. Without this,
+   they inherit cursor:grab from the plain .team rule meant for Simple View's draggable source
+   cards, which visually implies they're interactive when they aren't. */
+.bracket-progression [id="2-3"] > .team,
+.bracket-progression [id="1-3"] > .team {
+    cursor: default;
+}
+
 
 /* ── DROPZONES ── */
 .dropzone-advanced,
