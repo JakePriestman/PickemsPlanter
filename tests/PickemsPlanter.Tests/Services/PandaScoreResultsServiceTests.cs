@@ -189,6 +189,47 @@ public class PandaScoreResultsServiceTests
 		Assert.Empty(result);
 	}
 
+	[Theory]
+	[InlineData("NiP", "Ninjas in Pyjamas", "nip")]
+	[InlineData("Ninjas in Pyjamas", "NiP", "nip")]
+	public async Task GetCompletedMatchesAsync_ResolvesTeam_WhenPandaScoreNameIsAnInitialismOfSteamName(
+		string pandaScoreName, string steamName, string logo)
+	{
+		// Arrange — an initialism (eg. "NiP" for "Ninjas in Pyjamas") isn't a contiguous
+		// substring of the space-stripped full name, so the substring fallback alone misses it.
+		string eventId = "25";
+		Stages stage = Stages.Stage1;
+
+		List<Team> teams =
+		[
+			new() { Name = steamName, Logo = logo },
+			new() { Name = "BIG", Logo = "big" }
+		];
+
+		PandaScoreMatch match = new()
+		{
+			Id = 1,
+			Name = "Round 1: X vs Y",
+			Status = "finished",
+			WinnerId = 3249,
+			Opponents =
+			[
+				new() { Opponent = new PandaScoreTeam { Id = 3249, Name = pandaScoreName } },
+				new() { Opponent = new PandaScoreTeam { Id = 3256, Name = "BIG" } }
+			]
+		};
+
+		_cachingService.GetCompletedMatches(eventId, stage).Returns([match]);
+		_tournamentCachingService.GetTournamentTeamsAsync(eventId).Returns(teams);
+
+		// Act
+		var result = await _service.GetCompletedMatchesAsync(eventId, stage);
+
+		// Assert
+		var single = Assert.Single(result);
+		Assert.Equal($"{logo}.png", single.WinnerTeam);
+	}
+
 	[Fact]
 	public async Task GetCompletedMatchesAsync_SkipsMatch_WhenNameHasNoRoundPrefix()
 	{
