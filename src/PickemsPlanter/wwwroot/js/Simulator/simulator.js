@@ -41,6 +41,57 @@ async function LoadAsync() {
     fillInEmptyMatchupsWithUnknown();
 
     await autoFillFromResultsAsync();
+
+    await highlightLiveMatchesAsync();
+}
+
+async function highlightLiveMatchesAsync() {
+    const url = `/Simulator?handler=LiveMatches&eventId=${bracketEventId}&stage=${bracketStage}`;
+
+    let liveMatches;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) return;
+
+        liveMatches = await response.json();
+    } catch {
+        return;
+    }
+
+    if (!Array.isArray(liveMatches) || liveMatches.length === 0) return;
+
+    for (const match of liveMatches) {
+        const matchup = findMatchupForTeams(match.teamA, match.teamB);
+
+        if (matchup) matchup.classList.add('live');
+    }
+}
+
+// Same lookup as findUndecidedMatchupTeam (undecided matchup, both teams known), just
+// returning the matchup container itself rather than one team's element.
+function findMatchupForTeams(teamASrc, teamBSrc) {
+    const matchups = document.querySelectorAll('.matchup');
+
+    for (const matchup of matchups) {
+        const teamEls = [...matchup.querySelectorAll('.matchup-team')];
+
+        if (teamEls.length !== 2) continue;
+        if (teamEls.some(t => t.classList.contains('advanced') || t.classList.contains('eliminated'))) continue;
+
+        const imgs = teamEls.map(t => t.querySelector('img'));
+
+        if (imgs.some(i => !i)) continue;
+
+        const srcs = imgs.map(i => i.src.split('/').pop());
+
+        if (srcs.includes(teamASrc) && srcs.includes(teamBSrc)) {
+            return matchup;
+        }
+    }
+
+    return null;
 }
 
 async function autoFillFromResultsAsync() {

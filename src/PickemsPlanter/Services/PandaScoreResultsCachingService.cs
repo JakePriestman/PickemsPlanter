@@ -10,6 +10,7 @@ namespace PickemsPlanter.Services;
 public interface IPandaScoreResultsCachingService
 {
 	IReadOnlyCollection<PandaScoreMatch> GetCompletedMatches(string eventId, Stages stage);
+	IReadOnlyCollection<PandaScoreMatch> GetLiveMatches(string eventId, Stages stage);
 }
 
 public class PandaScoreResultsCachingService(
@@ -53,6 +54,14 @@ public class PandaScoreResultsCachingService(
 	public IReadOnlyCollection<PandaScoreMatch> GetCompletedMatches(string eventId, Stages stage)
 	{
 		if (cache.TryGetValue(CacheKey(eventId, stage), out IReadOnlyCollection<PandaScoreMatch>? matches) && matches is not null)
+			return matches;
+
+		return [];
+	}
+
+	public IReadOnlyCollection<PandaScoreMatch> GetLiveMatches(string eventId, Stages stage)
+	{
+		if (cache.TryGetValue(LiveCacheKey(eventId, stage), out IReadOnlyCollection<PandaScoreMatch>? matches) && matches is not null)
 			return matches;
 
 		return [];
@@ -102,8 +111,14 @@ public class PandaScoreResultsCachingService(
 			.Where(m => m.Status == "finished" && m.WinnerId is not null)
 			.ToList();
 
+		var live = matches
+			.Where(m => m.Status == "running")
+			.ToList();
+
 		cache.Set(CacheKey(eventId, stage), (IReadOnlyCollection<PandaScoreMatch>)completed);
+		cache.Set(LiveCacheKey(eventId, stage), (IReadOnlyCollection<PandaScoreMatch>)live);
 	}
 
 	private static string CacheKey(string eventId, Stages stage) => $"PANDASCORE_{eventId}_{stage}";
+	private static string LiveCacheKey(string eventId, Stages stage) => $"PANDASCORE_LIVE_{eventId}_{stage}";
 }

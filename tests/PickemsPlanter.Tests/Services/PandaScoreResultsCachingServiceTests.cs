@@ -37,6 +37,19 @@ public class PandaScoreResultsCachingServiceTests
 		]
 	};
 
+	private static PandaScoreMatch RunningMatch(int id) => new()
+	{
+		Id = id,
+		Name = "Round 1: A vs B",
+		Status = "running",
+		WinnerId = null,
+		Opponents =
+		[
+			new() { Opponent = new PandaScoreTeam { Id = 1, Name = "A" } },
+			new() { Opponent = new PandaScoreTeam { Id = 2, Name = "B" } }
+		]
+	};
+
 	[Fact]
 	public async Task RefreshAllAsync_CachesCompletedMatches_ForMappedStages()
 	{
@@ -157,6 +170,51 @@ public class PandaScoreResultsCachingServiceTests
 	{
 		// Act
 		var result = _service.GetCompletedMatches("25", Stages.Stage1);
+
+		// Assert
+		Assert.Empty(result);
+	}
+
+	[Fact]
+	public async Task RefreshAllAsync_CachesRunningMatches_SeparatelyFromCompleted()
+	{
+		// Arrange
+		Event @event = new() { Id = "25", Name = "Event 1", Disabled = false, PandaScoreStage1TournamentId = 20708 };
+
+		_eventTableService.GetAllEventsAsync().Returns([@event]);
+
+		List<PandaScoreMatch> matches =
+		[
+			FinishedMatch(1, winnerId: 1),
+			RunningMatch(2),
+			new()
+			{
+				Id = 3,
+				Name = "Round 2: E vs F",
+				Status = "not_started",
+				WinnerId = null,
+				Opponents = []
+			}
+		];
+
+		_pandaScoreApi.GetTournamentMatchesAsync(20708).Returns(matches);
+
+		// Act
+		await _service.RefreshAllAsync();
+
+		// Assert
+		var completed = Assert.Single(_service.GetCompletedMatches(@event.Id, Stages.Stage1));
+		Assert.Equal(1, completed.Id);
+
+		var live = Assert.Single(_service.GetLiveMatches(@event.Id, Stages.Stage1));
+		Assert.Equal(2, live.Id);
+	}
+
+	[Fact]
+	public void GetLiveMatches_ReturnsEmpty_WhenNothingCached()
+	{
+		// Act
+		var result = _service.GetLiveMatches("25", Stages.Stage1);
 
 		// Assert
 		Assert.Empty(result);
