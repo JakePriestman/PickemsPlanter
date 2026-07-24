@@ -24,14 +24,31 @@ body {
     text-align: center;
 }
 
-.coin-tier-badge {
-    font-size: 1.4em;
+/* Metallic tone triples per tier — used by the coin SVG's radial gradient (light/base/dark)
+   and reused as a flat colour for the tier name text + progress bar fill. Hand-designed
+   rather than sourced from Valve's own coin artwork (couldn't reliably retrieve official
+   per-tier images — see #137). */
+.coin-tier-bronze { --coin-light: #e3a366; --coin-base: #cd7f32; --coin-dark: #8b5a2b; }
+.coin-tier-silver { --coin-light: #f4f4f4; --coin-base: #c0c0c0; --coin-dark: #8c8c8c; }
+.coin-tier-gold { --coin-light: #ffe08a; --coin-base: #e8b923; --coin-dark: #a8790a; }
+.coin-tier-diamond { --coin-light: #eaf8ff; --coin-base: #7ec8e3; --coin-dark: #2f8fc7; }
+
+.coin-badge {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.coin-svg {
+    width: 110px;
+    height: 110px;
+}
+
+.coin-tier-name {
+    margin: 0;
+    font-size: 1.3em;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 0.3em 1em;
-    border-radius: 50px;
-    color: var(--background-colour);
+    color: var(--coin-base);
 }
 
 .coin-progress-count {
@@ -51,12 +68,8 @@ body {
     height: 100%;
     border-radius: 6px;
     transition: width 0.3s ease;
+    background: var(--coin-base);
 }
-
-.coin-tier-bronze { background: #cd7f32; }
-.coin-tier-silver { background: #c0c0c0; }
-.coin-tier-gold { background: #e8b923; }
-.coin-tier-diamond { background: var(--accent-colour); }
 
 .coin-challenge-list {
     list-style: none;
