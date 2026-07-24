@@ -23,20 +23,6 @@
         </div>
     </div>
 
-    <div class="view-toggle-row" id="viewToggleRow" hidden>
-        <label class="toggle-label view-toggle" title="Switch between Simple and Bracket view">
-            <span class="view-toggle-option">Simple</span>
-            <input type="checkbox" id="viewToggleInput" />
-            <span class="toggle-track"><span class="toggle-thumb"></span></span>
-            <span class="view-toggle-option">Bracket</span>
-        </label>
-        <div class="view-toggle-intro" id="viewToggleIntro" hidden>
-            <div class="view-toggle-intro-arrow"></div>
-            <p>New: switch to <strong>Bracket View</strong> to watch the whole Swiss stage fill in live as results come in.</p>
-            <button type="button" class="view-toggle-intro-dismiss" id="viewToggleIntroDismiss">Got it</button>
-        </div>
-    </div>
-
     <div class="pickem-layout">
         <nav class="stage-nav">
             <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage1 ? "active" : "")"
@@ -130,6 +116,20 @@
                     <span class="toggle-track"><span class="toggle-thumb"></span></span>
                     Show results
                 </label>
+
+                <div class="view-toggle-row" id="viewToggleRow" hidden>
+                    <label class="toggle-label view-toggle" title="Switch between Simple and Bracket view">
+                        <span class="view-toggle-option">Simple</span>
+                        <input type="checkbox" id="viewToggleInput" />
+                        <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                        <span class="view-toggle-option">Bracket</span>
+                    </label>
+                    <div class="view-toggle-intro" id="viewToggleIntro" hidden>
+                        <div class="view-toggle-intro-arrow"></div>
+                        <p>New: switch to <strong>Bracket View</strong> to watch the whole Swiss stage fill in live as results come in.</p>
+                        <button type="button" class="view-toggle-intro-dismiss" id="viewToggleIntroDismiss">Got it</button>
+                    </div>
+                </div>
             </div>
             <div class="buttons">
                 <button class="clear-all-picks" id="clearAllPicks" type="button" title="Clear all picks"><img src="/Images/clear_all_picks.png" /></button>
