@@ -85,7 +85,14 @@ async function autoFillFromResultsAsync() {
         for (const match of matchesThisRound) {
             const winnerTeam = findUndecidedMatchupTeam(match.winnerTeam, match.loserTeam);
 
-            if (winnerTeam) selectTeam(winnerTeam);
+            if (winnerTeam) {
+                selectTeam(winnerTeam);
+
+                if (match.score) {
+                    const matchup = winnerTeam.closest('.matchup');
+                    if (matchup) matchup.title = match.score;
+                }
+            }
         }
     }
 }
