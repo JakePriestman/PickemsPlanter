@@ -531,6 +531,12 @@
     position: absolute;
     cursor: grabbing;
     padding: 0;
+    /* Appended directly to <body> during drag (see dragStart in dragFunctions.js), with no
+       z-index of its own — it was relying on DOM order to paint on top, which only works
+       against z-index:auto siblings. Bracket View's .matchups-container/.teams-container
+       are position:relative;z-index:1, which paints above z-index:auto regardless of DOM
+       order, so the dragged team was rendering behind the dropzone there. */
+    z-index: 1000;
 }
 
 .dropzone-advanced .dropped-img,

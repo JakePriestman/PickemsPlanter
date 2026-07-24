@@ -433,13 +433,13 @@
 
 .bracket-progression .dropzone-advanced.drag-hover,
 .bracket-progression .dropzone-eliminated.drag-hover {
-    transform: scale(1.15);
+    transform: scale(1.05);
 }
 
 @media (hover: hover) {
     .bracket-progression .dropzone-advanced:hover,
     .bracket-progression .dropzone-eliminated:hover {
-        transform: scale(1.15);
+        transform: scale(1.05);
     }
 }
 
