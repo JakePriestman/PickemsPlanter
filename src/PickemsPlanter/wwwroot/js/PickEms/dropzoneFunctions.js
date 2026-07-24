@@ -59,8 +59,6 @@ function clearAllDropzones() {
 }
 
 function swapImagesInDropzones(originDropzone, destinationDropzone) {
-    const destinationImageSrc = destinationDropzone.querySelector('.dropped-img').src;
-
     originDropzone.innerHTML = destinationDropzone.innerHTML;
 
     destinationDropzone.innerHTML = '';
@@ -69,9 +67,6 @@ function swapImagesInDropzones(originDropzone, destinationDropzone) {
     currentDraggedElement.className = 'dropped-img';
     destinationDropzone.appendChild(currentDraggedElement);
     destinationDropzone.classList.remove('drag-hover');
-
-    mapElementTitle(destinationImageSrc, originDropzone);
-    mapElementTitle(currentDraggedElement.src, destinationDropzone);
 
     updateSaveButton();
     resetGlobals();
@@ -176,8 +171,6 @@ function placeImageInDropzone(imageSource, dropzone, isResults) {
         greyOutImages();
         resetEliminatedImages();
     }
-
-    mapElementTitle(imageSource, dropzone);
 
     resetGlobals();
 

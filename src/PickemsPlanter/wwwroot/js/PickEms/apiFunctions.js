@@ -37,8 +37,6 @@ async function LoadImagesAsync() {
             const teamImage = createTeamImage(imageSource);
             container.appendChild(teamImage);
 
-            mapElementTitle(imageSource, container);
-
             container.setAttribute('disabled', 'true');
 
             container.addEventListener('dragstart', (e) => e.preventDefault());
@@ -89,8 +87,6 @@ async function LoadPicksAsync() {
 
                 setDropzoneClassName(dropzone, false);
             }
-
-            mapElementTitle(imageSource, dropzone);
         }
     }
     else {
@@ -139,8 +135,6 @@ async function LoadResultsAsync() {
             toggleCheckmark(index, resultImageSource);
 
             setDropzoneClassName(dropzone, true);
-
-            mapElementTitle(imageSource, dropzone);
         }
     }
 

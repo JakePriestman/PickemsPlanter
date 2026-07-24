@@ -16,6 +16,32 @@
     --shadow-l: 0 10px 20px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.3);
 }
 
+.team-tooltip {
+    position: fixed;
+    z-index: 1000;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-m);
+    backdrop-filter: blur(8px);
+    color: var(--text-colour);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+}
+
+.team-tooltip.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 body {
     font-family: stratum-1-web, sans-serif;
     background: radial-gradient(ellipse at 50% 0%, #16213a 0%, var(--background-colour) 65%);
