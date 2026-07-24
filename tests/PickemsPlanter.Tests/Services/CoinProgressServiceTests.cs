@@ -124,6 +124,45 @@ public class CoinProgressServiceTests
 	}
 
 	[Fact]
+	public async Task GetCoinProgressAsync_StageAccuracy_OrderWithinACategoryDoesNotMatter()
+	{
+		// Arrange — same teams predicted for each category (3-0: a/b, 3-1-or-3-2: c-h, 0-3: i/j)
+		// as the official results, just placed in a different slot order within each category.
+		// Matches toggleCheckmark's own category-membership semantics (stylingFunctions.js) —
+		// a naive positional zip would (incorrectly) score this as 0 correct.
+		List<string> results = Filled("a", "b", "c", "d", "e", "f", "g", "h", "i", "j");
+		List<string> picks = Filled("b", "a", "h", "g", "f", "e", "d", "c", "j", "i");
+
+		_pickemsService.GetStagePicksAsync(Stages.Stage1, SteamId, EventId).Returns(picks);
+		_pickemsService.GetStageResultsAsync(Stages.Stage1, EventId).Returns(results);
+
+		// Act
+		var result = await _service.GetCoinProgressAsync(SteamId, EventId);
+
+		// Assert — all 10 land in the right category, so all 10 should count as correct
+		Assert.True(result.Challenges.Single(c => c.Name == "Stage 1 Accuracy").Completed);
+	}
+
+	[Fact]
+	public async Task GetCoinProgressAsync_QuarterFinals_OrderWithinTheCategoryDoesNotMatter()
+	{
+		// Arrange — same 4 quarter-finals teams, different slot order within that category
+		List<string> qfResults = Filled("a", "b", "c", "d");
+		List<string> qfPicks = Filled("d", "c", "b", "a");
+		List<string> picks = [.. qfPicks, .. Filled("e", "f"), .. Filled("champion")];
+		List<string> results = [.. qfResults, .. Filled("e", "f"), .. Filled("champion")];
+
+		_pickemsService.GetPlayoffPicksAsync(SteamId, EventId).Returns(picks);
+		_pickemsService.GetPlayoffResultsAsync(EventId).Returns(results);
+
+		// Act
+		var result = await _service.GetCoinProgressAsync(SteamId, EventId);
+
+		// Assert
+		Assert.True(result.Challenges.Single(c => c.Name == "Quarter-Finals").Completed);
+	}
+
+	[Fact]
 	public async Task GetCoinProgressAsync_StageAccuracy_UndecidedResultsNeverCountAsCorrect()
 	{
 		// Arrange — user picked the same teams the results eventually show, but results are

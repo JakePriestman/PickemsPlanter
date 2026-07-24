@@ -49,7 +49,12 @@ public class CoinProgressService(IPickemsService pickemsService) : ICoinProgress
 		bool picksAllowed = await pickemsService.GetStagePicksAllowedAsync(stage, eventId);
 
 		bool participation = HasParticipated(picks, picksAllowed, expectedCount: 10);
-		int correct = CountCorrect(picks, results);
+
+		// Categories per stage.js's dropzone layout: pick0-1 = 3-0, pick2-7 = 3-1/3-2 combined
+		// (the app doesn't distinguish a 3-1 finish from a 3-2 one for scoring), pick8-9 = 0-3.
+		int correct = CountCorrectInCategory(picks, results, start: 0, length: 2)
+			+ CountCorrectInCategory(picks, results, start: 2, length: 6)
+			+ CountCorrectInCategory(picks, results, start: 8, length: 2);
 
 		return
 		[
@@ -68,8 +73,8 @@ public class CoinProgressService(IPickemsService pickemsService) : ICoinProgress
 
 		// Bracket order per the app's own playoffs slicing convention (see toggleCheckmark in
 		// stylingFunctions.js): picks 0-3 are the quarter-finals predictions, 4-5 semi-finals, 6 the champion.
-		int quarterFinalsCorrect = CountCorrect([.. picks.Take(4)], [.. results.Take(4)]);
-		int semiFinalsCorrect = CountCorrect([.. picks.Skip(4).Take(2)], [.. results.Skip(4).Take(2)]);
+		int quarterFinalsCorrect = CountCorrectInCategory(picks, results, start: 0, length: 4);
+		int semiFinalsCorrect = CountCorrectInCategory(picks, results, start: 4, length: 2);
 		bool grandFinalCorrect = IsCorrect(picks.ElementAtOrDefault(6), results.ElementAtOrDefault(6));
 
 		return
@@ -86,17 +91,21 @@ public class CoinProgressService(IPickemsService pickemsService) : ICoinProgress
 	private static bool HasParticipated(List<string> picks, bool picksAllowed, int expectedCount) =>
 		!picksAllowed && picks.Count == expectedCount && picks.All(pick => !pick.Contains("unknown"));
 
-	private static int CountCorrect(IReadOnlyList<string> picks, IReadOnlyList<string> results)
+	// Set membership within the category, not positional equality — predicting *which* teams
+	// land in a given outcome (eg. "these two teams go 3-0") is what's scored, not which exact
+	// slot within that category each one was dropped into. Steam's official-results grouping
+	// (GetStageResultsAsync/GetPlayoffResultsAsync) has no reason to order a category's teams
+	// the same way the user happened to place their own predictions, so a naive positional zip
+	// undercounts real matches whenever the order differs — this mirrors toggleCheckmark's own
+	// category slicing + .includes() membership check in stylingFunctions.js exactly.
+	private static int CountCorrectInCategory(IReadOnlyList<string> picks, IReadOnlyList<string> results, int start, int length)
 	{
-		int count = 0;
+		var resultSet = results.Skip(start).Take(length)
+			.Where(result => !result.Contains("unknown"))
+			.ToHashSet();
 
-		for (int i = 0; i < picks.Count && i < results.Count; i++)
-		{
-			if (IsCorrect(picks[i], results[i]))
-				count++;
-		}
-
-		return count;
+		return picks.Skip(start).Take(length)
+			.Count(pick => !pick.Contains("unknown") && resultSet.Contains(pick));
 	}
 
 	private static bool IsCorrect(string? pick, string? result) =>
