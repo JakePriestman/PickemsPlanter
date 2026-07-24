@@ -31,8 +31,8 @@ function positionTeamTooltip(tooltip, target) {
     let left = targetRect.left + targetRect.width / 2 - tooltipRect.width / 2;
     left = Math.max(4, Math.min(left, window.innerWidth - tooltipRect.width - 4));
 
-    const spaceAbove = targetRect.top - tooltipRect.height - 8;
-    const top = spaceAbove >= 0 ? spaceAbove : targetRect.bottom + 8;
+    const spaceBelow = window.innerHeight - (targetRect.bottom + tooltipRect.height + 8);
+    const top = spaceBelow >= 0 ? targetRect.bottom + 8 : targetRect.top - tooltipRect.height - 8;
 
     tooltip.style.left = `${left}px`;
     tooltip.style.top = `${top}px`;
