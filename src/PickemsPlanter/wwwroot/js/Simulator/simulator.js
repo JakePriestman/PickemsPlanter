@@ -297,6 +297,7 @@ function createBracketTeamImage(imageSource, seed, buchholz) {
     const image = document.createElement("img");
     image.src = `https://sacs2.blob.core.windows.net/teamimages/${imageSource}`;
     image.className = "team-img";
+    image.title = resolveTeamTitle(imageSource);
     image.setAttribute('seed', seed);
     image.setAttribute('buchholz', buchholz);
 

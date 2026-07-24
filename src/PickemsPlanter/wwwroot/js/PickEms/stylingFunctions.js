@@ -1,6 +1,6 @@
-﻿function mapElementTitle(image, dropzone) {
-    const logo = image.split('/').pop().split('.')[0];
-    dropzone.title = (typeof teamNameMap !== 'undefined' ? teamNameMap[logo] : null) ?? logo;
+﻿function resolveTeamTitle(imageSource) {
+    const logo = imageSource.split('/').pop().split('.')[0];
+    return (typeof teamNameMap !== 'undefined' ? teamNameMap[logo] : null) ?? logo;
 }
 
 function updateSaveButton() {
@@ -200,6 +200,7 @@ function createTeamImage(imageSource) {
     const image = document.createElement("img");
     image.src = imageSource;
     image.className = "team-img";
+    image.title = resolveTeamTitle(imageSource);
 
     if (imageSource.includes('unknown'))
         image.classList.add('unknown');
@@ -211,6 +212,7 @@ function createDroppedImage(imageSource) {
     const image = document.createElement("img");
     image.src = imageSource;
     image.className = "dropped-img";
+    image.title = resolveTeamTitle(imageSource);
 
     return image;
 }

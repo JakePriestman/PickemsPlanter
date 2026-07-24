@@ -67,7 +67,6 @@ function selectRandomPicks() {
             const randomTeam = teamImageSources[randomIndex];
 
             placeImageInDropzone(randomTeam, dropzone, false, false);
-            mapElementTitle(randomTeam, dropzone);
 
             teamImageSources.splice(randomIndex, 1);
         }
