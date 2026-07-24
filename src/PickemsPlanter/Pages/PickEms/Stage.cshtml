@@ -23,6 +23,20 @@
         </div>
     </div>
 
+    <div class="view-toggle-row" id="viewToggleRow" hidden>
+        <label class="toggle-label view-toggle" title="Switch between Simple and Bracket view">
+            <span class="view-toggle-option">Simple</span>
+            <input type="checkbox" id="viewToggleInput" />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            <span class="view-toggle-option">Bracket</span>
+        </label>
+        <div class="view-toggle-intro" id="viewToggleIntro" hidden>
+            <div class="view-toggle-intro-arrow"></div>
+            <p>New: switch to <strong>Bracket View</strong> to watch the whole Swiss stage fill in live as results come in.</p>
+            <button type="button" class="view-toggle-intro-dismiss" id="viewToggleIntroDismiss">Got it</button>
+        </div>
+    </div>
+
     <div class="pickem-layout">
         <nav class="stage-nav">
             <a class="stage @(Model.Stage == PickemsPlanter.Models.Event.Stages.Stage1 ? "active" : "")"
@@ -77,6 +91,10 @@
                 <div class="team" id="team13"></div>
                 <div class="team" id="team14"></div>
                 <div class="team" id="team15"></div>
+            </section>
+
+            <section class="bracket-progression" id="bracketProgression">
+                <partial name="_SwissBracket" />
             </section>
 
             <section class="bracket">
@@ -134,6 +152,11 @@
             stage: "@Model.Stage",
             picks: [@Model.Picks]
         };
+        // Bracket View embeds Simulator's bracket engine read-only (no manual clicks —
+        // it only ever reflects real PandaScore results) and lazy-loads it itself the
+        // first time the view is actually switched to, rather than on every page load.
+        window.bracketViewReadOnly = true;
+        window.bracketViewLazyInit = true;
     </script>
     <script src="~/js/PickEms/stylingFunctions.js"></script>
     <script src="~/js/PickEms/utilities.js"></script>
@@ -145,4 +168,6 @@
     <script src="~/js/PickEms/stagePlayoffs.js"></script>
     <script src="~/js/PickEms/mobileFunctions.js"></script>
     <script src="~/js/PickEms/stage.js"></script>
+    <script src="~/js/Simulator/simulator.js"></script>
+    <script src="~/js/PickEms/viewToggle.js"></script>
 }
