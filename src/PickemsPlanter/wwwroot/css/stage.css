@@ -317,22 +317,10 @@
 .bracket-progression .matchups-container {
     display: flex;
     flex-direction: column;
-    gap: 18px; /* wider than simulator.css's 4px — leaves room for .matchup-score below each box */
+    gap: 8px;
     flex: 1;
     position: relative;
     z-index: 1;
-}
-
-.bracket-progression .matchup-score {
-    position: absolute;
-    bottom: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 9px;
-    font-weight: 600;
-    color: rgba(232, 234, 240, 0.55);
-    white-space: nowrap;
-    pointer-events: none;
 }
 
 .bracket-progression .swiss-pool-progression {

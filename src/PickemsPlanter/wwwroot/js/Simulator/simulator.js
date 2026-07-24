@@ -88,20 +88,9 @@ async function autoFillFromResultsAsync() {
             if (winnerTeam) {
                 selectTeam(winnerTeam);
 
-                // Score display is a Bracket View (/PickEms/Stage) feature only — /Simulator
-                // stays exactly as it was before scores were added.
-                if (match.score && window.bracketViewReadOnly) {
-                    const matchup = winnerTeam.closest('.matchup');
-
-                    if (matchup) {
-                        matchup.title = match.score;
-
-                        const scoreLabel = document.createElement('span');
-                        scoreLabel.className = 'matchup-score';
-                        scoreLabel.textContent = match.score;
-                        matchup.appendChild(scoreLabel);
-                    }
-                }
+                // match.score (from SimulatorMatchResult/PandaScoreResultsService) is still
+                // fetched here — just not rendered. Kept available for whatever reads
+                // autoFillFromResultsAsync's match data next.
             }
         }
     }
