@@ -152,10 +152,10 @@ async function autoFillFromResultsAsync() {
 
 // Splits "{winnerScore}-{loserScore}" (eg. "2-1") back out per-team and places each
 // team's own score between its logo and the "vs" divider — <team1> <score> vs <score> <team2>.
-// Wraps score/vs/score in one group rather than adding them as separate top-level grid
-// items — .matchup stays a 3-column grid (team/group/team) so the team logos keep their
-// normal centered position instead of being forced to the inner edge; only the middle
-// column widens (fixed 16px -> auto) to fit the group's content.
+// Wraps score/vs/score in one group and positions that group as an absolutely-positioned
+// overlay (see .matchup-score-group) rather than touching .matchup's own grid — the team
+// logos' position must stay byte-for-byte identical to every non-Bo3 matchup, so nothing
+// here is allowed to change .matchup's grid-template-columns/gap.
 function addMatchupScores(winnerTeam, score) {
     const matchup = winnerTeam.closest('.matchup');
     const vsDivider = matchup?.querySelector('.vs');
@@ -177,8 +177,6 @@ function addMatchupScores(winnerTeam, score) {
 
     vsDivider.replaceWith(group);
     group.append(createMatchupScoreElement(firstScore), vsDivider, createMatchupScoreElement(secondScore));
-
-    matchup.classList.add('has-scores');
 }
 
 function createMatchupScoreElement(scoreText) {

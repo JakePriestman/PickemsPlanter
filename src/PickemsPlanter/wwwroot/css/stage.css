@@ -390,22 +390,19 @@
     filter: brightness(40%);
 }
 
-/* Bo3s only (see IsBestOfThree) — score/vs/score are grouped into a single element
-   (.matchup-score-group, built in addMatchupScores) rather than added as separate grid
-   items, so .matchup stays a 3-column grid (team / group / team). Only the middle column
-   widens (16px -> auto, to fit the group) — the team logos keep their normal centered
-   position in the outer 1fr columns, same as every non-Bo3 matchup, instead of being
-   pulled to the inner edge. */
-.bracket-progression .matchup.has-scores {
-    grid-template-columns: 1fr auto 1fr;
-    gap: 10px;
-}
-
+/* Bo3s only (see IsBestOfThree) — .matchup's own grid-template-columns/gap is never
+   touched here, so the team logos' position is guaranteed identical to every non-Bo3
+   matchup. The score/vs/score group is instead an absolutely-positioned overlay, centered
+   on .matchup (which already has position: relative), independent of the grid entirely. */
 .bracket-progression .matchup-score-group {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 14px;
+    gap: 26px;
+    pointer-events: none;
 }
 
 .bracket-progression .matchup-team-score {
