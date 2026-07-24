@@ -139,12 +139,56 @@ async function autoFillFromResultsAsync() {
             if (winnerTeam) {
                 selectTeam(winnerTeam);
 
-                // match.score (from SimulatorMatchResult/PandaScoreResultsService) is still
-                // fetched here — just not rendered. Kept available for whatever reads
-                // autoFillFromResultsAsync's match data next.
+                // Score display is a Bracket View (/PickEms/Stage) feature only — /Simulator
+                // stays exactly as it was before scores were added. Shown for every decided
+                // match (not just Bo3s) — restricting it to Bo3 only meant some decided
+                // matchups got the wider score layout and others didn't, which read as an
+                // inconsistent/broken grid rather than a deliberate difference.
+                if (match.score && window.bracketViewReadOnly) {
+                    addMatchupScores(winnerTeam, match.score);
+                }
             }
         }
     }
+}
+
+// Splits "{winnerScore}-{loserScore}" (eg. "2-1") back out per-team and places each
+// team's own score between its logo and the "vs" divider — <team1> <score> vs <score> <team2>.
+// Wraps score/vs/score in one group rather than adding them as separate top-level grid
+// items — .matchup stays a 3-column grid (team/group/team) so the team logos keep their
+// normal centered position instead of being forced to the inner edge; only the middle
+// column widens (fixed 16px -> auto) to fit the group's content.
+function addMatchupScores(winnerTeam, score) {
+    const matchup = winnerTeam.closest('.matchup');
+    const vsDivider = matchup?.querySelector('.vs');
+
+    if (!matchup || !vsDivider) return;
+
+    const teamEls = [...matchup.querySelectorAll('.matchup-team')];
+    const loserTeam = teamEls.find(t => t !== winnerTeam);
+
+    if (!loserTeam) return;
+
+    const [winnerScore, loserScore] = score.split('-');
+    const isWinnerFirst = teamEls[0] === winnerTeam;
+    const firstScore = isWinnerFirst ? winnerScore : loserScore;
+    const secondScore = isWinnerFirst ? loserScore : winnerScore;
+
+    const group = document.createElement('div');
+    group.className = 'matchup-score-group';
+
+    vsDivider.replaceWith(group);
+    group.append(createMatchupScoreElement(firstScore), vsDivider, createMatchupScoreElement(secondScore));
+
+    matchup.classList.add('has-scores');
+}
+
+function createMatchupScoreElement(scoreText) {
+    const scoreElement = document.createElement('div');
+    scoreElement.className = 'matchup-team-score';
+    scoreElement.textContent = scoreText;
+
+    return scoreElement;
 }
 
 function findUndecidedMatchupTeam(winnerSrc, loserSrc) {

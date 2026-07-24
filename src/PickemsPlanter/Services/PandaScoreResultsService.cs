@@ -55,7 +55,8 @@ public partial class PandaScoreResultsService(IPandaScoreResultsCachingService c
 				WinnerTeam = winnerLogo,
 				LoserTeam = loserLogo,
 				Round = round.Value,
-				Score = ResolveScore(match, winner.Id, loser.Id)
+				Score = ResolveScore(match, winner.Id, loser.Id),
+				IsBestOfThree = match.NumberOfGames == 3
 			});
 		}
 

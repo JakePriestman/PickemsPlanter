@@ -16,6 +16,9 @@ public class PandaScoreMatch
 	[JsonPropertyName("winner_id")]
 	public int? WinnerId { get; init; }
 
+	[JsonPropertyName("number_of_games")]
+	public int NumberOfGames { get; init; }
+
 	public IReadOnlyCollection<PandaScoreOpponent> Opponents { get; init; } = [];
 
 	public IReadOnlyCollection<PandaScoreResult> Results { get; init; } = [];
