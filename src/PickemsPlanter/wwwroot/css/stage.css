@@ -198,8 +198,12 @@
 }
 
 .pickem-layout.view-bracket .content-row {
+    /* Explicit viewport-relative width, not just max-width — .pickem-container's ancestor
+       chain (site.css) centers with align-items:center rather than stretching, so this row
+       is shrink-to-fit by default and a bare max-width is never actually reached. */
+    width: min(1500px, 96vw);
+    max-width: 1500px;
     grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
-    max-width: 1200px;
 }
 
 .pickem-layout.view-bracket .teams-section {
