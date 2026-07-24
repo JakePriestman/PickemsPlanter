@@ -41,17 +41,39 @@ function toggleEventButtons(input) {
     const deleteButton = eventContainer.querySelector(".event-button-delete");
     const selectButton = eventContainer.querySelector(".event-button-select");
     const showButton = eventContainer.querySelector(".show-auth-code");
+    const coinButton = eventContainer.querySelector(".event-button-coin");
 
     const toggleButtons = () => {
         const hasText = input.value.trim() !== "";
         deleteButton.disabled = !hasText;
         selectButton.disabled = !hasText;
         showButton.disabled = !hasText;
+        coinButton.disabled = !hasText;
     };
 
     toggleButtons();
 
     input.addEventListener("input", toggleButtons);
+}
+
+function openCoinProgress(eventId, steamId) {
+    const width = 460;
+    const height = 700;
+
+    const winWidth = window.innerWidth;
+    const winHeight = window.innerHeight;
+
+    const winLeft = window.screenX;
+    const winTop = window.screenY;
+
+    const left = winLeft + (winWidth - width) / 2;
+    const top = winTop + (winHeight - height) / 2;
+
+    window.open(
+        `/CoinProgress?eventId=${eventId}&steamId=${steamId}`,
+        "coinProgressPopup",
+        `width=${width},height=${height},left=${left},top=${top}`
+    );
 }
 
 document.addEventListener("DOMContentLoaded", function () {

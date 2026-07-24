@@ -1,0 +1,108 @@
+body {
+    overflow-y: auto;
+    align-items: flex-start;
+}
+
+.coin-progress-container {
+    width: min(420px, 92vw);
+    margin: 2em auto;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-m);
+}
+
+.coin-progress-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    text-align: center;
+}
+
+.coin-tier-badge {
+    font-size: 1.4em;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.3em 1em;
+    border-radius: 50px;
+    color: var(--background-colour);
+}
+
+.coin-progress-count {
+    margin: 0;
+    color: rgba(232, 234, 240, 0.6);
+    font-size: 0.9em;
+}
+
+.coin-progress-bar {
+    height: 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+
+.coin-progress-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+.coin-tier-bronze { background: #cd7f32; }
+.coin-tier-silver { background: #c0c0c0; }
+.coin-tier-gold { background: #e8b923; }
+.coin-tier-diamond { background: var(--accent-colour); }
+
+.coin-challenge-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.coin-challenge {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.6em 0.8em;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    color: rgba(232, 234, 240, 0.5);
+}
+
+.coin-challenge.completed {
+    color: var(--text-colour);
+    background: rgba(94, 139, 75, 0.12);
+    border-color: rgba(94, 139, 75, 0.3);
+}
+
+.coin-challenge-check {
+    flex: 0 0 20px;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(232, 234, 240, 0.25);
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+.coin-challenge.completed .coin-challenge-check {
+    background: var(--advance-colour);
+    border-color: var(--advance-colour);
+    color: var(--text-colour);
+}
+
+.coin-challenge-name {
+    font-size: 0.95em;
+}

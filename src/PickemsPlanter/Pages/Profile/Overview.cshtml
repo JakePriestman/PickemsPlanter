@@ -45,6 +45,7 @@
                     </button>
                     <button class="event-button-delete" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="Delete">Delete Auth Code</button>
                     <button class="event-button-select" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="ChooseEvent">Choose Event</button>
+                    <button class="event-button-coin" type="button" onclick="openCoinProgress('@eventOption.Value', '@Model.SteamId')">Coin Progress</button>
                 </div>
             </div>
         }

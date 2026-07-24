@@ -1,0 +1,35 @@
+@page
+@using PickemsPlanter.Models.CoinProgress
+@model PickemsPlanter.Pages.CoinProgressModel
+@{
+    ViewData["Title"] = "Pick'Ems Planter - Coin Progress";
+    Layout = "_Layout";
+
+    string tierClass = Model.Progress.Tier.ToString().ToLowerInvariant();
+    double percent = Model.Progress.TotalChallenges == 0 ? 0 : 100.0 * Model.Progress.CompletedChallenges / Model.Progress.TotalChallenges;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/coinProgress.css" asp-append-version="true" />
+}
+
+<div class="coin-progress-container">
+    <div class="coin-progress-header">
+        <div class="coin-tier-badge coin-tier-@tierClass">@Model.Progress.Tier</div>
+        <p class="coin-progress-count">@Model.Progress.CompletedChallenges / @Model.Progress.TotalChallenges challenges completed</p>
+    </div>
+
+    <div class="coin-progress-bar">
+        <div class="coin-progress-bar-fill coin-tier-@tierClass" style="width: @(percent.ToString("0.##"))%;"></div>
+    </div>
+
+    <ul class="coin-challenge-list">
+        @foreach (ChallengeProgress challenge in Model.Progress.Challenges)
+        {
+            <li class="coin-challenge @(challenge.Completed ? "completed" : "")">
+                <span class="coin-challenge-check">@(challenge.Completed ? "✓" : "")</span>
+                <span class="coin-challenge-name">@challenge.Name</span>
+            </li>
+        }
+    </ul>
+</div>
