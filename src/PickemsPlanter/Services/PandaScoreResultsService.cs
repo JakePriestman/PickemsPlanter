@@ -79,9 +79,17 @@ public partial class PandaScoreResultsService(IPandaScoreResultsCachingService c
 			.Where(x =>
 			{
 				string normalizedTeamName = Normalize(x.Name!);
-				return normalizedTeamName == normalizedPandaScoreName
+
+				if (normalizedTeamName == normalizedPandaScoreName
 					|| normalizedTeamName.Contains(normalizedPandaScoreName)
-					|| normalizedPandaScoreName.Contains(normalizedTeamName);
+					|| normalizedPandaScoreName.Contains(normalizedTeamName))
+					return true;
+
+				// Some orgs are commonly referred to by an initialism of their full name
+				// (eg. "NiP" for "Ninjas in Pyjamas") — the initials aren't a contiguous
+				// substring of the space-stripped name, so the checks above miss it.
+				return GetInitials(x.Name!) == normalizedPandaScoreName
+					|| GetInitials(pandaScoreTeamName) == normalizedTeamName;
 			})
 			.ToList();
 
@@ -90,6 +98,9 @@ public partial class PandaScoreResultsService(IPandaScoreResultsCachingService c
 
 	private static string Normalize(string name) =>
 		string.Concat(name.Where(char.IsLetterOrDigit)).ToLowerInvariant();
+
+	private static string GetInitials(string name) =>
+		string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(word => word[0])).ToLowerInvariant();
 
 	private static int? ParseRound(string matchName)
 	{
