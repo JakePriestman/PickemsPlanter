@@ -393,7 +393,10 @@
 /* Bo3s only (see IsBestOfThree) — .matchup's own grid-template-columns/gap is never
    touched here, so the team logos' position is guaranteed identical to every non-Bo3
    matchup. The score/vs/score group is instead an absolutely-positioned overlay, centered
-   on .matchup (which already has position: relative), independent of the grid entirely. */
+   on .matchup (which already has position: relative), independent of the grid entirely.
+   .bracket-progression .swiss-round can be as narrow as 220px (min-width), so this group's
+   total width has to stay well under the ~80px genuinely free between the two 42px logos
+   at that width — kept deliberately compact/small rather than risking overlap again. */
 .bracket-progression .matchup-score-group {
     position: absolute;
     top: 50%;
@@ -401,12 +404,12 @@
     transform: translate(-50%, -50%);
     display: flex;
     align-items: center;
-    gap: 26px;
+    gap: 6px;
     pointer-events: none;
 }
 
 .bracket-progression .matchup-team-score {
-    font-size: 15px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--text-colour);
 }
