@@ -22,4 +22,9 @@ public class SimulatorModel(ISeedsService seedsService, IPandaScoreResultsServic
 	{
 		return new JsonResult(await pandaScoreResultsService.GetCompletedMatchesAsync(EventId, Stage));
 	}
+
+	public async Task<JsonResult> OnGetLiveMatches()
+	{
+		return new JsonResult(await pandaScoreResultsService.GetLiveMatchesAsync(EventId, Stage));
+	}
 }

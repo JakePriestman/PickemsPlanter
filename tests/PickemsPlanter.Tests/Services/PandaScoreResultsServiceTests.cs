@@ -309,4 +309,94 @@ public class PandaScoreResultsServiceTests
 		// Assert
 		Assert.Empty(result);
 	}
+
+	[Fact]
+	public async Task GetLiveMatchesAsync_ReturnsEmpty_WhenNoCachedMatches()
+	{
+		// Arrange
+		string eventId = "25";
+		Stages stage = Stages.Stage1;
+
+		_cachingService.GetLiveMatches(eventId, stage).Returns([]);
+
+		// Act
+		var result = await _service.GetLiveMatchesAsync(eventId, stage);
+
+		// Assert
+		Assert.Empty(result);
+		await _tournamentCachingService.DidNotReceive().GetTournamentTeamsAsync(eventId);
+	}
+
+	[Fact]
+	public async Task GetLiveMatchesAsync_ResolvesBothTeamsToLogoFileNames()
+	{
+		// Arrange
+		string eventId = "25";
+		Stages stage = Stages.Stage1;
+
+		List<Team> teams =
+		[
+			new() { Name = "BIG", Logo = "big" },
+			new() { Name = "NRG", Logo = "nrg" }
+		];
+
+		PandaScoreMatch match = new()
+		{
+			Id = 1,
+			Name = "Round 5: NRG vs BIG",
+			Status = "running",
+			WinnerId = null,
+			Opponents =
+			[
+				new() { Opponent = new PandaScoreTeam { Id = 3256, Name = "NRG" } },
+				new() { Opponent = new PandaScoreTeam { Id = 3249, Name = "BIG" } }
+			]
+		};
+
+		_cachingService.GetLiveMatches(eventId, stage).Returns([match]);
+		_tournamentCachingService.GetTournamentTeamsAsync(eventId).Returns(teams);
+
+		// Act
+		var result = await _service.GetLiveMatchesAsync(eventId, stage);
+
+		// Assert
+		var single = Assert.Single(result);
+		Assert.Equal("nrg.png", single.TeamA);
+		Assert.Equal("big.png", single.TeamB);
+	}
+
+	[Fact]
+	public async Task GetLiveMatchesAsync_SkipsMatch_WhenTeamNameUnresolved()
+	{
+		// Arrange
+		string eventId = "25";
+		Stages stage = Stages.Stage1;
+
+		List<Team> teams =
+		[
+			new() { Name = "BIG", Logo = "big" }
+		];
+
+		PandaScoreMatch match = new()
+		{
+			Id = 1,
+			Name = "Round 1: BIG vs Unknown Team",
+			Status = "running",
+			WinnerId = null,
+			Opponents =
+			[
+				new() { Opponent = new PandaScoreTeam { Id = 3249, Name = "BIG" } },
+				new() { Opponent = new PandaScoreTeam { Id = 9999, Name = "Unknown Team" } }
+			]
+		};
+
+		_cachingService.GetLiveMatches(eventId, stage).Returns([match]);
+		_tournamentCachingService.GetTournamentTeamsAsync(eventId).Returns(teams);
+
+		// Act
+		var result = await _service.GetLiveMatchesAsync(eventId, stage);
+
+		// Assert
+		Assert.Empty(result);
+	}
 }
