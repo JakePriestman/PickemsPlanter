@@ -70,9 +70,9 @@ function toggleRandomPicksButton(isResults) {
         return;
     }
 
-    const teams = document.querySelectorAll('.team');
+    const teams = getTeamSourceElements();
 
-    const stageIsNotCompleteWithTeams = Array.from(teams)
+    const stageIsNotCompleteWithTeams = teams
         .map(div => div.querySelector('.team-img').src)
         .some(x => x.includes('unknown'));
     //teams-section contains unknown teams

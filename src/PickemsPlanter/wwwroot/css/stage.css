@@ -1,3 +1,99 @@
+/* ── VIEW TOGGLE (Simple / Bracket) — sits to the right of the Show results toggle ── */
+.show-results-div {
+    position: relative;
+}
+
+.view-toggle-row {
+    display: flex;
+    align-items: center;
+    padding-left: 2.25em;
+}
+
+/* Scoped via .pickem-layout (Stage's own wrapper — Playoffs uses .playoff-layout) rather
+   than editing .bottom-bar itself in the shared stagePlayoffs.css, so this is fully
+   contained to stage.css and can't affect Playoffs. Positions #toast-container (moved here
+   by stage.js) just above the bottom bar, using bottom:100% so it's correct regardless of
+   the bottom bar's actual rendered height. */
+.pickem-layout .bottom-bar {
+    position: relative;
+}
+
+.pickem-layout .bottom-bar #toast-container {
+    position: absolute;
+    bottom: calc(100% + 0.5em);
+    right: 1.5em;
+    top: auto;
+    left: auto;
+    z-index: 10;
+}
+
+.view-toggle .view-toggle-option {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    color: rgba(232, 234, 240, 0.4);
+    transition: color 0.2s ease, font-weight 0.2s ease;
+}
+
+.view-toggle:not(:has(input:checked)) .view-toggle-option:first-child,
+.view-toggle:has(input:checked) .view-toggle-option:last-child {
+    color: var(--text-colour);
+    font-weight: 700;
+}
+
+/* Anchored to .show-results-div (not .view-toggle-row) so it stays put regardless
+   of where the toggle sits within the row; opens upward since this lives in the
+   bottom bar. */
+.view-toggle-intro {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    z-index: 20;
+    width: 240px;
+    padding: 0.9em 1em;
+    background: rgba(20, 24, 32, 0.97);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-l);
+    font-size: 12.5px;
+    line-height: 1.4;
+    color: rgba(232, 234, 240, 0.85);
+}
+
+.view-toggle-intro-arrow {
+    position: absolute;
+    bottom: -6px;
+    left: 22px;
+    width: 12px;
+    height: 12px;
+    background: rgba(20, 24, 32, 0.97);
+    border-right: 1px solid var(--glass-border);
+    border-bottom: 1px solid var(--glass-border);
+    transform: rotate(45deg);
+}
+
+.view-toggle-intro p {
+    margin: 0 0 0.7em;
+}
+
+.view-toggle-intro-dismiss {
+    width: 100%;
+    padding: 0.4em;
+    border-radius: 6px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-colour);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.view-toggle-intro-dismiss:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+
 /* ── TOP-LEVEL LAYOUT ── */
 .pickem-layout {
     display: flex;
@@ -18,16 +114,6 @@
     margin: auto 0;
     gap: 1.5em;
     align-items: stretch;
-}
-
-/* ── BRACKET (picks, right column) ── */
-.picks #toast-container {
-    position: absolute;
-    bottom: 0.75em;
-    right: 0.75em;
-    top: auto;
-    left: auto;
-    z-index: 10;
 }
 
 .bracket {
@@ -111,6 +197,256 @@
 .zero-three {
     border-color: rgba(168, 85, 85, 0.3);
     background: rgba(168, 85, 85, 0.05);
+}
+
+
+/* ── BRACKET VIEW ── */
+.bracket-progression {
+    display: none;
+}
+
+.pickem-layout.view-bracket .content-row {
+    /* Explicit viewport-relative width, not just max-width — .pickem-container's ancestor
+       chain (site.css) centers with align-items:center rather than stretching, so this row
+       is shrink-to-fit by default and a bare max-width is never actually reached. */
+    width: min(1650px, 97vw);
+    max-width: 1650px;
+    /* align-items:stretch (the parent's default) doesn't center an explicitly-sized flex
+       item — without this it sits flush against the start of the cross axis instead. */
+    align-self: center;
+    grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+}
+
+.pickem-layout.view-bracket .teams-section {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 260px;
+}
+
+/* pick0-9 relocate into the bracket's own terminal containers in Bracket View
+   (see relocatePicksForView in viewToggle.js) — the original panel is left empty. */
+.pickem-layout.view-bracket .bracket {
+    display: none;
+}
+
+.pickem-layout.view-bracket .bracket-progression {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    overflow-x: auto;
+    padding: 1.25em 1.5em;
+    min-width: 0;
+    background: rgba(14, 17, 23, 0.4);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-m);
+}
+
+/* Scoped port of simulator.css's bracket visuals — kept separate (rather than
+   loading simulator.css here) because simulator.css styles bare .container/.team
+   selectors that would otherwise clash with this page's own layout and team list. */
+.bracket-progression .swiss-round {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 280px;
+    min-width: 220px;
+    width: 100%;
+    flex: 1 1 0;
+    position: relative;
+}
+
+.bracket-progression .reset-button-container {
+    display: none;
+}
+
+.bracket-progression .swiss-pool-terminal {
+    display: flex;
+    flex-direction: column;
+    margin-right: 25px;
+}
+
+.bracket-progression .swiss-pool-wrapper-advanced,
+.bracket-progression .swiss-pool-wrapper-eliminated {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 0.4em 0.5em 0.5em;
+    border: 1px solid transparent;
+}
+
+.bracket-progression .swiss-pool-wrapper-advanced {
+    background: rgba(94, 139, 75, 0.05);
+    border-color: rgba(94, 139, 75, 0.3);
+}
+
+.bracket-progression .swiss-pool-wrapper-eliminated {
+    background: rgba(168, 85, 85, 0.05);
+    border-color: rgba(168, 85, 85, 0.3);
+}
+
+.bracket-progression .swiss-pool-title {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(232, 234, 240, 0.3);
+}
+
+.bracket-progression .swiss-pool-wrapper-advanced .swiss-pool-title,
+.bracket-progression .swiss-pool-wrapper-eliminated .swiss-pool-title {
+    text-align: center;
+    margin-bottom: 0.3em;
+}
+
+.bracket-progression .swiss-pool-wrapper-advanced .swiss-pool-title {
+    color: rgba(94, 139, 75, 0.8);
+}
+
+.bracket-progression .swiss-pool-wrapper-eliminated .swiss-pool-title {
+    color: rgba(168, 85, 85, 0.8);
+}
+
+.bracket-progression .swiss-pool-container {
+    display: flex;
+    justify-content: center;
+}
+
+.bracket-progression .matchups-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.bracket-progression .swiss-pool-progression {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 25px;
+}
+
+.bracket-progression .swiss-progression-up,
+.bracket-progression .swiss-progression-down {
+    width: 34px;
+    height: 3px;
+    position: relative;
+    left: -8px;
+    clip-path: polygon(0 0, 78% 0, 100% 50%, 78% 100%, 0 100%);
+}
+
+.bracket-progression .swiss-progression-up {
+    background: var(--advance-colour);
+    transform: rotate(-30deg);
+}
+
+.bracket-progression .swiss-progression-down {
+    background: var(--delete-colour);
+    transform: rotate(30deg);
+}
+
+.bracket-progression .matchup {
+    height: 50px;
+    background: rgba(14, 17, 23, 0.2);
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: 1fr 16px 1fr;
+    gap: 4px;
+    align-items: center;
+    position: relative;
+    border: 1px solid var(--glass-border);
+}
+
+.bracket-progression .matchup-team,
+.bracket-progression .teams-container .team {
+    align-items: center;
+    justify-content: center;
+    background: var(--foreground-colour);
+    box-shadow: var(--shadow-s);
+    display: inline-flex;
+    height: 42px;
+    width: 42px;
+    flex: 0 0 42px;
+    border-radius: 8px;
+    justify-self: center;
+    position: relative;
+}
+
+.bracket-progression .team-img.unknown {
+    opacity: 0.5;
+}
+
+.bracket-progression .matchup-team.advanced {
+    background-color: var(--advance-colour);
+    box-shadow: var(--shadow-m);
+}
+
+.bracket-progression .matchup-team.eliminated {
+    opacity: .4;
+    filter: brightness(40%);
+}
+
+.bracket-progression .teams-container {
+    flex-direction: row !important;
+    justify-content: center;
+    gap: 8px !important;
+    padding: 6px;
+    background: none !important;
+    border: none !important;
+    border-radius: 4px 0 4px 4px;
+    position: relative;
+    display: flex;
+    flex: 1;
+    z-index: 1;
+}
+
+.bracket-progression .team-img {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
+}
+
+/* pick0-9 relocate into these same .teams-container groups (3-0/3-1/3-2/0-3) in Bracket
+   View — shrink them from the Simple View's 72px sizing to fit the ~170px swiss-round
+   column (3 dropzones + gaps need to fit side by side for 3-1/3-2). */
+.bracket-progression .dropzone-advanced,
+.bracket-progression .dropzone-eliminated,
+.bracket-progression .dropzone-advanced-not-allowed,
+.bracket-progression .dropzone-eliminated-not-allowed {
+    height: 46px;
+    width: 46px;
+    font-size: 10px;
+    padding: 3px;
+    border-radius: 7px;
+}
+
+.bracket-progression .dropzone-advanced.drag-hover,
+.bracket-progression .dropzone-eliminated.drag-hover {
+    transform: scale(1.05);
+}
+
+@media (hover: hover) {
+    .bracket-progression .dropzone-advanced:hover,
+    .bracket-progression .dropzone-eliminated:hover {
+        transform: scale(1.05);
+    }
+}
+
+/* The engine still fills 3-0/3-1/3-2/0-3's own .team elements for its Buchholz bookkeeping
+   (see simulator.js) — hidden rather than removed so pick0-9, appended alongside as siblings,
+   are the only thing visible there. #2-3/#1-3 aren't prediction targets and stay visible. */
+.bracket-progression [id="3-0"] > .team,
+.bracket-progression [id="3-1"] > .team,
+.bracket-progression [id="3-2"] > .team,
+.bracket-progression [id="0-3"] > .team {
+    display: none;
 }
 
 
@@ -219,6 +555,16 @@
 
 /* ── MOBILE ── */
 @media screen and (max-width: 768px) {
+    /* Bracket View needs a lot of horizontal room and drag-and-drop precision that
+       doesn't hold up on a phone screen — lock to Simple View and hide the entry
+       points to both it and the Simulator. viewToggle.js mirrors this breakpoint
+       to force Simple View in JS as well. */
+    .view-toggle-row,
+    .pickem-layout.view-bracket .bracket-progression,
+    #simulatorButton {
+        display: none !important;
+    }
+
     .pickem-layout {
         padding: 0.5em 0 56px; /* 56px clears the fixed bottom bar */
         gap: 0.4em;

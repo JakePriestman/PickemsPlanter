@@ -57,6 +57,11 @@ public class PandaScoreResultsServiceTests
 			[
 				new() { Opponent = new PandaScoreTeam { Id = 3256, Name = "NRG" } },
 				new() { Opponent = new PandaScoreTeam { Id = 3249, Name = "BIG" } }
+			],
+			Results =
+			[
+				new() { TeamId = 3256, Score = 1 },
+				new() { TeamId = 3249, Score = 2 }
 			]
 		};
 
@@ -71,6 +76,45 @@ public class PandaScoreResultsServiceTests
 		Assert.Equal("big.png", single.WinnerTeam);
 		Assert.Equal("nrg.png", single.LoserTeam);
 		Assert.Equal(5, single.Round);
+		Assert.Equal("2-1", single.Score);
+	}
+
+	[Fact]
+	public async Task GetCompletedMatchesAsync_LeavesScoreNull_WhenResultsMissingAScore()
+	{
+		// Arrange — Results not populated for both sides; the match should still resolve
+		// (winner/loser/round matter more than the score annotation) just without a score.
+		string eventId = "25";
+		Stages stage = Stages.Stage1;
+
+		List<Team> teams =
+		[
+			new() { Name = "BIG", Logo = "big" },
+			new() { Name = "NRG", Logo = "nrg" }
+		];
+
+		PandaScoreMatch match = new()
+		{
+			Id = 1,
+			Name = "Round 1: NRG vs BIG",
+			Status = "finished",
+			WinnerId = 3249,
+			Opponents =
+			[
+				new() { Opponent = new PandaScoreTeam { Id = 3256, Name = "NRG" } },
+				new() { Opponent = new PandaScoreTeam { Id = 3249, Name = "BIG" } }
+			]
+		};
+
+		_cachingService.GetCompletedMatches(eventId, stage).Returns([match]);
+		_tournamentCachingService.GetTournamentTeamsAsync(eventId).Returns(teams);
+
+		// Act
+		var result = await _service.GetCompletedMatchesAsync(eventId, stage);
+
+		// Assert
+		var single = Assert.Single(result);
+		Assert.Null(single.Score);
 	}
 
 	[Fact]

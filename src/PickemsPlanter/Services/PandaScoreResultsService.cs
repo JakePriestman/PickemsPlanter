@@ -53,7 +53,8 @@ public partial class PandaScoreResultsService(IPandaScoreResultsCachingService c
 			{
 				WinnerTeam = winnerLogo,
 				LoserTeam = loserLogo,
-				Round = round.Value
+				Round = round.Value,
+				Score = ResolveScore(match, winner.Id, loser.Id)
 			});
 		}
 
@@ -94,6 +95,16 @@ public partial class PandaScoreResultsService(IPandaScoreResultsCachingService c
 			.ToList();
 
 		return fuzzyMatches.Count == 1 ? $"{fuzzyMatches[0].Logo}.png" : null;
+	}
+
+	private static string? ResolveScore(PandaScoreMatch match, int winnerId, int loserId)
+	{
+		var winnerResult = match.Results.FirstOrDefault(r => r.TeamId == winnerId);
+		var loserResult = match.Results.FirstOrDefault(r => r.TeamId == loserId);
+
+		return winnerResult is not null && loserResult is not null
+			? $"{winnerResult.Score}-{loserResult.Score}"
+			: null;
 	}
 
 	private static string Normalize(string name) =>
