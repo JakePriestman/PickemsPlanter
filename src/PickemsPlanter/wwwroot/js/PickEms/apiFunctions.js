@@ -171,9 +171,17 @@ async function showResultsAsync(showResultsCheckBox) {
 }
 
 function getImageNamesAndParseToJson() {
-    const dropzones = document.querySelectorAll('.dropzone-advanced, .dropzone-eliminated');
+    // Reads pick0..pickN explicitly by id rather than DOM order — on Stage, Bracket View
+    // relocates the pick elements into the live bracket's terminal containers, so their
+    // position in the document no longer matches pick0-9's positional save-order contract.
+    const pickCount = isPlayoffs ? 7 : 10;
 
-    const imagesData = Array.from(dropzones).map(zone => zone.querySelector('.dropped-img').src.split('/').pop());
+    const imagesData = [];
+
+    for (let i = 0; i < pickCount; i++) {
+        const dropzone = document.getElementById(`pick${i}`);
+        imagesData.push(dropzone.querySelector('.dropped-img').src.split('/').pop());
+    }
 
     const jsonData = JSON.stringify(imagesData);
     const imageData = document.getElementById('picksToPost');

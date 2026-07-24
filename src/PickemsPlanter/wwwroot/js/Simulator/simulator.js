@@ -90,7 +90,15 @@ async function autoFillFromResultsAsync() {
 
                 if (match.score) {
                     const matchup = winnerTeam.closest('.matchup');
-                    if (matchup) matchup.title = match.score;
+
+                    if (matchup) {
+                        matchup.title = match.score;
+
+                        const scoreLabel = document.createElement('span');
+                        scoreLabel.className = 'matchup-score';
+                        scoreLabel.textContent = match.score;
+                        matchup.appendChild(scoreLabel);
+                    }
                 }
             }
         }
@@ -460,10 +468,15 @@ function createRoundThreeMatchups(swissRound) {
 
     const previousContainers = swissRound.querySelectorAll('.swiss-pool-container');
 
-    const threeZeroTeams = previousContainers[0].querySelectorAll('.matchup-team.advanced');
-    const threeZero = containers[0].querySelectorAll('.team');
-    if (threeZeroTeams.length === 2)
-        fillAdvancedOrEliminatedTeams(threeZeroTeams, threeZero);
+    // 3-0/0-3/3-1/3-2 are prediction outcomes on Bracket View — pick0-9 live inside those
+    // containers as drag-drop targets there, so the read-only engine must never overwrite
+    // them with the real result (that's what "Show results" is for, same as Simple View).
+    if (!window.bracketViewReadOnly) {
+        const threeZeroTeams = previousContainers[0].querySelectorAll('.matchup-team.advanced');
+        const threeZero = containers[0].querySelectorAll('.team');
+        if (threeZeroTeams.length === 2)
+            fillAdvancedOrEliminatedTeams(threeZeroTeams, threeZero);
+    }
 
     const twoOneTeams = [...previousContainers[0].querySelectorAll('.matchup-team.eliminated'),
                             ...previousContainers[1].querySelectorAll('.matchup-team.advanced')];
@@ -477,10 +490,12 @@ function createRoundThreeMatchups(swissRound) {
     if (oneTwoTeams.length === 6)
         calculateMatchups(oneTwoTeams, oneTwo);
 
-    const zeroThreeTeams = previousContainers[2].querySelectorAll('.matchup-team.eliminated');
-    const zeroThree = containers[3].querySelectorAll('.team');
-    if (zeroThreeTeams.length === 2)
-        fillAdvancedOrEliminatedTeams(zeroThreeTeams, zeroThree);
+    if (!window.bracketViewReadOnly) {
+        const zeroThreeTeams = previousContainers[2].querySelectorAll('.matchup-team.eliminated');
+        const zeroThree = containers[3].querySelectorAll('.team');
+        if (zeroThreeTeams.length === 2)
+            fillAdvancedOrEliminatedTeams(zeroThreeTeams, zeroThree);
+    }
 
     resetStyles(nextRound);
 }
@@ -492,10 +507,12 @@ function createRoundFourMatchups(swissRound) {
 
     const previousContainers = swissRound.querySelectorAll('.swiss-pool-container');
 
-    const threeOneTeams = previousContainers[1].querySelectorAll('.matchup-team.advanced');
-    const threeOne = containers[0].querySelectorAll('.team');
-    if (threeOneTeams.length === 3)
-        fillAdvancedOrEliminatedTeams(threeOneTeams, threeOne);
+    if (!window.bracketViewReadOnly) {
+        const threeOneTeams = previousContainers[1].querySelectorAll('.matchup-team.advanced');
+        const threeOne = containers[0].querySelectorAll('.team');
+        if (threeOneTeams.length === 3)
+            fillAdvancedOrEliminatedTeams(threeOneTeams, threeOne);
+    }
 
     const twoTwoTeams = [...previousContainers[1].querySelectorAll('.matchup-team.eliminated'),
                             ...previousContainers[2].querySelectorAll('.matchup-team.advanced')]
@@ -515,10 +532,12 @@ function createRoundFourMatchups(swissRound) {
 function secureLastTeams(swissRound) {
     const containers = swissRound.querySelectorAll('.swiss-pool-container');
 
-    const threeTwoTeams = containers[2].querySelectorAll('.matchup-team.advanced');
-    const threeTwo = containers[1].querySelectorAll('.team');
-    if (threeTwoTeams.length > 0)
-        fillAdvancedOrEliminatedTeams(threeTwoTeams, threeTwo);
+    if (!window.bracketViewReadOnly) {
+        const threeTwoTeams = containers[2].querySelectorAll('.matchup-team.advanced');
+        const threeTwo = containers[1].querySelectorAll('.team');
+        if (threeTwoTeams.length > 0)
+            fillAdvancedOrEliminatedTeams(threeTwoTeams, threeTwo);
+    }
 
     const twoThreeTeams = containers[2].querySelectorAll('.matchup-team.eliminated');
     const twoThree = containers[3].querySelectorAll('.team');

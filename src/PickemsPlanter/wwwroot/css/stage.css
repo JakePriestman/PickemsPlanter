@@ -198,13 +198,19 @@
 }
 
 .pickem-layout.view-bracket .content-row {
-    grid-template-columns: minmax(200px, 260px) minmax(0, 1fr) minmax(260px, 340px);
-    max-width: 1400px;
+    grid-template-columns: minmax(200px, 260px) minmax(0, 1fr);
+    max-width: 1200px;
 }
 
 .pickem-layout.view-bracket .teams-section {
     grid-template-columns: repeat(2, 1fr);
     max-width: 260px;
+}
+
+/* pick0-9 relocate into the bracket's own terminal containers in Bracket View
+   (see relocatePicksForView in viewToggle.js) — the original panel is left empty. */
+.pickem-layout.view-bracket .bracket {
+    display: none;
 }
 
 .pickem-layout.view-bracket .bracket-progression {
@@ -294,10 +300,22 @@
 .bracket-progression .matchups-container {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px; /* wider than simulator.css's 4px — leaves room for .matchup-score below each box */
     flex: 1;
     position: relative;
     z-index: 1;
+}
+
+.bracket-progression .matchup-score {
+    position: absolute;
+    bottom: -13px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    font-weight: 600;
+    color: rgba(232, 234, 240, 0.55);
+    white-space: nowrap;
+    pointer-events: none;
 }
 
 .bracket-progression .swiss-pool-progression {
@@ -388,6 +406,32 @@
     width: 20px;
     object-fit: contain;
     filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
+}
+
+/* pick0-9 relocate into these same .teams-container groups (3-0/3-1/3-2/0-3) in Bracket
+   View — shrink them from the Simple View's 72px sizing to fit the ~170px swiss-round
+   column (3 dropzones + gaps need to fit side by side for 3-1/3-2). */
+.bracket-progression .dropzone-advanced,
+.bracket-progression .dropzone-eliminated,
+.bracket-progression .dropzone-advanced-not-allowed,
+.bracket-progression .dropzone-eliminated-not-allowed {
+    height: 36px;
+    width: 36px;
+    font-size: 9px;
+    padding: 2px;
+    border-radius: 6px;
+}
+
+.bracket-progression .dropzone-advanced.drag-hover,
+.bracket-progression .dropzone-eliminated.drag-hover {
+    transform: scale(1.15);
+}
+
+@media (hover: hover) {
+    .bracket-progression .dropzone-advanced:hover,
+    .bracket-progression .dropzone-eliminated:hover {
+        transform: scale(1.15);
+    }
 }
 
 
