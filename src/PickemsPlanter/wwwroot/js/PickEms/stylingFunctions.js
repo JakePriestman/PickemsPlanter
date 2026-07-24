@@ -3,6 +3,55 @@
     return (typeof teamNameMap !== 'undefined' ? teamNameMap[logo] : null) ?? logo;
 }
 
+// Single delegated listener covers every team image on the page — Simple View source
+// cards, dropzones, and the Swiss bracket's own internal team images alike — with no
+// per-callsite wiring needed, and no dependency on teamNameMap being populated yet by
+// the time an image is created (resolveTeamTitle is looked up live, on hover).
+let teamTooltipElement = null;
+
+function isTeamImageElement(element) {
+    return element instanceof HTMLImageElement
+        && (element.classList.contains('team-img') || element.classList.contains('dropped-img'));
+}
+
+function ensureTeamTooltipElement() {
+    if (!teamTooltipElement) {
+        teamTooltipElement = document.createElement('div');
+        teamTooltipElement.className = 'team-tooltip';
+        document.body.appendChild(teamTooltipElement);
+    }
+
+    return teamTooltipElement;
+}
+
+function positionTeamTooltip(tooltip, target) {
+    const targetRect = target.getBoundingClientRect();
+    const tooltipRect = tooltip.getBoundingClientRect();
+
+    let left = targetRect.left + targetRect.width / 2 - tooltipRect.width / 2;
+    left = Math.max(4, Math.min(left, window.innerWidth - tooltipRect.width - 4));
+
+    const spaceAbove = targetRect.top - tooltipRect.height - 8;
+    const top = spaceAbove >= 0 ? spaceAbove : targetRect.bottom + 8;
+
+    tooltip.style.left = `${left}px`;
+    tooltip.style.top = `${top}px`;
+}
+
+document.addEventListener('mouseover', (event) => {
+    if (!isTeamImageElement(event.target)) return;
+
+    const tooltip = ensureTeamTooltipElement();
+    tooltip.textContent = resolveTeamTitle(event.target.src);
+    positionTeamTooltip(tooltip, event.target);
+    tooltip.classList.add('show');
+});
+
+document.addEventListener('mouseout', (event) => {
+    if (!isTeamImageElement(event.target)) return;
+    if (teamTooltipElement) teamTooltipElement.classList.remove('show');
+});
+
 function updateSaveButton() {
     const saveButton = document.getElementById('saveButton');
 
@@ -200,7 +249,6 @@ function createTeamImage(imageSource) {
     const image = document.createElement("img");
     image.src = imageSource;
     image.className = "team-img";
-    image.title = resolveTeamTitle(imageSource);
 
     if (imageSource.includes('unknown'))
         image.classList.add('unknown');
@@ -212,7 +260,6 @@ function createDroppedImage(imageSource) {
     const image = document.createElement("img");
     image.src = imageSource;
     image.className = "dropped-img";
-    image.title = resolveTeamTitle(imageSource);
 
     return image;
 }
