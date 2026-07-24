@@ -5,7 +5,7 @@ function isMobileView() {
 }
 
 function initMobileTapMode() {
-    document.querySelectorAll('.team').forEach(team => {
+    getTeamSourceElements().forEach(team => {
         team.addEventListener('click', onTeamClick);
     });
 

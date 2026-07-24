@@ -110,7 +110,7 @@ function dragEnd() {
 }
 
 function enableTeamsFunctionality(pickImageSources) {
-    const teams = Array.from(document.querySelectorAll('.team'));
+    const teams = getTeamSourceElements();
     const teamsToEnable = getTeamsToEnable(teams, pickImageSources);
 
     teamsToEnable.forEach(team => {
@@ -121,7 +121,7 @@ function enableTeamsFunctionality(pickImageSources) {
 }
 
 function disableTeamsFunctionality(leftOverTeams) {
-    const teams = Array.from(document.querySelectorAll('.team'));
+    const teams = getTeamSourceElements();
     const teamsToDisable = getTeamsToDisable(teams, leftOverTeams);
 
     teamsToDisable.forEach(team => {
@@ -132,7 +132,7 @@ function disableTeamsFunctionality(leftOverTeams) {
 }
 
 function disableAllTeamsFunctionality() {
-    const teams = Array.from(document.querySelectorAll('.team'));
+    const teams = getTeamSourceElements();
 
     teams.forEach(team => {
         team.setAttribute('disabled', 'true');

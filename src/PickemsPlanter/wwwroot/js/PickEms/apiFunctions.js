@@ -21,7 +21,7 @@ async function LoadImagesAsync() {
         `/PickEms/Playoffs?handler=Images&eventId=${eventId}&steamId=${steamId}` :
         `/PickEms/Stage?handler=Images&eventId=${eventId}&steamId=${steamId}&stage=${stage}`;
 
-    document.querySelectorAll('.team').forEach(t => t.classList.add('skeleton'));
+    getTeamSourceElements().forEach(t => t.classList.add('skeleton'));
 
     const imagesResponse = await fetch(url);
     const imageUrls = await imagesResponse.json();

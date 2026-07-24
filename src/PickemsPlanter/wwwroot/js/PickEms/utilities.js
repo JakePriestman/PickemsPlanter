@@ -1,4 +1,17 @@
-﻿function resetGlobals() {
+﻿// On /PickEms/Stage, the live bracket's own hidden tracking placeholders (used internally
+// by the Simulator engine for Buchholz bookkeeping — see bracketRoot() in simulator.js)
+// also carry class "team", same as the 16 draggable team source cards. Most of those
+// placeholders have no .team-img child until that outcome is actually decided, so any
+// unscoped document.querySelectorAll('.team') call that assumes every match has a filled
+// team-img (eg. team.querySelector('.team-img').src) throws the moment it hits one. Every
+// call site that means "the draggable team source cards" — not the bracket engine's
+// internals — should go through this instead of querying '.team' directly. No-op on
+// Playoffs, which has no #bracketProgression.
+function getTeamSourceElements() {
+    return Array.from(document.querySelectorAll('.team')).filter(t => !t.closest('#bracketProgression'));
+}
+
+function resetGlobals() {
     isDragging = false;
     currentDraggedElement = null;
     dragOriginElement = null;
@@ -41,9 +54,9 @@ function getRectCenter(rect) {
 }
 
 function getAllTeamImageSources() {
-    const teams = document.querySelectorAll('.team');
+    const teams = getTeamSourceElements();
 
-    const teamImageSources = Array.from(teams)
+    const teamImageSources = teams
         .filter(div => !div.hasAttribute('disabled'))
         .map(div => div.querySelector('img.team-img').src);
 
