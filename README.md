@@ -37,6 +37,12 @@ This product fully complies with Valve's [API Terms of Use](https://steamcommuni
 
 ---
 
+## 📊 PandaScore API Integration
+
+The Simulator's auto-fill feature (Swiss stage seeding/matchups sourced from real results) uses the [PandaScore](https://pandascore.co/) esports data API — an officially licensed data provider, not a scrape. It's opt-in per event/stage (an event only auto-fills once a PandaScore tournament ID is mapped to it) and fails soft: if PandaScore is unreachable or a stage isn't mapped, the Simulator behaves exactly as it does today, fully manual.
+
+---
+
 ## ⚙️ Installation & Setup
 
 ### Prerequisites
@@ -86,7 +92,7 @@ You can deploy PickemsPlanter to **Azure App Service** using deploy.bicep
 
 ## 📝 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is source-available under the **[PolyForm Strict License 1.0.0](https://polyformproject.org/licenses/strict/1.0.0)** — see the [LICENSE](LICENSE) file for details. Personal, noncommercial use (reading, running, learning from the code) is permitted; distributing it, building a product or service on it, or any commercial use is not, without permission from the author.
 
 ---
 

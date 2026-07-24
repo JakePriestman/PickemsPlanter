@@ -23,7 +23,10 @@ public static class ServiceCollectionExtensions
 			services.AddRazorPages();
 			services.AddSingleton<IPickemsService, PickemsService>();
 			services.AddSingleton<ISeedsService, SeedsService>();
+			services.AddSingleton<IPandaScoreResultsService, PandaScoreResultsService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
+			services.AddOptions<PandaScoreConfig>().Bind(config.GetSection(nameof(PandaScoreConfig)));
+			services.AddOptions<EventDiscoveryConfig>().Bind(config.GetSection(nameof(EventDiscoveryConfig)));
 		}
 		public void AddAuth()
 		{
@@ -40,6 +43,12 @@ public static class ServiceCollectionExtensions
 			services.AddSingleton<IUserPredictionsCachingService, UserPredictionsCachingService>();
 			services.AddSingleton<ITournamentCachingService, TournamentCachingService>();
 			services.AddHostedService<StartupCachingService>();
+
+			services.AddSingleton<PandaScoreResultsCachingService>();
+			services.AddSingleton<IPandaScoreResultsCachingService>(sp => sp.GetRequiredService<PandaScoreResultsCachingService>());
+			services.AddHostedService(sp => sp.GetRequiredService<PandaScoreResultsCachingService>());
+
+			services.AddHostedService<SteamEventDiscoveryService>();
 		}
 
 		public void AddJsonSerialization()
@@ -59,6 +68,10 @@ public static class ServiceCollectionExtensions
 			string? steamOpenIDURL = config["Steam:OpenIDURL"];
 
 			services.AddHttpClient<ILoginAPI, LoginAPI>(opt => opt.BaseAddress = new Uri(steamOpenIDURL!));
+
+			string? pandaScoreAPIURL = config["PandaScore:ApiUrl"];
+
+			services.AddHttpClient<IPandaScoreApi, PandaScoreAPI>(opt => opt.BaseAddress = new Uri(pandaScoreAPIURL!));
 		}
 
 		public void AddTableStorage(IConfiguration config)

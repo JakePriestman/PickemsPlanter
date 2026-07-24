@@ -5,7 +5,7 @@ using PickemsPlanter.Services;
 
 namespace PickemsPlanter.Pages;
 
-public class SimulatorModel(ISeedsService seedsService) : PageModel
+public class SimulatorModel(ISeedsService seedsService, IPandaScoreResultsService pandaScoreResultsService) : PageModel
 {
 	[BindProperty(SupportsGet = true)]
 	public required string EventId { get; init; }
@@ -16,5 +16,10 @@ public class SimulatorModel(ISeedsService seedsService) : PageModel
 	public async Task<JsonResult> OnGetSeeds()
 	{
 		return new JsonResult(await seedsService.GetSeedImagesInStageAsync(Stage, EventId));
+	}
+
+	public async Task<JsonResult> OnGetResults()
+	{
+		return new JsonResult(await pandaScoreResultsService.GetCompletedMatchesAsync(EventId, Stage));
 	}
 }
