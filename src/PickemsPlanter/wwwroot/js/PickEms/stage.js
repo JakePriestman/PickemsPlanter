@@ -61,12 +61,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     await LoadTeamsAndPicksAsync();
     initMobileTapMode();
 
-    // Anchored to .content-row (not .picks) so it stays visible in both Simple View and
-    // Bracket View — .bracket (which contains .picks) is display:none while Bracket View
-    // is active, and a hidden ancestor hides everything inside it regardless of its own styles.
+    // Anchored to .bottom-bar (not .picks/.content-row) so it pops up just above the bottom
+    // bar rather than floating disconnected mid-page, and stays visible in both Simple View
+    // and Bracket View — .bottom-bar is never hidden in either.
     const toastContainer = document.getElementById('toast-container');
-    const contentRow = document.querySelector('.content-row');
-    if (toastContainer && contentRow) contentRow.appendChild(toastContainer);
+    const bottomBar = document.querySelector('.bottom-bar');
+    if (toastContainer && bottomBar) bottomBar.appendChild(toastContainer);
 });
 
 const showResultsCheckmark = document.getElementById("showResults");
