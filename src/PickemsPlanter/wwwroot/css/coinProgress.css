@@ -51,7 +51,7 @@
     font-family: inherit;
     font-weight: 700;
     letter-spacing: 0.03em;
-    fill: var(--coin-dark);
+    fill: var(--coin-base);
 }
 
 .coin-tier-name {

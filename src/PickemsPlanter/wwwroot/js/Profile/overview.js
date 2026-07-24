@@ -123,20 +123,29 @@ function renderCoinProgress(progress, eventName) {
                                  needs (top arc over the top, bottom arc under the bottom), but travel in
                                  OPPOSITE directions (left-to-right vs right-to-left, opposite sweep-flag) —
                                  that's what keeps the bottom text reading upright instead of upside-down;
-                                 tracing both the same direction mirrors the bottom text. -->
-                            <path id="coinTopArc-${tierClass}" d="M 5,50 A 45,45 0 0 1 95,50" />
-                            <path id="coinBottomArc-${tierClass}" d="M 5,50 A 45,45 0 0 0 95,50" />
+                                 tracing both the same direction mirrors the bottom text. Radius 40 sits in
+                                 the middle of the bezel band (33-46) — a dedicated wide ring for the text,
+                                 separate from the inner face, rather than text crowded near the edge. -->
+                            <path id="coinTopArc-${tierClass}" d="M 10,50 A 40,40 0 0 1 90,50" />
+                            <path id="coinBottomArc-${tierClass}" d="M 10,50 A 40,40 0 0 0 90,50" />
                             <path id="coinStar-${tierClass}" d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" />
+                            <!-- Stamped/embossed look for the rim text: a dark shadow offset one way and a
+                                 light highlight offset the other, simulating a raised relief under a
+                                 top-left light source. -->
+                            <filter id="coinEmboss-${tierClass}" x="-30%" y="-30%" width="160%" height="160%">
+                                <feDropShadow dx="0.4" dy="0.4" stdDeviation="0.1" flood-color="var(--coin-dark)" flood-opacity="0.85" />
+                                <feDropShadow dx="-0.3" dy="-0.3" stdDeviation="0.1" flood-color="var(--coin-light)" flood-opacity="0.8" />
+                            </filter>
                         </defs>
                         <circle cx="50" cy="50" r="46" fill="url(#coinFace-${tierClass})" stroke="var(--coin-dark)" stroke-width="3" />
-                        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--coin-light)" stroke-width="1.5" opacity="0.55" />
+                        <circle cx="50" cy="50" r="33" fill="none" stroke="var(--coin-light)" stroke-width="1.5" opacity="0.55" />
                         <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.85" />
-                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(5,50) scale(0.14) translate(-50,-50)" />
-                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(95,50) scale(0.14) translate(-50,-50)" />
-                        <text class="coin-rim-text" font-size="7">
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(10,50) scale(0.14) translate(-50,-50)" />
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(90,50) scale(0.14) translate(-50,-50)" />
+                        <text class="coin-rim-text" font-size="8" filter="url(#coinEmboss-${tierClass})">
                             <textPath href="#coinTopArc-${tierClass}" startOffset="50%" text-anchor="middle">CS2 MAJOR</textPath>
                         </text>
-                        <text class="coin-rim-text" font-size="7">
+                        <text class="coin-rim-text" font-size="8" filter="url(#coinEmboss-${tierClass})">
                             <textPath href="#coinBottomArc-${tierClass}" startOffset="50%" text-anchor="middle">${cityAndYear(eventName)}</textPath>
                         </text>
                     </svg>
