@@ -31,11 +31,13 @@ function relocatePicksForView(view) {
     }
 
     if (view === 'bracket') {
+        // Appended alongside the container's existing .team tracking elements, not replacing
+        // them — the read-only engine still fills those for its own Buchholz bookkeeping
+        // (calculateNewBuchholzScores in simulator.js reads them back later); stage.css hides
+        // them so only the picks are visible once both are present.
         for (const [groupId, pickIds] of Object.entries(PICK_TERMINAL_GROUPS)) {
             const container = document.getElementById(groupId);
             if (!container) continue;
-
-            container.innerHTML = '';
 
             for (const pickId of pickIds) {
                 const el = document.getElementById(pickId);
@@ -104,12 +106,26 @@ async function handleViewToggleChange(event) {
     const view = event.target.checked ? 'bracket' : 'simple';
     localStorage.setItem(VIEW_STORAGE_KEY, view);
     dismissViewToggleIntro();
-    await applyView(view);
+
+    try {
+        await applyView(view);
+    } catch (e) {
+        console.error('Failed to switch Simple/Bracket view', e);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     updateToggleRowVisibility();
-    await applyView(getEffectiveView());
+
+    // An error applying the initial view (eg. a bad response from the live results endpoint)
+    // must not prevent the toggle's own listener below from ever being wired up — otherwise
+    // the toggle silently stops responding to clicks for the rest of the page's lifetime.
+    try {
+        await applyView(getEffectiveView());
+    } catch (e) {
+        console.error('Failed to apply initial Simple/Bracket view', e);
+    }
+
     showViewToggleIntroIfNeeded();
 
     const toggleInput = document.getElementById('viewToggleInput');

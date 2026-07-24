@@ -217,9 +217,10 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 16px;
+    justify-content: center;
+    gap: 24px;
     overflow-x: auto;
-    padding: 1.25em 1em;
+    padding: 1.25em 1.5em;
     min-width: 0;
     background: rgba(14, 17, 23, 0.4);
     border: 1px solid var(--glass-border);
@@ -234,9 +235,10 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
-    max-width: 170px;
+    max-width: 230px;
+    min-width: 170px;
     width: 100%;
-    flex: 0 0 auto;
+    flex: 1 1 0;
     position: relative;
 }
 
@@ -432,6 +434,16 @@
     .bracket-progression .dropzone-eliminated:hover {
         transform: scale(1.15);
     }
+}
+
+/* The engine still fills 3-0/3-1/3-2/0-3's own .team elements for its Buchholz bookkeeping
+   (see simulator.js) — hidden rather than removed so pick0-9, appended alongside as siblings,
+   are the only thing visible there. #2-3/#1-3 aren't prediction targets and stay visible. */
+.bracket-progression [id="3-0"] > .team,
+.bracket-progression [id="3-1"] > .team,
+.bracket-progression [id="3-2"] > .team,
+.bracket-progression [id="0-3"] > .team {
+    display: none;
 }
 
 
