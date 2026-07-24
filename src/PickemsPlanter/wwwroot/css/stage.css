@@ -96,10 +96,13 @@
     margin: auto 0;
     gap: 1.5em;
     align-items: stretch;
+    /* anchors #toast-container below (moved here by stage.js) — was previously anchored to
+       .picks, which sits over the teams-section in a way that's hard to see, and is hidden
+       entirely in Bracket View since .bracket is display:none there. */
+    position: relative;
 }
 
-/* ── BRACKET (picks, right column) ── */
-.picks #toast-container {
+.content-row #toast-container {
     position: absolute;
     bottom: 0.75em;
     right: 0.75em;
