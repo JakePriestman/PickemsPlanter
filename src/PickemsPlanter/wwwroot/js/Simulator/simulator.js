@@ -140,9 +140,11 @@ async function autoFillFromResultsAsync() {
                 selectTeam(winnerTeam);
 
                 // Score display is a Bracket View (/PickEms/Stage) feature only — /Simulator
-                // stays exactly as it was before scores were added. Only Bo3s (not Bo1s) get
-                // a score at all — see SimulatorMatchResult.IsBestOfThree.
-                if (match.isBestOfThree && match.score && window.bracketViewReadOnly) {
+                // stays exactly as it was before scores were added. Shown for every decided
+                // match (not just Bo3s) — restricting it to Bo3 only meant some decided
+                // matchups got the wider score layout and others didn't, which read as an
+                // inconsistent/broken grid rather than a deliberate difference.
+                if (match.score && window.bracketViewReadOnly) {
                     addMatchupScores(winnerTeam, match.score);
                 }
             }
