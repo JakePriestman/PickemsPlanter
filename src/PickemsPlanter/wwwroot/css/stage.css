@@ -398,13 +398,14 @@
    pulled to the inner edge. */
 .bracket-progression .matchup.has-scores {
     grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
 }
 
 .bracket-progression .matchup-score-group {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 14px;
 }
 
 .bracket-progression .matchup-team-score {
