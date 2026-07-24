@@ -16,7 +16,7 @@ const sixMatchupPriorities = [
   [ [1,2], [3,4], [5,6] ]  
 ];
 
-let { eventId, stage } = window.pageData;
+let { eventId: bracketEventId, stage: bracketStage } = window.pageData;
 
 // The Bracket View on /PickEms/Stage embeds this engine read-only and lazy-loads it
 // itself (only once the user actually opens Bracket View) rather than on every page load.
@@ -54,7 +54,7 @@ async function autoFillFromResultsAsync() {
     // Seeding isn't fully known yet — stay fully manual, same gate createInitialMatchupsAsync uses for clicks.
     if ([...seedImages].some(x => x.src.includes('unknown'))) return;
 
-    const url = `/Simulator?handler=Results&eventId=${eventId}&stage=${stage}`;
+    const url = `/Simulator?handler=Results&eventId=${bracketEventId}&stage=${bracketStage}`;
 
     let results;
 
@@ -333,7 +333,7 @@ function checkAllFilledInRound(mt) {
 
 
 async function createInitialMatchupsAsync() {
-    const url = `/Simulator?handler=Seeds&eventId=${eventId}&stage=${stage}`;
+    const url = `/Simulator?handler=Seeds&eventId=${bracketEventId}&stage=${bracketStage}`;
 
     const imagesResponse = await fetch(url);
     const seeds = await imagesResponse.json();
