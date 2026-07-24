@@ -152,6 +152,10 @@ async function autoFillFromResultsAsync() {
 
 // Splits "{winnerScore}-{loserScore}" (eg. "2-1") back out per-team and places each
 // team's own score between its logo and the "vs" divider — <team1> <score> vs <score> <team2>.
+// Wraps score/vs/score in one group rather than adding them as separate top-level grid
+// items — .matchup stays a 3-column grid (team/group/team) so the team logos keep their
+// normal centered position instead of being forced to the inner edge; only the middle
+// column widens (fixed 16px -> auto) to fit the group's content.
 function addMatchupScores(winnerTeam, score) {
     const matchup = winnerTeam.closest('.matchup');
     const vsDivider = matchup?.querySelector('.vs');
@@ -168,9 +172,13 @@ function addMatchupScores(winnerTeam, score) {
     const firstScore = isWinnerFirst ? winnerScore : loserScore;
     const secondScore = isWinnerFirst ? loserScore : winnerScore;
 
+    const group = document.createElement('div');
+    group.className = 'matchup-score-group';
+
+    vsDivider.replaceWith(group);
+    group.append(createMatchupScoreElement(firstScore), vsDivider, createMatchupScoreElement(secondScore));
+
     matchup.classList.add('has-scores');
-    vsDivider.insertAdjacentElement('beforebegin', createMatchupScoreElement(firstScore));
-    vsDivider.insertAdjacentElement('afterend', createMatchupScoreElement(secondScore));
 }
 
 function createMatchupScoreElement(scoreText) {

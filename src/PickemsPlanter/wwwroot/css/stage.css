@@ -390,24 +390,21 @@
     filter: brightness(40%);
 }
 
-/* Bo3s only (see IsBestOfThree) — adds two more columns either side of the "vs" divider
-   so the layout reads <team-1> <score> vs <score> <team-2>; non-Bo3 matchups keep the
-   plain 3-column grid untouched. The two outer columns are still 1fr (so both scores
-   land equidistant from the vs divider — the columns are equal width), but .matchup-team
-   normally centers itself within that wide column (see the plain .matchup-team rule
-   above) which left the score+vs cluster floating alone in the middle, detached from
-   both logos — pulling each logo to the edge nearest its score fixes that.
-*/
+/* Bo3s only (see IsBestOfThree) — score/vs/score are grouped into a single element
+   (.matchup-score-group, built in addMatchupScores) rather than added as separate grid
+   items, so .matchup stays a 3-column grid (team / group / team). Only the middle column
+   widens (16px -> auto, to fit the group) — the team logos keep their normal centered
+   position in the outer 1fr columns, same as every non-Bo3 matchup, instead of being
+   pulled to the inner edge. */
 .bracket-progression .matchup.has-scores {
-    grid-template-columns: 1fr auto 16px auto 1fr;
+    grid-template-columns: 1fr auto 1fr;
 }
 
-.bracket-progression .matchup.has-scores .matchup-team:first-child {
-    justify-self: end;
-}
-
-.bracket-progression .matchup.has-scores .matchup-team:last-child {
-    justify-self: start;
+.bracket-progression .matchup-score-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
 }
 
 .bracket-progression .matchup-team-score {
