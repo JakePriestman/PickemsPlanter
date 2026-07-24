@@ -473,14 +473,25 @@
     display: none;
 }
 
-/* #2-3/#1-3 (above) stay visible rather than hidden, but they're still just a display-only
-   bracket slot — getTeamSourceElements() already excludes anything inside #bracketProgression
-   from drag activation (see utilities.js), so nothing here is actually draggable. Without this,
-   they inherit cursor:grab from the plain .team rule meant for Simple View's draggable source
-   cards, which visually implies they're interactive when they aren't. */
-.bracket-progression [id="2-3"] > .team,
-.bracket-progression [id="1-3"] > .team {
+/* #2-3/#1-3 (above) stay visible rather than hidden, but every terminal pool's .team is
+   still just a display-only bracket slot — getTeamSourceElements() already excludes anything
+   inside #bracketProgression from drag activation (see utilities.js), so nothing here is
+   actually draggable. Without this, they inherit interactive-looking styling meant for Simple
+   View's draggable source cards: cursor:grab from the plain .team rule (below), and a hover
+   scale + blue box-shadow ring from stagePlayoffs.css's .team:not([disabled]):hover — these
+   elements never get [disabled] (only Simple View's cards do), so that rule always matches.
+   Scoped to .teams-container generally (not just #2-3/#1-3) so it can't be missed again for
+   whichever terminal pool happens to be visible. */
+.bracket-progression .teams-container .team {
     cursor: default;
+}
+
+.bracket-progression .teams-container .team:hover {
+    box-shadow: var(--shadow-s);
+}
+
+.bracket-progression .teams-container .team:hover .team-img {
+    transform: none;
 }
 
 
