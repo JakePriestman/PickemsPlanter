@@ -139,12 +139,46 @@ async function autoFillFromResultsAsync() {
             if (winnerTeam) {
                 selectTeam(winnerTeam);
 
-                // match.score (from SimulatorMatchResult/PandaScoreResultsService) is still
-                // fetched here — just not rendered. Kept available for whatever reads
-                // autoFillFromResultsAsync's match data next.
+                // Score display is a Bracket View (/PickEms/Stage) feature only — /Simulator
+                // stays exactly as it was before scores were added. Only Bo3s (not Bo1s) get
+                // a score at all — see SimulatorMatchResult.IsBestOfThree.
+                if (match.isBestOfThree && match.score && window.bracketViewReadOnly) {
+                    addMatchupScores(winnerTeam, match.score);
+                }
             }
         }
     }
+}
+
+// Splits "{winnerScore}-{loserScore}" (eg. "2-1") back out per-team and places each
+// team's own score between its logo and the "vs" divider — <team1> <score> vs <score> <team2>.
+function addMatchupScores(winnerTeam, score) {
+    const matchup = winnerTeam.closest('.matchup');
+    const vsDivider = matchup?.querySelector('.vs');
+
+    if (!matchup || !vsDivider) return;
+
+    const teamEls = [...matchup.querySelectorAll('.matchup-team')];
+    const loserTeam = teamEls.find(t => t !== winnerTeam);
+
+    if (!loserTeam) return;
+
+    const [winnerScore, loserScore] = score.split('-');
+    const isWinnerFirst = teamEls[0] === winnerTeam;
+    const firstScore = isWinnerFirst ? winnerScore : loserScore;
+    const secondScore = isWinnerFirst ? loserScore : winnerScore;
+
+    matchup.classList.add('has-scores');
+    vsDivider.insertAdjacentElement('beforebegin', createMatchupScoreElement(firstScore));
+    vsDivider.insertAdjacentElement('afterend', createMatchupScoreElement(secondScore));
+}
+
+function createMatchupScoreElement(scoreText) {
+    const scoreElement = document.createElement('div');
+    scoreElement.className = 'matchup-team-score';
+    scoreElement.textContent = scoreText;
+
+    return scoreElement;
 }
 
 function findUndecidedMatchupTeam(winnerSrc, loserSrc) {
