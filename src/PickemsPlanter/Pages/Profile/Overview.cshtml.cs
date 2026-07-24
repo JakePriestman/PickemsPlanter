@@ -11,7 +11,7 @@ using System.Security.Claims;
 namespace PickemsPlanter.Pages.Profile;
 
 public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
-	IEventTableService eventTableService) : PageModel
+	IEventTableService eventTableService, ICoinProgressService coinProgressService) : PageModel
 {
 	[BindProperty]
 	public string SelectedEvent { get; set; } = string.Empty;
@@ -109,6 +109,11 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 		if (authCode == null) return NotFound();
 
 		return new JsonResult(new { authCode.AuthCode });
+	}
+
+	public async Task<JsonResult> OnGetCoinProgress(string eventId)
+	{
+		return new JsonResult(await coinProgressService.GetCoinProgressAsync(SteamId, eventId));
 	}
 
 	private async Task CacheOnChooseEvent(string authCode)

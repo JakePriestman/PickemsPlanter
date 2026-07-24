@@ -56,24 +56,73 @@ function toggleEventButtons(input) {
     input.addEventListener("input", toggleButtons);
 }
 
-function openCoinProgress(eventId, steamId) {
-    const width = 460;
-    const height = 700;
+async function toggleCoinProgress(eventId) {
+    const existingPanel = document.querySelector(".coin-progress-panel");
+    const wasThisEventOpen = existingPanel?.dataset.eventId === eventId;
 
-    const winWidth = window.innerWidth;
-    const winHeight = window.innerHeight;
+    existingPanel?.remove();
 
-    const winLeft = window.screenX;
-    const winTop = window.screenY;
+    if (wasThisEventOpen) return;
 
-    const left = winLeft + (winWidth - width) / 2;
-    const top = winTop + (winHeight - height) / 2;
+    const eventContainer = document.querySelector(`.event[data-event-id="${eventId}"]`);
+    if (!eventContainer) return;
 
-    window.open(
-        `/CoinProgress?eventId=${eventId}&steamId=${steamId}`,
-        "coinProgressPopup",
-        `width=${width},height=${height},left=${left},top=${top}`
-    );
+    const panel = document.createElement("div");
+    panel.className = "coin-progress-panel";
+    panel.dataset.eventId = eventId;
+    panel.innerHTML = '<div class="coin-progress-container"><p class="coin-progress-count">Loading coin progress...</p></div>';
+
+    eventContainer.insertAdjacentElement("afterend", panel);
+
+    const response = await fetch(`?handler=CoinProgress&eventId=${eventId}`);
+
+    if (!response.ok) {
+        panel.innerHTML = '<div class="coin-progress-container"><p class="coin-progress-count">Could not load coin progress.</p></div>';
+        return;
+    }
+
+    const progress = await response.json();
+
+    panel.innerHTML = renderCoinProgress(progress);
+}
+
+function renderCoinProgress(progress) {
+    const tierClass = progress.tier.toLowerCase();
+    const percent = progress.totalChallenges === 0 ? 0 : (100 * progress.completedChallenges / progress.totalChallenges).toFixed(2);
+
+    const challengesHtml = progress.challenges.map(challenge => `
+        <li class="coin-challenge ${challenge.completed ? "completed" : ""}">
+            <span class="coin-challenge-check">${challenge.completed ? "✓" : ""}</span>
+            <span class="coin-challenge-name">${challenge.name}</span>
+        </li>
+    `).join("");
+
+    return `
+        <div class="coin-progress-container">
+            <div class="coin-progress-header">
+                <div class="coin-badge coin-tier-${tierClass}">
+                    <svg viewBox="0 0 100 100" class="coin-svg" aria-hidden="true">
+                        <defs>
+                            <radialGradient id="coinFace-${tierClass}" cx="35%" cy="30%" r="75%">
+                                <stop offset="0%" stop-color="var(--coin-light)" />
+                                <stop offset="55%" stop-color="var(--coin-base)" />
+                                <stop offset="100%" stop-color="var(--coin-dark)" />
+                            </radialGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="46" fill="url(#coinFace-${tierClass})" stroke="var(--coin-dark)" stroke-width="3" />
+                        <circle cx="50" cy="50" r="38" fill="none" stroke="var(--coin-light)" stroke-width="1.5" opacity="0.55" />
+                        <path d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" fill="var(--coin-dark)" opacity="0.85" />
+                    </svg>
+                </div>
+                <p class="coin-tier-name coin-tier-${tierClass}">${progress.tier}</p>
+                <p class="coin-progress-count">${progress.completedChallenges} / ${progress.totalChallenges} challenges completed</p>
+            </div>
+            <div class="coin-progress-bar">
+                <div class="coin-progress-bar-fill coin-tier-${tierClass}" style="width: ${percent}%;"></div>
+            </div>
+            <ul class="coin-challenge-list">${challengesHtml}</ul>
+        </div>
+    `;
 }
 
 document.addEventListener("DOMContentLoaded", function () {
