@@ -88,13 +88,11 @@ async function toggleCoinProgress(eventId) {
 }
 
 // Assumes "<...> City Year" naming (eg. "IEM Cologne 2026" -> "COLOGNE 2026") — the coin's
-// rim only has room for the short form, matching the reference coin design. Falls back to
-// the full name if it doesn't end in a 4-digit year.
+// rim only has room for the short form, matching the reference coin design. Always caps at
+// the last 2 words regardless of whether the last one looks like a year, so a naming pattern
+// that doesn't fit the assumption still gets shortened rather than overflowing the rim.
 function cityAndYear(eventName) {
-    const words = eventName.trim().split(/\s+/);
-    const lastWord = words[words.length - 1];
-
-    if (!/^\d{4}$/.test(lastWord) || words.length < 2) return eventName.toUpperCase();
+    const words = eventName.trim().split(/\s+/).filter(Boolean);
 
     return words.slice(-2).join(" ").toUpperCase();
 }
@@ -126,19 +124,19 @@ function renderCoinProgress(progress, eventName) {
                                  OPPOSITE directions (left-to-right vs right-to-left, opposite sweep-flag) —
                                  that's what keeps the bottom text reading upright instead of upside-down;
                                  tracing both the same direction mirrors the bottom text. -->
-                            <path id="coinTopArc-${tierClass}" d="M 9,50 A 41,41 0 0 1 91,50" />
-                            <path id="coinBottomArc-${tierClass}" d="M 9,50 A 41,41 0 0 0 91,50" />
+                            <path id="coinTopArc-${tierClass}" d="M 5,50 A 45,45 0 0 1 95,50" />
+                            <path id="coinBottomArc-${tierClass}" d="M 5,50 A 45,45 0 0 0 95,50" />
                             <path id="coinStar-${tierClass}" d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" />
                         </defs>
                         <circle cx="50" cy="50" r="46" fill="url(#coinFace-${tierClass})" stroke="var(--coin-dark)" stroke-width="3" />
                         <circle cx="50" cy="50" r="38" fill="none" stroke="var(--coin-light)" stroke-width="1.5" opacity="0.55" />
                         <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.85" />
-                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(9,50) scale(0.16) translate(-50,-50)" />
-                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(91,50) scale(0.16) translate(-50,-50)" />
-                        <text class="coin-rim-text" font-size="8">
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(5,50) scale(0.14) translate(-50,-50)" />
+                        <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(95,50) scale(0.14) translate(-50,-50)" />
+                        <text class="coin-rim-text" font-size="7">
                             <textPath href="#coinTopArc-${tierClass}" startOffset="50%" text-anchor="middle">CS2 MAJOR</textPath>
                         </text>
-                        <text class="coin-rim-text" font-size="8">
+                        <text class="coin-rim-text" font-size="7">
                             <textPath href="#coinBottomArc-${tierClass}" startOffset="50%" text-anchor="middle">${cityAndYear(eventName)}</textPath>
                         </text>
                     </svg>
