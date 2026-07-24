@@ -45,9 +45,12 @@
 
 /* Applies to .matchup regardless of whether the bracket is embedded (Stage's Bracket
    View, under .bracket-progression) or standalone (/Simulator) — both share this class. */
+/* Inset (negative offset) rather than an outward ring — the swiss-pool-title round
+   label sits almost flush against the first matchup with no margin, so an outward
+   outline overlaps it; an inset ring stays within the matchup's own box regardless. */
 .matchup.live {
     outline: 2px solid var(--live-colour);
-    outline-offset: 2px;
+    outline-offset: -3px;
     animation: matchup-live-pulse 1.6s ease-in-out infinite;
 }
 
