@@ -54,13 +54,32 @@
 /*EVENT FORM*/
 .event-form {
     position: relative;
-    padding: 2em 2em 5em;
+    padding: 2em 2em 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.25em;
-    overflow-y: auto;
     flex: 1;
+    min-height: 0;
+}
+
+/* The events' own scroll container, separate from .event-form, so overflow only scrolls
+   this list — the information button/popup above it stay fixed in place. min-height: 0 is
+   required for a flex child to actually shrink and scroll instead of growing past its parent. */
+.event-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25em;
+    width: 100%;
+    max-width: 760px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 1.5em 1.5em 5em;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
 }
 
 .information-button {
@@ -306,6 +325,10 @@
 
 @media screen and (max-width: 1024px) {
     .event-form {
+        padding: 1em 1em 0;
+    }
+
+    .event-list {
         padding: 1em 1em 4em;
     }
 

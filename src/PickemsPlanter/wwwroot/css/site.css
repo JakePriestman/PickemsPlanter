@@ -302,6 +302,9 @@ footer {
     right: 0;
     text-align: center;
     pointer-events: none;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 footer p {

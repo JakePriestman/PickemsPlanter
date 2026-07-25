@@ -135,23 +135,16 @@ function renderCoinProgress(progress, eventName) {
                             <path id="coinTopArc-${tierClass}" d="M 10,53 A 40,40 0 0 1 90,53" />
                             <path id="coinBottomArc-${tierClass}" d="M 10,53 A 40,40 0 0 0 90,53" />
                             <path id="coinStar-${tierClass}" d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" />
-                            <!-- Stamped/embossed look for the rim text: a dark shadow offset one way and a
-                                 light highlight offset the other, simulating a raised relief under a
-                                 top-left light source. -->
-                            <filter id="coinEmboss-${tierClass}" x="-30%" y="-30%" width="160%" height="160%">
-                                <feDropShadow dx="0.7" dy="0.7" stdDeviation="0.15" flood-color="#000000" flood-opacity="0.6" />
-                                <feDropShadow dx="-0.5" dy="-0.5" stdDeviation="0.15" flood-color="var(--coin-light)" flood-opacity="0.9" />
-                            </filter>
                         </defs>
                         <circle cx="50" cy="50" r="46" fill="url(#coinFace-${tierClass})" stroke="var(--coin-dark)" stroke-width="3" />
                         <circle cx="50" cy="50" r="33" fill="none" stroke="var(--coin-light)" stroke-width="1.5" opacity="0.55" />
                         <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.85" />
                         <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(10,50) scale(0.14) translate(-50,-50)" />
                         <use href="#coinStar-${tierClass}" fill="var(--coin-dark)" opacity="0.7" transform="translate(90,50) scale(0.14) translate(-50,-50)" />
-                        <text class="coin-rim-text" font-size="8" filter="url(#coinEmboss-${tierClass})">
+                        <text class="coin-rim-text" font-size="8">
                             <textPath href="#coinTopArc-${tierClass}" startOffset="50%" text-anchor="middle">CS2 MAJOR</textPath>
                         </text>
-                        <text class="coin-rim-text" font-size="8" filter="url(#coinEmboss-${tierClass})">
+                        <text class="coin-rim-text" font-size="8">
                             <textPath href="#coinBottomArc-${tierClass}" startOffset="50%" text-anchor="middle">${cityAndYear(eventName)}</textPath>
                         </text>
                     </svg>
