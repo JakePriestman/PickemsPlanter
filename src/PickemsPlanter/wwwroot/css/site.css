@@ -302,7 +302,7 @@ footer {
     right: 0;
     text-align: center;
     pointer-events: none;
-    background: var(--glass-bg);
+    background: rgba(var(--background-colour-rgb), 0.92);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
 }
