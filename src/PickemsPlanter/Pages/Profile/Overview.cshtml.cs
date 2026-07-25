@@ -7,11 +7,13 @@ using PickemsPlanter.Models.TableStorage;
 using PickemsPlanter.Services;
 using System.Net;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PickemsPlanter.Pages.Profile;
 
 public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
-	IEventTableService eventTableService) : PageModel
+	IEventTableService eventTableService, ICoinProgressService coinProgressService) : PageModel
 {
 	[BindProperty]
 	public string SelectedEvent { get; set; } = string.Empty;
@@ -109,6 +111,23 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 		if (authCode == null) return NotFound();
 
 		return new JsonResult(new { authCode.AuthCode });
+	}
+
+	// The app's default JsonResult serialization (camelCase, no enum converter) sends
+	// CoinTier as its underlying int (0-3) rather than the name — fine for numeric fields,
+	// but the frontend needs the tier by name ("Bronze"/"Silver"/...), not an ordinal that'd
+	// silently break if the enum's declaration order ever changed.
+	private static readonly JsonSerializerOptions CoinProgressJsonOptions = new()
+	{
+		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+		Converters = { new JsonStringEnumConverter() }
+	};
+
+	public async Task<JsonResult> OnGetCoinProgress(string eventId)
+	{
+		var progress = await coinProgressService.GetCoinProgressAsync(SteamId, eventId);
+
+		return new JsonResult(progress, CoinProgressJsonOptions);
 	}
 
 	private async Task CacheOnChooseEvent(string authCode)

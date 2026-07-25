@@ -1,0 +1,133 @@
+/* Sits inline as a sibling right after the .event card it belongs to (see toggleCoinProgress
+   in overview.js) rather than in a popup window — same width as .event, pulled up close
+   underneath it (negative margin against .event-form's own gap) so it reads as an extension
+   of that specific card rather than just another item in the event list. */
+.coin-progress-panel {
+    width: 100%;
+    max-width: 700px;
+    margin-top: -0.75em;
+}
+
+.coin-progress-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25em;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-m);
+}
+
+.coin-progress-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    text-align: center;
+}
+
+/* Metallic tone triples per tier — used by the coin SVG's radial gradient (light/base/dark)
+   and reused as a flat colour for the tier name text + progress bar fill. Hand-designed
+   rather than sourced from Valve's own coin artwork (couldn't reliably retrieve official
+   per-tier images — see #137). */
+.coin-tier-bronze { --coin-light: #e3a366; --coin-base: #cd7f32; --coin-dark: #8b5a2b; }
+.coin-tier-silver { --coin-light: #f4f4f4; --coin-base: #c0c0c0; --coin-dark: #8c8c8c; }
+.coin-tier-gold { --coin-light: #ffe08a; --coin-base: #e8b923; --coin-dark: #a8790a; }
+.coin-tier-diamond { --coin-light: #eaf8ff; --coin-base: #7ec8e3; --coin-dark: #2f8fc7; }
+
+.coin-badge {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
+}
+
+.coin-svg {
+    width: 110px;
+    height: 110px;
+}
+
+.coin-rim-text {
+    font-family: inherit;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    fill: var(--coin-dark);
+}
+
+.coin-tier-name {
+    margin: 0;
+    font-size: 1.3em;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--coin-base);
+}
+
+.coin-progress-count {
+    margin: 0;
+    color: rgba(232, 234, 240, 0.6);
+    font-size: 0.9em;
+}
+
+.coin-progress-bar {
+    height: 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+}
+
+.coin-progress-bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    background: var(--coin-base);
+}
+
+.coin-challenge-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.coin-challenge {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.6em 0.8em;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid transparent;
+    color: rgba(232, 234, 240, 0.5);
+}
+
+.coin-challenge.completed {
+    color: var(--text-colour);
+    background: rgba(94, 139, 75, 0.12);
+    border-color: rgba(94, 139, 75, 0.3);
+}
+
+.coin-challenge-check {
+    flex: 0 0 20px;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(232, 234, 240, 0.25);
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+.coin-challenge.completed .coin-challenge-check {
+    background: var(--advance-colour);
+    border-color: var(--advance-colour);
+    color: var(--text-colour);
+}
+
+.coin-challenge-name {
+    font-size: 0.95em;
+}
