@@ -139,8 +139,8 @@ function renderCoinProgress(progress, eventName) {
                                  light highlight offset the other, simulating a raised relief under a
                                  top-left light source. -->
                             <filter id="coinEmboss-${tierClass}" x="-30%" y="-30%" width="160%" height="160%">
-                                <feDropShadow dx="0.4" dy="0.4" stdDeviation="0.1" flood-color="var(--coin-dark)" flood-opacity="0.85" />
-                                <feDropShadow dx="-0.3" dy="-0.3" stdDeviation="0.1" flood-color="var(--coin-light)" flood-opacity="0.8" />
+                                <feDropShadow dx="0.7" dy="0.7" stdDeviation="0.15" flood-color="#000000" flood-opacity="0.6" />
+                                <feDropShadow dx="-0.5" dy="-0.5" stdDeviation="0.15" flood-color="var(--coin-light)" flood-opacity="0.9" />
                             </filter>
                         </defs>
                         <circle cx="50" cy="50" r="46" fill="url(#coinFace-${tierClass})" stroke="var(--coin-dark)" stroke-width="3" />
