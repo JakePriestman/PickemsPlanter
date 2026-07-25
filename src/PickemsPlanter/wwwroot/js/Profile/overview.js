@@ -87,12 +87,18 @@ async function toggleCoinProgress(eventId) {
     panel.innerHTML = renderCoinProgress(progress, eventName);
 }
 
-// Assumes "<...> City Year" naming (eg. "IEM Cologne 2026" -> "COLOGNE 2026") — the coin's
-// rim only has room for the short form, matching the reference coin design. Always caps at
-// the last 2 words regardless of whether the last one looks like a year, so a naming pattern
-// that doesn't fit the assumption still gets shortened rather than overflowing the rim.
+// Assumes "<Org> City Year <...>" naming (eg. "IEM Cologne 2026 CS2 Major Championship" ->
+// "COLOGNE 2026") — the coin's rim only has room for the short form, matching the reference
+// coin design. Locates the city by finding the 4-digit year token and taking the word right
+// before it, rather than assuming it's the second-to-last word — safe for multi-word city
+// names (eg. "Rio de Janeiro") since it doesn't depend on where the year falls in the string.
 function cityAndYear(eventName) {
     const words = eventName.trim().split(/\s+/).filter(Boolean);
+    const yearIndex = words.findIndex(word => /^\d{4}$/.test(word));
+
+    if (yearIndex > 0) {
+        return `${words[yearIndex - 1]} ${words[yearIndex]}`.toUpperCase();
+    }
 
     return words.slice(-2).join(" ").toUpperCase();
 }
@@ -126,8 +132,8 @@ function renderCoinProgress(progress, eventName) {
                                  tracing both the same direction mirrors the bottom text. Radius 40 sits in
                                  the middle of the bezel band (33-46) — a dedicated wide ring for the text,
                                  separate from the inner face, rather than text crowded near the edge. -->
-                            <path id="coinTopArc-${tierClass}" d="M 10,50 A 40,40 0 0 1 90,50" />
-                            <path id="coinBottomArc-${tierClass}" d="M 10,50 A 40,40 0 0 0 90,50" />
+                            <path id="coinTopArc-${tierClass}" d="M 10,53 A 40,40 0 0 1 90,53" />
+                            <path id="coinBottomArc-${tierClass}" d="M 10,53 A 40,40 0 0 0 90,53" />
                             <path id="coinStar-${tierClass}" d="M50 27 L56.5 43.5 L74 44.5 L60 55 L65 72 L50 62 L35 72 L40 55 L26 44.5 L43.5 43.5 Z" />
                             <!-- Stamped/embossed look for the rim text: a dark shadow offset one way and a
                                  light highlight offset the other, simulating a raised relief under a
