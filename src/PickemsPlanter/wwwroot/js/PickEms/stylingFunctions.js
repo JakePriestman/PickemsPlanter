@@ -14,6 +14,17 @@ function isTeamImageElement(element) {
         && (element.classList.contains('team-img') || element.classList.contains('dropped-img'));
 }
 
+// team-img/dropped-img are sized by object-fit:contain with only min/max constraints, so
+// their rendered box shrinks to the hovered logo's own aspect ratio (e.g. a wide wordmark
+// logo renders far shorter than a square crest) rather than matching the fixed-size slot
+// (.team/.matchup-team/.dropzone-advanced/.dropzone-eliminated) it visually sits in. Anchor
+// the tooltip to that stable slot instead of the image so its vertical offset from the
+// slot's edge — what a user actually perceives as "the team's box" — stays consistent
+// regardless of which logo happens to be in it.
+function resolveTooltipAnchor(target) {
+    return target.closest('.team, .matchup-team, .dropzone-advanced, .dropzone-eliminated') ?? target;
+}
+
 function ensureTeamTooltipElement() {
     if (!teamTooltipElement) {
         teamTooltipElement = document.createElement('div');
@@ -43,7 +54,7 @@ document.addEventListener('mouseover', (event) => {
 
     const tooltip = ensureTeamTooltipElement();
     tooltip.textContent = resolveTeamTitle(event.target.src);
-    positionTeamTooltip(tooltip, event.target);
+    positionTeamTooltip(tooltip, resolveTooltipAnchor(event.target));
     tooltip.classList.add('show');
 });
 
