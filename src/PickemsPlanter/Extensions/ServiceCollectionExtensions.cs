@@ -25,6 +25,8 @@ public static class ServiceCollectionExtensions
 			services.AddSingleton<ISeedsService, SeedsService>();
 			services.AddSingleton<IPandaScoreResultsService, PandaScoreResultsService>();
 			services.AddSingleton<ICoinProgressService, CoinProgressService>();
+			services.AddSingleton<ISwissStandingsCalculator, SwissStandingsCalculator>();
+			services.AddSingleton<IAdvancingSeedAutomationService, AdvancingSeedAutomationService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
 			services.AddOptions<PandaScoreConfig>().Bind(config.GetSection(nameof(PandaScoreConfig)));
 			services.AddOptions<EventDiscoveryConfig>().Bind(config.GetSection(nameof(EventDiscoveryConfig)));

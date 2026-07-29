@@ -8,6 +8,7 @@ namespace PickemsPlanter.Services;
 public interface ISeedsTableService
 {
 	Task<IReadOnlyCollection<Seed>> GetSeedsInStageAsync(Stages stage, string eventId);
+	Task UpsertSeedsAsync(Stages stage, string eventId, IReadOnlyDictionary<string, int> teamNameToRank);
 }
 
 public class SeedsTableService(TableServiceClient tableServiceClient) : ISeedsTableService
@@ -19,13 +20,29 @@ public class SeedsTableService(TableServiceClient tableServiceClient) : ISeedsTa
 
 		AsyncPageable<Seed> query = client.QueryAsync<Seed>(x => x.PartitionKey == eventId);
 
-		List<Seed> results = []; 
-		
-		await foreach (var item in query) 
-		{ 
-			results.Add(item); 
+		List<Seed> results = [];
+
+		await foreach (var item in query)
+		{
+			results.Add(item);
 		}
 
 		return [.. results.OrderBy(s => s.Rank)];
+	}
+
+	public async Task UpsertSeedsAsync(Stages stage, string eventId, IReadOnlyDictionary<string, int> teamNameToRank)
+	{
+		string tableName = stage.ToString().ToLower();
+		TableClient client = tableServiceClient.GetTableClient(tableName);
+
+		foreach (var (teamName, rank) in teamNameToRank)
+		{
+			TableEntity entity = new(eventId, teamName)
+			{
+				{ nameof(Seed.Rank), rank }
+			};
+
+			await client.UpsertEntityAsync(entity, TableUpdateMode.Merge);
+		}
 	}
 }
