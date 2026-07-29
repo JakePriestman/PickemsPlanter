@@ -55,7 +55,7 @@
 
 .seeding-columns {
     display: flex;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 24px;
     flex-wrap: wrap;
 }
@@ -108,9 +108,7 @@
     background: rgba(255, 255, 255, 0.04);
     color: rgba(232, 234, 240, 0.65);
     font-weight: 600;
-    font-size: 0.85em;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
+    font-size: 0.9em;
 }
 
 .seeding-table td {

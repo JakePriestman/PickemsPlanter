@@ -125,18 +125,16 @@
                                                 <input type="checkbox" asp-for="PreviewRows[i].Selected" />
                                             </td>
                                         }
-                                        else
-                                        {
-                                            <td>
-                                                <input type="hidden" asp-for="PreviewRows[i].Selected" />
-                                            </td>
-                                        }
                                         <td>@(row.Rank?.ToString() ?? "—")</td>
                                         <td>
                                             @row.TeamName
                                             <input type="hidden" asp-for="PreviewRows[i].TeamName" />
                                             <input type="hidden" asp-for="PreviewRows[i].Rank" />
                                             <input type="hidden" asp-for="PreviewRows[i].Matched" />
+                                            @if (!Model.IsInviteOnlyStage)
+                                            {
+                                                <input type="hidden" asp-for="PreviewRows[i].Selected" />
+                                            }
                                         </td>
                                         <td>@(row.Matched ? "Yes" : "No match")</td>
                                     </tr>
