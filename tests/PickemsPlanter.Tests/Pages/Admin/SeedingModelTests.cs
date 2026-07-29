@@ -171,6 +171,9 @@ public class SeedingModelTests
 		Assert.True(_model.HasPreview);
 		Assert.Equal(3, _model.Previews.Count);
 		Assert.All(SeedingModel.SeedableStages, stage => Assert.True(_model.Previews[stage].CanApply));
+		Assert.Equal(16, _model.Previews[Stages.Stage1].Rows.Count);
+		Assert.Equal(8, _model.Previews[Stages.Stage2].Rows.Count);
+		Assert.Equal(8, _model.Previews[Stages.Stage3].Rows.Count);
 		_hltvRankingParser.Received(1).Parse(Arg.Any<Stream>());
 	}
 
@@ -238,7 +241,7 @@ public class SeedingModelTests
 		// (that stage's full 16-team candidate pool plus this stage's own 8 confirmed
 		// invites). The confirmed invites are still knowable — always the first 8 in Steam's
 		// own order, per StageRosterService — so the preview should show exactly those 8, not
-		// all 24 candidates, and none of them need a checkbox to resolve ambiguity.
+		// all 24 candidates.
 		List<Team> confirmedInvites = [.. Enumerable.Range(1, 8).Select(i => new Team { PickId = 100 + i, Name = $"Invite {i}", Logo = $"invite{i}" })];
 
 		RosterReturns(Stages.Stage1, SixteenTeams());
@@ -257,7 +260,7 @@ public class SeedingModelTests
 		// Assert
 		var stage2 = _model.Previews[Stages.Stage2];
 		Assert.Equal(8, stage2.Rows.Count);
-		Assert.All(stage2.Rows, r => Assert.True(r.Matched && r.Selected));
+		Assert.All(stage2.Rows, r => Assert.True(r.Matched));
 		Assert.True(stage2.CanApply);
 	}
 
@@ -279,14 +282,15 @@ public class SeedingModelTests
 
 		// Assert
 		Assert.False(_model.Previews[Stages.Stage2].CanApply);
-		Assert.Contains("isn't finalized yet", _model.Previews[Stages.Stage2].Message);
+		Assert.Contains("couldn't be determined yet", _model.Previews[Stages.Stage2].Message);
 	}
 
 	[Fact]
-	public async Task OnPostUploadAsync_Stage2_PreChecksLikelyInvites()
+	public async Task OnPostUploadAsync_Stage2_ShowsOnlyConfirmedInvites_IgnoringAdvancers()
 	{
 		// Arrange — likely invites are teams I-P (pickids 9-16); the other 8 (advancers) are
-		// deliberately left unmatched, which must NOT block Apply since they aren't selected.
+		// deliberately left unmatched in the uploaded ranking, which must NOT block Apply
+		// since advancers are never part of the Stage 2 preview at all.
 		var roster = SixteenTeams();
 		RosterReturns(Stages.Stage1, SixteenTeams());
 		RosterReturns(Stages.Stage2, roster);
@@ -306,8 +310,9 @@ public class SeedingModelTests
 		// Assert
 		var stage2 = _model.Previews[Stages.Stage2];
 		Assert.True(stage2.CanApply);
-		Assert.Equal(8, stage2.Rows.Count(r => r.Selected));
-		Assert.DoesNotContain(stage2.Rows, r => r.Selected && !r.Matched);
+		Assert.Equal(8, stage2.Rows.Count);
+		Assert.All(stage2.Rows, r => Assert.True(r.Matched));
+		Assert.DoesNotContain(stage2.Rows, r => r.TeamName == TeamName(1)); // an advancer, not an invite
 	}
 
 	[Fact]
@@ -317,14 +322,13 @@ public class SeedingModelTests
 		_model.Stage = Stages.Stage1;
 		_model.PreviewRows =
 		[
-			new() { TeamName = "Team A", Rank = 200, Matched = true, Selected = true },
-			new() { TeamName = "Team B", Rank = 50, Matched = true, Selected = true },
+			new() { TeamName = "Team A", Rank = 200, Matched = true },
+			new() { TeamName = "Team B", Rank = 50, Matched = true },
 			.. Enumerable.Range(1, 14).Select(i => new SeedPreviewRow
 			{
 				TeamName = $"Filler {i}",
 				Rank = 1000 + i,
-				Matched = true,
-				Selected = true
+				Matched = true
 			})
 		];
 
@@ -340,15 +344,11 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostApplyAsync_Stage2_WritesOnlySelectedEightSeeds()
+	public async Task OnPostApplyAsync_Stage2_WritesTheEightInviteSeeds()
 	{
 		// Arrange
 		_model.Stage = Stages.Stage2;
-		_model.PreviewRows =
-		[
-			.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true, Selected = true }),
-			.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Advancer {i}", Rank = null, Matched = false, Selected = false })
-		];
+		_model.PreviewRows = [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
@@ -366,7 +366,7 @@ public class SeedingModelTests
 	{
 		// Arrange
 		_model.Stage = Stages.Stage3;
-		_model.PreviewRows = [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true, Selected = true })];
+		_model.PreviewRows = [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
@@ -377,11 +377,11 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostApplyAsync_DoesNotApply_WhenMoreThanExpectedCountSelected()
+	public async Task OnPostApplyAsync_DoesNotApply_WhenRowCountIsWrong()
 	{
-		// Arrange
+		// Arrange — Stage 2/3 must always be exactly 8 rows.
 		_model.Stage = Stages.Stage2;
-		_model.PreviewRows = [.. Enumerable.Range(1, 9).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true, Selected = true })];
+		_model.PreviewRows = [.. Enumerable.Range(1, 9).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
@@ -393,14 +393,14 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostApplyAsync_DoesNotApply_WhenAnyRelevantRowIsUnmatched()
+	public async Task OnPostApplyAsync_DoesNotApply_WhenAnyRowIsUnmatched()
 	{
 		// Arrange
 		_model.Stage = Stages.Stage1;
 		_model.PreviewRows =
 		[
-			new() { TeamName = "Team A", Rank = null, Matched = false, Selected = true },
-			.. Enumerable.Range(1, 15).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true, Selected = true })
+			new() { TeamName = "Team A", Rank = null, Matched = false },
+			.. Enumerable.Range(1, 15).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })
 		];
 
 		// Act

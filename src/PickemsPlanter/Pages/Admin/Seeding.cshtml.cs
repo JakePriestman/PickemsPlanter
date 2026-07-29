@@ -61,8 +61,9 @@ public class SeedingModel(
 	public bool HasPreview { get; private set; }
 
 	// Stage 1's roster is written in full (all 16); Stage 2/3's roster mixes 8 invite teams
-	// (seeded here) with 8 stage-advancers (seed owned by AdvancingSeedAutomationService), so
-	// only the checked subset is written.
+	// (seeded here — see IStageRosterService.GetLikelyInviteTeamsAsync) with 8 stage-advancers
+	// (seed owned by AdvancingSeedAutomationService), so only the confirmed 8 invites are
+	// ever shown or written here.
 	public static bool IsInviteOnlyStage(Stages stage) => stage is Stages.Stage2 or Stages.Stage3;
 
 	public static string StageLabel(Stages stage) => stage switch
@@ -128,7 +129,7 @@ public class SeedingModel(
 
 		HasPreview = true;
 
-		if (!ValidateSelection(Stage, PreviewRows, out var relevantRows, out string? message))
+		if (!ValidateRows(Stage, PreviewRows, out string? message))
 		{
 			Previews[Stage] = new StagePreview(PreviewRows, false, message);
 			return Page();
@@ -137,7 +138,7 @@ public class SeedingModel(
 		// Re-index by relative HLTV order within the written set — a global HLTV position
 		// (eg. "#47") isn't a bracket seed, but the Nth-lowest among exactly the teams being
 		// written is.
-		var ordered = relevantRows.OrderBy(r => r.Rank).ToList();
+		var ordered = PreviewRows.OrderBy(r => r.Rank).ToList();
 
 		Dictionary<string, int> teamNameToRank = [];
 
@@ -156,44 +157,38 @@ public class SeedingModel(
 		if (roster.Count < 16)
 			return new([], false, $"{StageLabel(stage)}'s roster isn't fully known yet (found {roster.Count} of 16 teams) — nothing to match against.");
 
-		// Steam reports 24 for a Stage 2/3 whose previous stage hasn't concluded yet — that
-		// stage's full 16-team candidate pool plus this stage's own 8 confirmed invites — but
-		// the confirmed invites are always the first 8 in Steam's own order regardless (see
-		// StageRosterService), so there's nothing ambiguous here: show exactly those 8, not
-		// the 16-24 candidate teams that aren't resolved yet.
-		if (IsInviteOnlyStage(stage) && roster.Count > 16)
-		{
-			var confirmedInvites = await stageRosterService.GetLikelyInviteTeamsAsync(eventId, stage);
-
-			if (confirmedInvites is null)
-				return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams.");
-
-			var confirmedRows = BuildPreviewRows(confirmedInvites, hltvTeams, _ => true);
-			bool confirmedCanApply = ValidateSelection(stage, confirmedRows, out _, out string? confirmedMessage);
-
-			return new(confirmedRows, confirmedCanApply, confirmedMessage);
-		}
-
-		if (roster.Count > 16)
-			return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams.");
-
-		HashSet<int>? suggestedInvitePickIds = null;
+		IReadOnlyList<Team> teamsToSeed;
 
 		if (IsInviteOnlyStage(stage))
 		{
-			var likelyInvites = await stageRosterService.GetLikelyInviteTeamsAsync(eventId, stage);
-			suggestedInvitePickIds = likelyInvites?.Select(t => t.PickId).ToHashSet();
+			// Always exactly the 8 confirmed invites — never the previous stage's advancers,
+			// and never the "candidate" teams Steam still lists before that stage concludes
+			// (see StageRosterService: the confirmed 8 are knowable either way, so there's
+			// nothing ambiguous left to show a full 16-team pick from).
+			var confirmedInvites = await stageRosterService.GetLikelyInviteTeamsAsync(eventId, stage);
+
+			if (confirmedInvites is null)
+				return new([], false, $"{StageLabel(stage)}'s 8 confirmed invite teams couldn't be determined yet (Steam is showing {roster.Count} candidate teams for this stage).");
+
+			teamsToSeed = confirmedInvites;
+		}
+		else
+		{
+			// Stage 1 has no "previous stage" to inflate its roster — more than 16 here is
+			// an unexpected/anomalous state, not a normal pre-resolution one.
+			if (roster.Count > 16)
+				return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams.");
+
+			teamsToSeed = roster;
 		}
 
-		var rows = BuildPreviewRows(roster, hltvTeams,
-			team => !IsInviteOnlyStage(stage) || (suggestedInvitePickIds?.Contains(team.PickId) ?? false));
-
-		bool canApply = ValidateSelection(stage, rows, out _, out string? message);
+		var rows = BuildPreviewRows(teamsToSeed, hltvTeams);
+		bool canApply = ValidateRows(stage, rows, out string? message);
 
 		return new(rows, canApply, message);
 	}
 
-	private static List<SeedPreviewRow> BuildPreviewRows(IEnumerable<Team> teams, IReadOnlyList<HltvRankedTeam> hltvTeams, Func<Team, bool> isSelected)
+	private static List<SeedPreviewRow> BuildPreviewRows(IEnumerable<Team> teams, IReadOnlyList<HltvRankedTeam> hltvTeams)
 	{
 		List<string> hltvNames = [.. hltvTeams.Select(t => t.TeamName)];
 
@@ -207,27 +202,23 @@ public class SeedingModel(
 				{
 					TeamName = team.Name!,
 					Rank = hltvEntry?.GlobalRank,
-					Matched = hltvEntry is not null,
-					Selected = isSelected(team)
+					Matched = hltvEntry is not null
 				};
 			})
 			.OrderBy(r => r.Rank ?? int.MaxValue)];
 	}
 
-	private static bool ValidateSelection(Stages stage, List<SeedPreviewRow> rows, out List<SeedPreviewRow> relevantRows, out string? message)
+	private static bool ValidateRows(Stages stage, List<SeedPreviewRow> rows, out string? message)
 	{
-		bool inviteOnly = IsInviteOnlyStage(stage);
-		relevantRows = inviteOnly ? [.. rows.Where(r => r.Selected)] : rows;
+		int expectedCount = IsInviteOnlyStage(stage) ? 8 : 16;
 
-		int expectedCount = inviteOnly ? 8 : 16;
-
-		if (relevantRows.Count != expectedCount)
+		if (rows.Count != expectedCount)
 		{
-			message = $"Select exactly {expectedCount} teams before applying (currently {relevantRows.Count}).";
+			message = $"Expected {expectedCount} teams for {StageLabel(stage)}, found {rows.Count}.";
 			return false;
 		}
 
-		var unmatched = relevantRows.Where(r => !r.Matched || r.Rank is null).Select(r => r.TeamName).ToList();
+		var unmatched = rows.Where(r => !r.Matched || r.Rank is null).Select(r => r.TeamName).ToList();
 
 		if (unmatched.Count > 0)
 		{

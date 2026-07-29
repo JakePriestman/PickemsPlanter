@@ -111,10 +111,6 @@
                                 <table class="seeding-table">
                                     <thead>
                                         <tr>
-                                            @if (inviteOnly)
-                                            {
-                                                <th>Invite?</th>
-                                            }
                                             <th>HLTV rank</th>
                                             <th>Team</th>
                                             <th>Matched</th>
@@ -126,22 +122,12 @@
                                             var row = preview.Rows[i];
 
                                             <tr class="@(row.Matched ? "" : "seeding-unmatched-row")">
-                                                @if (inviteOnly)
-                                                {
-                                                    <td>
-                                                        <input type="checkbox" name="PreviewRows[@i].Selected" value="true" checked="@row.Selected" />
-                                                    </td>
-                                                }
                                                 <td>@(row.Rank?.ToString() ?? "—")</td>
                                                 <td>
                                                     @row.TeamName
                                                     <input type="hidden" name="PreviewRows[@i].TeamName" value="@row.TeamName" />
                                                     <input type="hidden" name="PreviewRows[@i].Rank" value="@row.Rank" />
                                                     <input type="hidden" name="PreviewRows[@i].Matched" value="@row.Matched" />
-                                                    @if (!inviteOnly)
-                                                    {
-                                                        <input type="hidden" name="PreviewRows[@i].Selected" value="true" />
-                                                    }
                                                 </td>
                                                 <td>@(row.Matched ? "Yes" : "No match")</td>
                                             </tr>
