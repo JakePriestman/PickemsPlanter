@@ -184,7 +184,9 @@ public class SeedingModel(
 
 	private async Task LoadEventsAndSeedsAsync()
 	{
-		Events = await eventTableService.GetAllEventsAsync();
+		var events = await eventTableService.GetAllEventsAsync();
+
+		Events = [.. events.Where(e => !e.Disabled)];
 
 		if (EventId is not null && Stage is not null)
 			CurrentSeeds = await seedsTableService.GetSeedsInStageAsync(Stage.Value, EventId);

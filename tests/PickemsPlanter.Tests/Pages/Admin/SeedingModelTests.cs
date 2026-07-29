@@ -297,4 +297,22 @@ public class SeedingModelTests
 		// Assert
 		Assert.Equal("Seeds applied.", _model.StatusMessage);
 	}
+
+	[Fact]
+	public async Task OnGetAsync_OnlyListsActiveEvents()
+	{
+		// Arrange
+		_eventTableService.GetAllEventsAsync().Returns((IReadOnlyCollection<TournamentEvent>)
+		[
+			new() { Id = "25", Name = "Active Event", Disabled = false },
+			new() { Id = "26", Name = "Disabled Event", Disabled = true }
+		]);
+
+		// Act
+		await _model.OnGetAsync();
+
+		// Assert
+		Assert.Single(_model.Events);
+		Assert.Equal("25", _model.Events.Single().Id);
+	}
 }
