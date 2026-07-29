@@ -96,6 +96,14 @@
     opacity: 0.85;
 }
 
+/* Each column now stacks a sub-section per stage — a light divider between them
+   (skipping the first, which already sits right under the column's own h2/upload
+   control) makes the stage boundaries clearer. */
+.seeding-column h3:not(:first-of-type) {
+    padding-top: 1.2em;
+    border-top: 1px solid var(--glass-border);
+}
+
 .seeding-empty {
     opacity: 0.7;
     font-size: 0.9em;

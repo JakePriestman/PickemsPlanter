@@ -9,14 +9,22 @@ using TournamentEvent = PickemsPlanter.Models.Event.Event;
 
 namespace PickemsPlanter.Pages.Admin;
 
+// One stage's parsed/matched preview, built once per upload (see BuildPreviewAsync).
+public record StagePreview(List<SeedPreviewRow> Rows, bool CanApply, string? Message);
+
 // First authorization-gated page in the app — restricted to the site owner (AdminOnly policy,
-// see Extensions/ServiceCollectionExtensions.AddAuth). Lets the admin seed a stage from a
+// see Extensions/ServiceCollectionExtensions.AddAuth). Lets the admin seed a tournament from a
 // browser-saved copy of HLTV's Valve Ranking page (see Services/HltvRankingParser.cs for why
 // this is a file upload rather than a server-side fetch).
 //
-// Upload always previews the parsed/matched result and requires an explicit Apply — this is a
-// deliberate, manual, per-tournament action, not a background job, and a wrong match should be
-// visible before it's written rather than silently applied.
+// The same HLTV ranking snapshot seeds Stage 1's 16 teams and Stage 2/3's 8 invite teams each
+// (all three are pre-tournament data, fixed before a single match is played) — so the admin
+// picks an event, uploads that one file once, and gets a preview + independent Apply action for
+// all three stages at once, instead of re-uploading the same file per stage.
+//
+// Upload always previews the parsed/matched result and requires an explicit Apply per stage —
+// this is a deliberate, manual, per-tournament action, not a background job, and a wrong match
+// should be visible before it's written rather than silently applied.
 [Authorize(Policy = "AdminOnly")]
 public class SeedingModel(
 	IEventTableService eventTableService,
@@ -24,48 +32,64 @@ public class SeedingModel(
 	IStageRosterService stageRosterService,
 	IHltvRankingParser hltvRankingParser) : PageModel
 {
+	public static readonly IReadOnlyList<Stages> SeedableStages = [Stages.Stage1, Stages.Stage2, Stages.Stage3];
+
 	[BindProperty(SupportsGet = true)]
 	public string? EventId { get; set; }
 
 	[BindProperty(SupportsGet = true)]
-	public Stages? Stage { get; set; }
+	public bool Applied { get; set; }
 
 	[BindProperty(SupportsGet = true)]
-	public bool Applied { get; set; }
+	public Stages? AppliedStage { get; set; }
+
+	// Only bound on an Apply postback — each stage's Apply form is independent, so this (and
+	// PreviewRows below) only ever carries the one stage that was actually submitted.
+	[BindProperty]
+	public Stages Stage { get; set; }
 
 	[BindProperty]
 	public List<SeedPreviewRow> PreviewRows { get; set; } = [];
 
 	public IReadOnlyCollection<TournamentEvent> Events { get; private set; } = [];
-	public IReadOnlyCollection<Seed> CurrentSeeds { get; private set; } = [];
+	public Dictionary<Stages, IReadOnlyCollection<Seed>> CurrentSeedsByStage { get; private set; } = [];
+	public Dictionary<Stages, StagePreview> Previews { get; private set; } = [];
+
 	public string? StatusMessage { get; private set; }
 	public bool StatusIsSuccess { get; private set; }
 	public bool HasPreview { get; private set; }
-	public bool CanApply { get; private set; }
 
 	// Stage 1's roster is written in full (all 16); Stage 2/3's roster mixes 8 invite teams
 	// (seeded here) with 8 stage-advancers (seed owned by AdvancingSeedAutomationService), so
 	// only the checked subset is written.
-	public bool IsInviteOnlyStage => Stage is Stages.Stage2 or Stages.Stage3;
+	public static bool IsInviteOnlyStage(Stages stage) => stage is Stages.Stage2 or Stages.Stage3;
+
+	public static string StageLabel(Stages stage) => stage switch
+	{
+		Stages.Stage1 => "Stage 1",
+		Stages.Stage2 => "Stage 2 invites",
+		Stages.Stage3 => "Stage 3 invites",
+		_ => stage.ToString()
+	};
 
 	public async Task OnGetAsync()
 	{
-		await LoadEventsAndSeedsAsync();
+		await LoadEventAndSeedsAsync();
 
 		if (Applied)
 		{
-			StatusMessage = "Seeds applied.";
+			StatusMessage = AppliedStage is null ? "Seeds applied." : $"{StageLabel(AppliedStage.Value)} seeds applied.";
 			StatusIsSuccess = true;
 		}
 	}
 
 	public async Task<IActionResult> OnPostUploadAsync(IFormFile? file)
 	{
-		await LoadEventsAndSeedsAsync();
+		await LoadEventAndSeedsAsync();
 
-		if (EventId is null || Stage is null)
+		if (EventId is null)
 		{
-			StatusMessage = "Choose an event and stage first.";
+			StatusMessage = "Choose an event first.";
 			return Page();
 		}
 
@@ -83,65 +107,29 @@ public class SeedingModel(
 			return Page();
 		}
 
-		var roster = await stageRosterService.GetStageRosterAsync(EventId, Stage.Value);
-
-		if (roster.Count != 16)
-		{
-			StatusMessage = $"This stage's roster isn't fully known yet (found {roster.Count} of 16 teams) — nothing to match against.";
-			return Page();
-		}
-
-		HashSet<int>? suggestedInvitePickIds = null;
-
-		if (IsInviteOnlyStage)
-		{
-			var likelyInvites = await stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stage.Value);
-			suggestedInvitePickIds = likelyInvites?.Select(t => t.PickId).ToHashSet();
-		}
-
-		List<string> hltvNames = [.. hltvTeams.Select(t => t.TeamName)];
-
-		PreviewRows = [.. roster
-			.Select(team =>
-			{
-				string? matchedName = PandaScoreMatchMapper.ResolveTeamName(hltvNames, team.Name!);
-				var hltvEntry = matchedName is null ? null : hltvTeams.FirstOrDefault(t => t.TeamName == matchedName);
-
-				return new SeedPreviewRow
-				{
-					TeamName = team.Name!,
-					Rank = hltvEntry?.GlobalRank,
-					Matched = hltvEntry is not null,
-					Selected = !IsInviteOnlyStage || (suggestedInvitePickIds?.Contains(team.PickId) ?? false)
-				};
-			})
-			.OrderBy(r => r.Rank ?? int.MaxValue)];
+		foreach (var stage in SeedableStages)
+			Previews[stage] = await BuildPreviewAsync(EventId, stage, hltvTeams);
 
 		HasPreview = true;
-		CanApply = ValidateSelection(out _);
-
-		if (!CanApply)
-			StatusMessage = BuildValidationMessage();
 
 		return Page();
 	}
 
 	public async Task<IActionResult> OnPostApplyAsync()
 	{
-		await LoadEventsAndSeedsAsync();
+		await LoadEventAndSeedsAsync();
 
-		if (EventId is null || Stage is null)
+		if (EventId is null)
 		{
-			StatusMessage = "Choose an event and stage first.";
+			StatusMessage = "Choose an event first.";
 			return Page();
 		}
 
 		HasPreview = true;
 
-		if (!ValidateSelection(out var relevantRows))
+		if (!ValidateSelection(Stage, PreviewRows, out var relevantRows, out string? message))
 		{
-			CanApply = false;
-			StatusMessage = BuildValidationMessage();
+			Previews[Stage] = new StagePreview(PreviewRows, false, message);
 			return Page();
 		}
 
@@ -155,40 +143,84 @@ public class SeedingModel(
 		for (int i = 0; i < ordered.Count; i++)
 			teamNameToRank[ordered[i].TeamName] = i + 1;
 
-		await seedsTableService.UpsertSeedsAsync(Stage.Value, EventId, teamNameToRank);
+		await seedsTableService.UpsertSeedsAsync(Stage, EventId, teamNameToRank);
 
-		return RedirectToPage(new { EventId, Stage, Applied = true });
+		return RedirectToPage(new { EventId, Applied = true, AppliedStage = Stage });
 	}
 
-	private bool ValidateSelection(out List<SeedPreviewRow> relevantRows)
+	private async Task<StagePreview> BuildPreviewAsync(string eventId, Stages stage, IReadOnlyList<HltvRankedTeam> hltvTeams)
 	{
-		relevantRows = IsInviteOnlyStage ? [.. PreviewRows.Where(r => r.Selected)] : PreviewRows;
+		var roster = await stageRosterService.GetStageRosterAsync(eventId, stage);
 
-		int expectedCount = IsInviteOnlyStage ? 8 : 16;
+		if (roster.Count != 16)
+			return new([], false, $"{StageLabel(stage)}'s roster isn't fully known yet (found {roster.Count} of 16 teams) — nothing to match against.");
 
-		return relevantRows.Count == expectedCount && relevantRows.All(r => r.Matched && r.Rank is not null);
+		HashSet<int>? suggestedInvitePickIds = null;
+
+		if (IsInviteOnlyStage(stage))
+		{
+			var likelyInvites = await stageRosterService.GetLikelyInviteTeamsAsync(eventId, stage);
+			suggestedInvitePickIds = likelyInvites?.Select(t => t.PickId).ToHashSet();
+		}
+
+		List<string> hltvNames = [.. hltvTeams.Select(t => t.TeamName)];
+
+		List<SeedPreviewRow> rows = [.. roster
+			.Select(team =>
+			{
+				string? matchedName = PandaScoreMatchMapper.ResolveTeamName(hltvNames, team.Name!);
+				var hltvEntry = matchedName is null ? null : hltvTeams.FirstOrDefault(t => t.TeamName == matchedName);
+
+				return new SeedPreviewRow
+				{
+					TeamName = team.Name!,
+					Rank = hltvEntry?.GlobalRank,
+					Matched = hltvEntry is not null,
+					Selected = !IsInviteOnlyStage(stage) || (suggestedInvitePickIds?.Contains(team.PickId) ?? false)
+				};
+			})
+			.OrderBy(r => r.Rank ?? int.MaxValue)];
+
+		bool canApply = ValidateSelection(stage, rows, out _, out string? message);
+
+		return new(rows, canApply, message);
 	}
 
-	private string BuildValidationMessage()
+	private static bool ValidateSelection(Stages stage, List<SeedPreviewRow> rows, out List<SeedPreviewRow> relevantRows, out string? message)
 	{
-		int expectedCount = IsInviteOnlyStage ? 8 : 16;
-		var relevantRows = IsInviteOnlyStage ? PreviewRows.Where(r => r.Selected).ToList() : PreviewRows;
+		bool inviteOnly = IsInviteOnlyStage(stage);
+		relevantRows = inviteOnly ? [.. rows.Where(r => r.Selected)] : rows;
+
+		int expectedCount = inviteOnly ? 8 : 16;
 
 		if (relevantRows.Count != expectedCount)
-			return $"Select exactly {expectedCount} teams before applying (currently {relevantRows.Count}).";
+		{
+			message = $"Select exactly {expectedCount} teams before applying (currently {relevantRows.Count}).";
+			return false;
+		}
 
 		var unmatched = relevantRows.Where(r => !r.Matched || r.Rank is null).Select(r => r.TeamName).ToList();
 
-		return $"These teams didn't match the uploaded ranking: {string.Join(", ", unmatched)}. Nothing was written.";
+		if (unmatched.Count > 0)
+		{
+			message = $"These teams didn't match the uploaded ranking: {string.Join(", ", unmatched)}. Nothing was written.";
+			return false;
+		}
+
+		message = null;
+		return true;
 	}
 
-	private async Task LoadEventsAndSeedsAsync()
+	private async Task LoadEventAndSeedsAsync()
 	{
 		var events = await eventTableService.GetAllEventsAsync();
 
 		Events = [.. events.Where(e => !e.Disabled)];
 
-		if (EventId is not null && Stage is not null)
-			CurrentSeeds = await seedsTableService.GetSeedsInStageAsync(Stage.Value, EventId);
+		if (EventId is null)
+			return;
+
+		foreach (var stage in SeedableStages)
+			CurrentSeedsByStage[stage] = await seedsTableService.GetSeedsInStageAsync(stage, EventId);
 	}
 }

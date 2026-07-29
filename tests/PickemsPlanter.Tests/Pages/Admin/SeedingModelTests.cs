@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NSubstitute;
+using PickemsPlanter.Models.Admin;
 using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
 using PickemsPlanter.Models.StorageAccount;
@@ -49,12 +50,78 @@ public class SeedingModelTests
 		return file;
 	}
 
+	private void RosterReturns(Stages stage, List<Team> roster) =>
+		_stageRosterService.GetStageRosterAsync(EventId, stage).Returns(roster);
+
+	private void AllStagesHaveFullRosters()
+	{
+		foreach (var stage in SeedingModel.SeedableStages)
+		{
+			var roster = SixteenTeams();
+			RosterReturns(stage, roster);
+
+			if (SeedingModel.IsInviteOnlyStage(stage))
+				_stageRosterService.GetLikelyInviteTeamsAsync(EventId, stage).Returns(roster.Where(t => t.PickId > 8).ToList());
+		}
+	}
+
+	private void ParserReturns(IReadOnlyList<HltvRankedTeam> teams) =>
+		_hltvRankingParser.Parse(Arg.Any<Stream>()).Returns(teams);
+
+	private static List<HltvRankedTeam> AllSixteenMatch() =>
+		[.. Enumerable.Range(1, 16).Select(i => new HltvRankedTeam(i, TeamName(i)))];
+
 	[Fact]
-	public async Task OnPostUploadAsync_SetsStatusMessage_WhenEventOrStageMissing()
+	public async Task OnGetAsync_OnlyListsActiveEvents()
+	{
+		// Arrange
+		_eventTableService.GetAllEventsAsync().Returns((IReadOnlyCollection<TournamentEvent>)
+		[
+			new() { Id = "25", Name = "Active Event", Disabled = false },
+			new() { Id = "26", Name = "Disabled Event", Disabled = true }
+		]);
+
+		// Act
+		await _model.OnGetAsync();
+
+		// Assert
+		Assert.Single(_model.Events);
+		Assert.Equal("25", _model.Events.Single().Id);
+	}
+
+	[Fact]
+	public async Task OnGetAsync_LoadsCurrentSeeds_ForAllThreeStages()
+	{
+		// Act
+		await _model.OnGetAsync();
+
+		// Assert
+		Assert.Equal(3, _model.CurrentSeedsByStage.Count);
+		Assert.Contains(Stages.Stage1, _model.CurrentSeedsByStage.Keys);
+		Assert.Contains(Stages.Stage2, _model.CurrentSeedsByStage.Keys);
+		Assert.Contains(Stages.Stage3, _model.CurrentSeedsByStage.Keys);
+	}
+
+	[Fact]
+	public async Task OnGetAsync_ShowsStageSpecificAppliedMessage()
+	{
+		// Arrange
+		_model.Applied = true;
+		_model.AppliedStage = Stages.Stage2;
+
+		// Act
+		await _model.OnGetAsync();
+
+		// Assert
+		Assert.Equal("Stage 2 invites seeds applied.", _model.StatusMessage);
+		Assert.True(_model.StatusIsSuccess);
+	}
+
+	[Fact]
+	public async Task OnPostUploadAsync_SetsStatusMessage_WhenEventMissing()
 	{
 		// Arrange
 		_model.EventId = null;
-		_model.Stage = Stages.Stage1;
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
@@ -68,9 +135,6 @@ public class SeedingModelTests
 	[Fact]
 	public async Task OnPostUploadAsync_SetsStatusMessage_WhenFileIsMissing()
 	{
-		// Arrange
-		_model.Stage = Stages.Stage1;
-
 		// Act
 		await _model.OnPostUploadAsync(null);
 
@@ -83,8 +147,7 @@ public class SeedingModelTests
 	public async Task OnPostUploadAsync_SetsStatusMessage_WhenNoTeamsParsed()
 	{
 		// Arrange
-		_model.Stage = Stages.Stage1;
-		_hltvRankingParser.Parse(Arg.Any<Stream>()).Returns((IReadOnlyList<HltvRankedTeam>)[]);
+		ParserReturns([]);
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
@@ -95,83 +158,105 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostUploadAsync_SetsStatusMessage_WhenRosterIsNot16Teams()
+	public async Task OnPostUploadAsync_BuildsPreviews_ForAllThreeStages_InOneUpload()
 	{
 		// Arrange
-		_model.Stage = Stages.Stage1;
-		_hltvRankingParser.Parse(Arg.Any<Stream>()).Returns([new HltvRankedTeam(1, "Team 1")]);
-		_stageRosterService.GetStageRosterAsync(EventId, Stages.Stage1).Returns(SixteenTeams().Take(10).ToList());
-
-		// Act
-		await _model.OnPostUploadAsync(FakeFile());
-
-		// Assert
-		Assert.NotNull(_model.StatusMessage);
-		Assert.False(_model.HasPreview);
-	}
-
-	[Fact]
-	public async Task OnPostUploadAsync_Stage1_BuildsFullPreview_OrderedByHltvRank_WhenAllMatch()
-	{
-		// Arrange
-		_model.Stage = Stages.Stage1;
-		_stageRosterService.GetStageRosterAsync(EventId, Stages.Stage1).Returns(SixteenTeams());
-
-		// Reverse HLTV rank order vs team numbering, to prove the preview is sorted by rank.
-		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(1, 16).Select(i => new HltvRankedTeam(i, TeamName(17 - i)))];
-		_hltvRankingParser.Parse(Arg.Any<Stream>()).Returns(hltvTeams);
+		AllStagesHaveFullRosters();
+		ParserReturns(AllSixteenMatch());
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
 
 		// Assert
 		Assert.True(_model.HasPreview);
-		Assert.True(_model.CanApply);
-		Assert.Equal(16, _model.PreviewRows.Count);
-		Assert.All(_model.PreviewRows, r => Assert.True(r.Matched));
-		Assert.Equal(TeamName(16), _model.PreviewRows[0].TeamName); // rank 1
-		Assert.Equal(TeamName(1), _model.PreviewRows[15].TeamName); // rank 16
+		Assert.Equal(3, _model.Previews.Count);
+		Assert.All(SeedingModel.SeedableStages, stage => Assert.True(_model.Previews[stage].CanApply));
+		_hltvRankingParser.Received(1).Parse(Arg.Any<Stream>());
 	}
 
 	[Fact]
-	public async Task OnPostUploadAsync_Stage1_CannotApply_WhenATeamIsUnmatched()
+	public async Task OnPostUploadAsync_Stage1_OrdersPreviewByHltvRank()
 	{
 		// Arrange
-		_model.Stage = Stages.Stage1;
-		_stageRosterService.GetStageRosterAsync(EventId, Stages.Stage1).Returns(SixteenTeams());
+		AllStagesHaveFullRosters();
 
-		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(1, 15).Select(i => new HltvRankedTeam(i, TeamName(i)))];
-		_hltvRankingParser.Parse(Arg.Any<Stream>()).Returns(hltvTeams);
+		// Reverse HLTV rank order vs team lettering, to prove the preview is sorted by rank.
+		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(1, 16).Select(i => new HltvRankedTeam(i, TeamName(17 - i)))];
+		ParserReturns(hltvTeams);
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
 
 		// Assert
-		Assert.False(_model.CanApply);
-		Assert.Contains(TeamName(16), _model.StatusMessage);
+		var stage1 = _model.Previews[Stages.Stage1];
+		Assert.Equal(TeamName(16), stage1.Rows[0].TeamName); // rank 1
+		Assert.Equal(TeamName(1), stage1.Rows[15].TeamName); // rank 16
 	}
 
 	[Fact]
-	public async Task OnPostUploadAsync_Stage2_PreChecksLikelyInvites_AndIgnoresAdvancersForMatchCompleteness()
+	public async Task OnPostUploadAsync_MarksStagePreviewUnableToApply_WhenATeamIsUnmatched_ButOtherStagesAreUnaffected()
 	{
-		// Arrange — likely invites are teams 9-16; team 1 (an advancer, unselected by default)
-		// deliberately has no HLTV match, which must NOT block Apply since it's not selected.
-		_model.Stage = Stages.Stage2;
+		// Arrange — Stage1's roster has one extra, unmatchable team name; Stage2/3 fully match.
+		RosterReturns(Stages.Stage1, [.. SixteenTeams().Take(15), Team(99, "Unmatchable FC")]);
+		RosterReturns(Stages.Stage2, SixteenTeams());
+		RosterReturns(Stages.Stage3, SixteenTeams());
+		ParserReturns(AllSixteenMatch());
 
-		var roster = SixteenTeams();
-		_stageRosterService.GetStageRosterAsync(EventId, Stages.Stage2).Returns(roster);
-		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage2).Returns(roster.Where(t => t.PickId > 8).ToList());
-
-		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(9, 8).Select(i => new HltvRankedTeam(i, TeamName(i)))];
-		_hltvRankingParser.Parse(Arg.Any<Stream>()).Returns(hltvTeams);
+		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Arg.Any<Stages>())
+			.Returns((IReadOnlyCollection<Team>?)null);
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
 
 		// Assert
-		Assert.True(_model.CanApply);
-		Assert.Equal(8, _model.PreviewRows.Count(r => r.Selected));
-		Assert.DoesNotContain(_model.PreviewRows, r => r.Selected && !r.Matched);
+		Assert.False(_model.Previews[Stages.Stage1].CanApply);
+		Assert.Contains("Unmatchable FC", _model.Previews[Stages.Stage1].Message);
+	}
+
+	[Fact]
+	public async Task OnPostUploadAsync_StageWithIncompleteRoster_DoesNotAffectOtherStages()
+	{
+		// Arrange
+		RosterReturns(Stages.Stage1, SixteenTeams());
+		RosterReturns(Stages.Stage2, SixteenTeams().Take(10).ToList());
+		RosterReturns(Stages.Stage3, SixteenTeams());
+		ParserReturns(AllSixteenMatch());
+
+		// Act
+		await _model.OnPostUploadAsync(FakeFile());
+
+		// Assert
+		Assert.True(_model.Previews[Stages.Stage1].CanApply);
+		Assert.False(_model.Previews[Stages.Stage2].CanApply);
+		Assert.Contains("roster isn't fully known yet", _model.Previews[Stages.Stage2].Message);
+	}
+
+	[Fact]
+	public async Task OnPostUploadAsync_Stage2_PreChecksLikelyInvites()
+	{
+		// Arrange — likely invites are teams I-P (pickids 9-16); the other 8 (advancers) are
+		// deliberately left unmatched, which must NOT block Apply since they aren't selected.
+		var roster = SixteenTeams();
+		RosterReturns(Stages.Stage1, SixteenTeams());
+		RosterReturns(Stages.Stage2, roster);
+		RosterReturns(Stages.Stage3, SixteenTeams());
+
+		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage2)
+			.Returns(roster.Where(t => t.PickId > 8).ToList());
+		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage3)
+			.Returns((IReadOnlyCollection<Team>?)null);
+
+		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(9, 8).Select(i => new HltvRankedTeam(i, TeamName(i)))];
+		ParserReturns(hltvTeams);
+
+		// Act
+		await _model.OnPostUploadAsync(FakeFile());
+
+		// Assert
+		var stage2 = _model.Previews[Stages.Stage2];
+		Assert.True(stage2.CanApply);
+		Assert.Equal(8, stage2.Rows.Count(r => r.Selected));
+		Assert.DoesNotContain(stage2.Rows, r => r.Selected && !r.Matched);
 	}
 
 	[Fact]
@@ -183,7 +268,7 @@ public class SeedingModelTests
 		[
 			new() { TeamName = "Team A", Rank = 200, Matched = true, Selected = true },
 			new() { TeamName = "Team B", Rank = 50, Matched = true, Selected = true },
-			.. Enumerable.Range(1, 14).Select(i => new PickemsPlanter.Models.Admin.SeedPreviewRow
+			.. Enumerable.Range(1, 14).Select(i => new SeedPreviewRow
 			{
 				TeamName = $"Filler {i}",
 				Rank = 1000 + i,
@@ -210,20 +295,8 @@ public class SeedingModelTests
 		_model.Stage = Stages.Stage2;
 		_model.PreviewRows =
 		[
-			.. Enumerable.Range(1, 8).Select(i => new PickemsPlanter.Models.Admin.SeedPreviewRow
-			{
-				TeamName = $"Invite {i}",
-				Rank = i,
-				Matched = true,
-				Selected = true
-			}),
-			.. Enumerable.Range(1, 8).Select(i => new PickemsPlanter.Models.Admin.SeedPreviewRow
-			{
-				TeamName = $"Advancer {i}",
-				Rank = null,
-				Matched = false,
-				Selected = false
-			})
+			.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true, Selected = true }),
+			.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Advancer {i}", Rank = null, Matched = false, Selected = false })
 		];
 
 		// Act
@@ -238,24 +311,33 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostApplyAsync_Stage2_DoesNotApply_WhenMoreThanEightSelected()
+	public async Task OnPostApplyAsync_RedirectsWithTheAppliedStage()
+	{
+		// Arrange
+		_model.Stage = Stages.Stage3;
+		_model.PreviewRows = [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true, Selected = true })];
+
+		// Act
+		var result = await _model.OnPostApplyAsync();
+
+		// Assert
+		var redirect = Assert.IsType<RedirectToPageResult>(result);
+		Assert.Equal(Stages.Stage3, redirect.RouteValues!["AppliedStage"]);
+	}
+
+	[Fact]
+	public async Task OnPostApplyAsync_DoesNotApply_WhenMoreThanExpectedCountSelected()
 	{
 		// Arrange
 		_model.Stage = Stages.Stage2;
-		_model.PreviewRows = [.. Enumerable.Range(1, 9).Select(i => new PickemsPlanter.Models.Admin.SeedPreviewRow
-		{
-			TeamName = $"Team {i}",
-			Rank = i,
-			Matched = true,
-			Selected = true
-		})];
+		_model.PreviewRows = [.. Enumerable.Range(1, 9).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true, Selected = true })];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
 
 		// Assert
 		Assert.IsType<PageResult>(result);
-		Assert.False(_model.CanApply);
+		Assert.False(_model.Previews[Stages.Stage2].CanApply);
 		await _seedsTableService.DidNotReceiveWithAnyArgs().UpsertSeedsAsync(default, default!, default!);
 	}
 
@@ -267,13 +349,7 @@ public class SeedingModelTests
 		_model.PreviewRows =
 		[
 			new() { TeamName = "Team A", Rank = null, Matched = false, Selected = true },
-			.. Enumerable.Range(1, 15).Select(i => new PickemsPlanter.Models.Admin.SeedPreviewRow
-			{
-				TeamName = $"Team {i}",
-				Rank = i,
-				Matched = true,
-				Selected = true
-			})
+			.. Enumerable.Range(1, 15).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true, Selected = true })
 		];
 
 		// Act
@@ -281,38 +357,22 @@ public class SeedingModelTests
 
 		// Assert
 		Assert.IsType<PageResult>(result);
-		Assert.Contains("Team A", _model.StatusMessage);
+		Assert.Contains("Team A", _model.Previews[Stages.Stage1].Message);
 		await _seedsTableService.DidNotReceiveWithAnyArgs().UpsertSeedsAsync(default, default!, default!);
 	}
 
 	[Fact]
-	public async Task OnGetAsync_ShowsAppliedMessage_WhenAppliedFlagSet()
+	public async Task OnPostApplyAsync_SetsStatusMessage_WhenEventMissing()
 	{
 		// Arrange
-		_model.Applied = true;
+		_model.EventId = null;
 
 		// Act
-		await _model.OnGetAsync();
+		var result = await _model.OnPostApplyAsync();
 
 		// Assert
-		Assert.Equal("Seeds applied.", _model.StatusMessage);
-	}
-
-	[Fact]
-	public async Task OnGetAsync_OnlyListsActiveEvents()
-	{
-		// Arrange
-		_eventTableService.GetAllEventsAsync().Returns((IReadOnlyCollection<TournamentEvent>)
-		[
-			new() { Id = "25", Name = "Active Event", Disabled = false },
-			new() { Id = "26", Name = "Disabled Event", Disabled = true }
-		]);
-
-		// Act
-		await _model.OnGetAsync();
-
-		// Assert
-		Assert.Single(_model.Events);
-		Assert.Equal("25", _model.Events.Single().Id);
+		Assert.IsType<PageResult>(result);
+		Assert.NotNull(_model.StatusMessage);
+		await _seedsTableService.DidNotReceiveWithAnyArgs().UpsertSeedsAsync(default, default!, default!);
 	}
 }
