@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
+using PickemsPlanter.Models.Configurations;
 using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.TableStorage;
 using PickemsPlanter.Services;
@@ -13,7 +15,7 @@ using System.Text.Json.Serialization;
 namespace PickemsPlanter.Pages.Profile;
 
 public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
-	IEventTableService eventTableService, ICoinProgressService coinProgressService) : PageModel
+	IEventTableService eventTableService, ICoinProgressService coinProgressService, IOptionsMonitor<AdminConfig> adminConfig) : PageModel
 {
 	[BindProperty]
 	public string SelectedEvent { get; set; } = string.Empty;
@@ -23,6 +25,11 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 	public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
 
 	public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+
+	// Drives the Admin/Seeding nav link — same comparison the AdminOnly authorization
+	// policy makes (Extensions/ServiceCollectionExtensions.AddAuth), just surfaced here so
+	// the page is actually discoverable rather than a URL you have to know.
+	public bool IsAdmin => SteamId == adminConfig.CurrentValue.SteamId;
 
 	public List<SelectListItem> EventOptions { get; set; } = [];
 
