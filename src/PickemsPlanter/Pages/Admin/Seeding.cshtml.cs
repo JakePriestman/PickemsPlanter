@@ -152,8 +152,15 @@ public class SeedingModel(
 	{
 		var roster = await stageRosterService.GetStageRosterAsync(eventId, stage);
 
-		if (roster.Count != 16)
+		if (roster.Count < 16)
 			return new([], false, $"{StageLabel(stage)}'s roster isn't fully known yet (found {roster.Count} of 16 teams) — nothing to match against.");
+
+		// Steam reports 24 for a Stage 2/3 whose previous stage hasn't concluded yet — the
+		// previous stage's full 16-team candidate pool plus this stage's own 8 confirmed
+		// invites — and only collapses to a clean 16 once that stage finishes. See
+		// StageRosterService for the confirmed behavior this message is describing.
+		if (roster.Count > 16)
+			return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams, which means the previous stage hasn't concluded. Check back once it has.");
 
 		HashSet<int>? suggestedInvitePickIds = null;
 

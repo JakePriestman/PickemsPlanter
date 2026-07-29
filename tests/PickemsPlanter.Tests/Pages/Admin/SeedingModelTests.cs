@@ -232,6 +232,25 @@ public class SeedingModelTests
 	}
 
 	[Fact]
+	public async Task OnPostUploadAsync_StageWithInflatedRoster_ExplainsThePreviousStageHasNotConcluded()
+	{
+		// Arrange — Steam reports 24 (the previous stage's full 16-team candidate pool plus
+		// this stage's own 8 confirmed invites) for a Stage 2/3 whose previous stage hasn't
+		// concluded yet; it only collapses to a clean 16 once that stage finishes.
+		RosterReturns(Stages.Stage1, SixteenTeams());
+		RosterReturns(Stages.Stage2, [.. SixteenTeams(), .. Enumerable.Range(17, 8).Select(i => Team(i))]);
+		RosterReturns(Stages.Stage3, SixteenTeams());
+		ParserReturns(AllSixteenMatch());
+
+		// Act
+		await _model.OnPostUploadAsync(FakeFile());
+
+		// Assert
+		Assert.False(_model.Previews[Stages.Stage2].CanApply);
+		Assert.Contains("previous stage hasn't concluded", _model.Previews[Stages.Stage2].Message);
+	}
+
+	[Fact]
 	public async Task OnPostUploadAsync_Stage2_PreChecksLikelyInvites()
 	{
 		// Arrange — likely invites are teams I-P (pickids 9-16); the other 8 (advancers) are
