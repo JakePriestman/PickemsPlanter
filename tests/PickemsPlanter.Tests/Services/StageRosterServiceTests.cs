@@ -42,6 +42,23 @@ public class StageRosterServiceTests
 		Assert.Equal(Enumerable.Range(1, 16).ToHashSet(), roster.Select(t => t.PickId).ToHashSet());
 	}
 
+	[Fact]
+	public async Task GetStageRosterAsync_PreservesTheSectionsTeamOrder_NotGetTournamentTeamsAsyncsOrder()
+	{
+		// Arrange — the team list comes back in a different order than the section lists them.
+		string eventId = "25";
+		List<Team> allTeams = [.. new[] { 3, 1, 2 }.Select(Team)];
+
+		_tournamentCachingService.GetSectionAsync(eventId, Stages.Stage1).Returns(SectionWithPickIds([1, 2, 3]));
+		_tournamentCachingService.GetTournamentTeamsAsync(eventId).Returns(allTeams);
+
+		// Act
+		var roster = await _service.GetStageRosterAsync(eventId, Stages.Stage1);
+
+		// Assert
+		Assert.Equal([1, 2, 3], roster.Select(t => t.PickId));
+	}
+
 	[Theory]
 	[InlineData(Stages.Stage1)]
 	[InlineData(Stages.Playoffs)]
@@ -108,6 +125,30 @@ public class StageRosterServiceTests
 		// Assert
 		Assert.NotNull(invites);
 		Assert.Equal(Enumerable.Range(17, 8).ToHashSet(), invites.Select(t => t.PickId).ToHashSet());
+	}
+
+	[Fact]
+	public async Task GetLikelyInviteTeamsAsync_ReturnsFirstEightInSteamsOwnOrder_WhenRosterIsInflatedBeyondSixteen()
+	{
+		// Arrange — Steam reports 24 for a stage whose previous stage hasn't concluded yet:
+		// this stage's 8 confirmed invites (always listed first, per PickemsService's existing
+		// live-picker logic) plus the previous stage's full 16-team candidate pool. Section
+		// order deliberately differs from pickid numeric order, to prove it's Steam's own team
+		// order being sliced, not GetTournamentTeamsAsync's.
+		string eventId = "25";
+		List<Team> allTeams = [.. Enumerable.Range(1, 16).Select(Team), .. Enumerable.Range(101, 8).Select(Team)];
+
+		int[] sectionOrder = [.. Enumerable.Range(101, 8), .. Enumerable.Range(1, 16)];
+
+		_tournamentCachingService.GetSectionAsync(eventId, Stages.Stage2).Returns(SectionWithPickIds(sectionOrder));
+		_tournamentCachingService.GetTournamentTeamsAsync(eventId).Returns(allTeams);
+
+		// Act
+		var invites = await _service.GetLikelyInviteTeamsAsync(eventId, Stages.Stage2);
+
+		// Assert
+		Assert.NotNull(invites);
+		Assert.Equal(Enumerable.Range(101, 8), invites.Select(t => t.PickId));
 	}
 
 	[Fact]

@@ -5,36 +5,40 @@ namespace PickemsPlanter.Services;
 
 public interface IStageRosterService
 {
-	Task<IReadOnlyCollection<Team>> GetStageRosterAsync(string eventId, Stages stage);
-	Task<IReadOnlyCollection<Team>?> GetLikelyInviteTeamsAsync(string eventId, Stages stage);
+	Task<IReadOnlyList<Team>> GetStageRosterAsync(string eventId, Stages stage);
+	Task<IReadOnlyList<Team>?> GetLikelyInviteTeamsAsync(string eventId, Stages stage);
 }
 
 // A Stage 2/3 bracket's 16-team roster mixes 8 pre-qualified invite teams with 8 teams
 // advancing from the previous stage (seed already owned by AdvancingSeedAutomationService).
-// Cross-checking a real completed tournament's data confirmed a stage's roster is always
-// (teams also present in the previous stage's roster, i.e. advancers) union (teams new to
-// this stage, i.e. invites) — so diffing the two stages' rosters identifies the invites.
 //
 // Confirmed directly against a live event's Steam tournament data: before the previous stage
 // concludes, Steam reports this stage's roster as 24 — the previous stage's full 16-team
-// candidate pool (any of whom could still advance) plus this stage's own 8 confirmed invites.
-// It collapses to a clean 16 the moment the previous stage concludes, which is also exactly
-// when AdvancingSeedAutomationService writes that stage's seeds 9-16. So the `!= 16` guard
-// below isn't just a defensive fallback — it's the correct, confirmed signal for "the previous
-// stage hasn't concluded yet, don't offer a suggestion."
+// candidate pool (any of whom could still advance) plus this stage's own 8 confirmed invites,
+// with the 8 confirmed invites always the FIRST 8 entries in Steam's own team order (this is
+// the same assumption PickemsService.GetTeamsInStageAsync already relies on for the live
+// Pick'Ems picker: `imageUrls.Count > 16 ? imageUrls.Take(8) : imageUrls`). Once the previous
+// stage concludes, the roster collapses to a clean 16 — but Steam then reorders the list
+// (confirmed against real archived tournament data: invites and advancers end up interleaved,
+// not invites-first), so position can no longer be trusted and a roster-diff against the
+// previous stage's resolved roster is the only reliable signal at that point.
 public class StageRosterService(ITournamentCachingService tournamentCachingService) : IStageRosterService
 {
-	public async Task<IReadOnlyCollection<Team>> GetStageRosterAsync(string eventId, Stages stage)
+	public async Task<IReadOnlyList<Team>> GetStageRosterAsync(string eventId, Stages stage)
 	{
 		var section = await tournamentCachingService.GetSectionAsync(eventId, stage);
 		var teams = await tournamentCachingService.GetTournamentTeamsAsync(eventId);
 
-		var pickIds = section.Groups.First().Teams.Select(t => t.PickId).ToHashSet();
+		var teamsByPickId = teams.ToDictionary(t => t.PickId);
 
-		return [.. teams.Where(t => pickIds.Contains(t.PickId))];
+		// Preserves Steam's own team order (not the order GetTournamentTeamsAsync happens to
+		// return teams in) — GetLikelyInviteTeamsAsync's "first 8" case depends on this.
+		return [.. section.Groups.First().Teams
+			.Select(t => teamsByPickId.GetValueOrDefault(t.PickId))
+			.Where(t => t is not null)!];
 	}
 
-	public async Task<IReadOnlyCollection<Team>?> GetLikelyInviteTeamsAsync(string eventId, Stages stage)
+	public async Task<IReadOnlyList<Team>?> GetLikelyInviteTeamsAsync(string eventId, Stages stage)
 	{
 		Stages? previousStage = stage switch
 		{
@@ -48,10 +52,13 @@ public class StageRosterService(ITournamentCachingService tournamentCachingServi
 
 		var currentRoster = await GetStageRosterAsync(eventId, stage);
 
-		// Fewer/more than 16 means this stage's roster isn't cleanly resolved yet — nothing
-		// reliable to diff against.
-		if (currentRoster.Count != 16)
+		if (currentRoster.Count < 16)
 			return null;
+
+		// Previous stage hasn't concluded yet — Steam's own confirmed invites are always the
+		// first 8 in its team order, regardless of how many candidate slots follow.
+		if (currentRoster.Count > 16)
+			return [.. currentRoster.Take(8)];
 
 		var previousRoster = await GetStageRosterAsync(eventId, previousStage.Value);
 

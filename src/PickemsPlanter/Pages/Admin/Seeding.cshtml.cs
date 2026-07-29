@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PickemsPlanter.Models.Admin;
 using PickemsPlanter.Models.Event;
+using PickemsPlanter.Models.Steam;
 using PickemsPlanter.Models.StorageAccount;
 using PickemsPlanter.Services;
 using TournamentEvent = PickemsPlanter.Models.Event.Event;
@@ -155,12 +156,26 @@ public class SeedingModel(
 		if (roster.Count < 16)
 			return new([], false, $"{StageLabel(stage)}'s roster isn't fully known yet (found {roster.Count} of 16 teams) — nothing to match against.");
 
-		// Steam reports 24 for a Stage 2/3 whose previous stage hasn't concluded yet — the
-		// previous stage's full 16-team candidate pool plus this stage's own 8 confirmed
-		// invites — and only collapses to a clean 16 once that stage finishes. See
-		// StageRosterService for the confirmed behavior this message is describing.
+		// Steam reports 24 for a Stage 2/3 whose previous stage hasn't concluded yet — that
+		// stage's full 16-team candidate pool plus this stage's own 8 confirmed invites — but
+		// the confirmed invites are always the first 8 in Steam's own order regardless (see
+		// StageRosterService), so there's nothing ambiguous here: show exactly those 8, not
+		// the 16-24 candidate teams that aren't resolved yet.
+		if (IsInviteOnlyStage(stage) && roster.Count > 16)
+		{
+			var confirmedInvites = await stageRosterService.GetLikelyInviteTeamsAsync(eventId, stage);
+
+			if (confirmedInvites is null)
+				return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams.");
+
+			var confirmedRows = BuildPreviewRows(confirmedInvites, hltvTeams, _ => true);
+			bool confirmedCanApply = ValidateSelection(stage, confirmedRows, out _, out string? confirmedMessage);
+
+			return new(confirmedRows, confirmedCanApply, confirmedMessage);
+		}
+
 		if (roster.Count > 16)
-			return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams, which means the previous stage hasn't concluded. Check back once it has.");
+			return new([], false, $"{StageLabel(stage)}'s bracket isn't finalized yet — Steam is still showing {roster.Count} candidate teams.");
 
 		HashSet<int>? suggestedInvitePickIds = null;
 
@@ -170,9 +185,19 @@ public class SeedingModel(
 			suggestedInvitePickIds = likelyInvites?.Select(t => t.PickId).ToHashSet();
 		}
 
+		var rows = BuildPreviewRows(roster, hltvTeams,
+			team => !IsInviteOnlyStage(stage) || (suggestedInvitePickIds?.Contains(team.PickId) ?? false));
+
+		bool canApply = ValidateSelection(stage, rows, out _, out string? message);
+
+		return new(rows, canApply, message);
+	}
+
+	private static List<SeedPreviewRow> BuildPreviewRows(IEnumerable<Team> teams, IReadOnlyList<HltvRankedTeam> hltvTeams, Func<Team, bool> isSelected)
+	{
 		List<string> hltvNames = [.. hltvTeams.Select(t => t.TeamName)];
 
-		List<SeedPreviewRow> rows = [.. roster
+		return [.. teams
 			.Select(team =>
 			{
 				string? matchedName = PandaScoreMatchMapper.ResolveTeamName(hltvNames, team.Name!);
@@ -183,14 +208,10 @@ public class SeedingModel(
 					TeamName = team.Name!,
 					Rank = hltvEntry?.GlobalRank,
 					Matched = hltvEntry is not null,
-					Selected = !IsInviteOnlyStage(stage) || (suggestedInvitePickIds?.Contains(team.PickId) ?? false)
+					Selected = isSelected(team)
 				};
 			})
 			.OrderBy(r => r.Rank ?? int.MaxValue)];
-
-		bool canApply = ValidateSelection(stage, rows, out _, out string? message);
-
-		return new(rows, canApply, message);
 	}
 
 	private static bool ValidateSelection(Stages stage, List<SeedPreviewRow> rows, out List<SeedPreviewRow> relevantRows, out string? message)

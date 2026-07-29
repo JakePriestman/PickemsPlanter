@@ -203,7 +203,7 @@ public class SeedingModelTests
 		ParserReturns(AllSixteenMatch());
 
 		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Arg.Any<Stages>())
-			.Returns((IReadOnlyCollection<Team>?)null);
+			.Returns((IReadOnlyList<Team>?)null);
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
@@ -232,22 +232,54 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostUploadAsync_StageWithInflatedRoster_ExplainsThePreviousStageHasNotConcluded()
+	public async Task OnPostUploadAsync_StageWithInflatedRoster_ShowsOnlyTheConfirmedEightInvites()
 	{
-		// Arrange — Steam reports 24 (the previous stage's full 16-team candidate pool plus
-		// this stage's own 8 confirmed invites) for a Stage 2/3 whose previous stage hasn't
-		// concluded yet; it only collapses to a clean 16 once that stage finishes.
+		// Arrange — Steam reports 24 for a Stage 2/3 whose previous stage hasn't concluded yet
+		// (that stage's full 16-team candidate pool plus this stage's own 8 confirmed
+		// invites). The confirmed invites are still knowable — always the first 8 in Steam's
+		// own order, per StageRosterService — so the preview should show exactly those 8, not
+		// all 24 candidates, and none of them need a checkbox to resolve ambiguity.
+		List<Team> confirmedInvites = [.. Enumerable.Range(1, 8).Select(i => new Team { PickId = 100 + i, Name = $"Invite {i}", Logo = $"invite{i}" })];
+
 		RosterReturns(Stages.Stage1, SixteenTeams());
-		RosterReturns(Stages.Stage2, [.. SixteenTeams(), .. Enumerable.Range(17, 8).Select(i => Team(i))]);
+		RosterReturns(Stages.Stage2, [.. confirmedInvites, .. SixteenTeams()]);
+		RosterReturns(Stages.Stage3, SixteenTeams());
+
+		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage2).Returns(confirmedInvites);
+		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage3).Returns((IReadOnlyList<Team>?)null);
+
+		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(1, 8).Select(i => new HltvRankedTeam(i, $"Invite {i}"))];
+		ParserReturns(hltvTeams);
+
+		// Act
+		await _model.OnPostUploadAsync(FakeFile());
+
+		// Assert
+		var stage2 = _model.Previews[Stages.Stage2];
+		Assert.Equal(8, stage2.Rows.Count);
+		Assert.All(stage2.Rows, r => Assert.True(r.Matched && r.Selected));
+		Assert.True(stage2.CanApply);
+	}
+
+	[Fact]
+	public async Task OnPostUploadAsync_StageWithInflatedRoster_ExplainsThePreviousStageHasNotConcluded_WhenConfirmedInvitesUnavailable()
+	{
+		// Arrange — same inflated-roster scenario, but the confirmed invites genuinely
+		// couldn't be determined (defensive fallback — GetLikelyInviteTeamsAsync always
+		// resolves this deterministically in practice, since it's just a Take(8)).
+		RosterReturns(Stages.Stage1, SixteenTeams());
+		RosterReturns(Stages.Stage2, [.. SixteenTeams(), .. Enumerable.Range(101, 8).Select(i => Team(i))]);
 		RosterReturns(Stages.Stage3, SixteenTeams());
 		ParserReturns(AllSixteenMatch());
+
+		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Arg.Any<Stages>()).Returns((IReadOnlyList<Team>?)null);
 
 		// Act
 		await _model.OnPostUploadAsync(FakeFile());
 
 		// Assert
 		Assert.False(_model.Previews[Stages.Stage2].CanApply);
-		Assert.Contains("previous stage hasn't concluded", _model.Previews[Stages.Stage2].Message);
+		Assert.Contains("isn't finalized yet", _model.Previews[Stages.Stage2].Message);
 	}
 
 	[Fact]
@@ -263,7 +295,7 @@ public class SeedingModelTests
 		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage2)
 			.Returns(roster.Where(t => t.PickId > 8).ToList());
 		_stageRosterService.GetLikelyInviteTeamsAsync(EventId, Stages.Stage3)
-			.Returns((IReadOnlyCollection<Team>?)null);
+			.Returns((IReadOnlyList<Team>?)null);
 
 		List<HltvRankedTeam> hltvTeams = [.. Enumerable.Range(9, 8).Select(i => new HltvRankedTeam(i, TeamName(i)))];
 		ParserReturns(hltvTeams);
