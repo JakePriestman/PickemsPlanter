@@ -1,0 +1,55 @@
+.seeding-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 0;
+}
+
+.seeding-status {
+    background: var(--foreground-colour);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+}
+
+.seeding-picker-form {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.seeding-picker-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.seeding-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+}
+
+.seeding-table th,
+.seeding-table td {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.seeding-advancer-row {
+    opacity: 0.6;
+}
+
+.seeding-unmatched-row {
+    background: rgba(168, 85, 85, 0.2);
+}
+
+.seeding-note {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+.seeding-upload,
+.seeding-preview {
+    margin-top: 24px;
+}

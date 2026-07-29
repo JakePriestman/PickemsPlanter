@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Configurations;
 using PickemsPlanter.Services;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace PickemsPlanter.Extensions;
@@ -14,7 +15,7 @@ public static class ServiceCollectionExtensions
 	{
 		public void ConfigureServices(IConfiguration config)
 		{
-			services.AddAuth();
+			services.AddAuth(config);
 			services.AddCachingServices();
 			services.AddJsonSerialization();
 			services.AddHttpClients(config);
@@ -27,17 +28,28 @@ public static class ServiceCollectionExtensions
 			services.AddSingleton<ICoinProgressService, CoinProgressService>();
 			services.AddSingleton<ISwissStandingsCalculator, SwissStandingsCalculator>();
 			services.AddSingleton<IAdvancingSeedAutomationService, AdvancingSeedAutomationService>();
+			services.AddSingleton<IHltvRankingParser, HltvRankingParser>();
+			services.AddSingleton<IStageRosterService, StageRosterService>();
 			services.AddOptions<SteamConfig>().Bind(config.GetSection(nameof(SteamConfig)));
 			services.AddOptions<PandaScoreConfig>().Bind(config.GetSection(nameof(PandaScoreConfig)));
 			services.AddOptions<EventDiscoveryConfig>().Bind(config.GetSection(nameof(EventDiscoveryConfig)));
+			services.AddOptions<AdminConfig>().Bind(config.GetSection(nameof(AdminConfig)));
 		}
-		public void AddAuth()
+		public void AddAuth(IConfiguration config)
 		{
 			services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 					.AddCookie(options =>
 					{
 						options.LoginPath = "/Login";
 					});
+
+			// The admin's Steam ID is Key Vault-backed (AdminConfig--SteamId), same as
+			// SteamConfig.WebApiKey/PandaScoreConfig.ApiToken — never committed.
+			string? adminSteamId = config["AdminConfig:SteamId"];
+
+			services.AddAuthorization(options => options.AddPolicy("AdminOnly",
+				policy => policy.RequireAssertion(ctx =>
+					adminSteamId is not null && ctx.User.FindFirst(ClaimTypes.NameIdentifier)?.Value == adminSteamId)));
 		}
 
 		public void AddCachingServices()

@@ -59,35 +59,42 @@ public static partial class PandaScoreMatchMapper
 		if (pandaScoreTeamName is null)
 			return null;
 
-		var exactMatches = teams.Where(x => x.Name!.Equals(pandaScoreTeamName, StringComparison.CurrentCultureIgnoreCase)).ToList();
+		string? matchedName = ResolveTeamName([.. teams.Select(t => t.Name!)], pandaScoreTeamName);
+
+		return matchedName is null ? null : $"{teams.First(t => t.Name == matchedName).Logo}.png";
+	}
+
+	// Matches targetName against candidateNames using the same exact -> normalized-substring ->
+	// initialism fallback chain ResolveLogoFileName uses for PandaScore names — reused as-is for
+	// HLTV name matching (Services/HltvRankingParser.cs consumers), since HLTV hits the same kind
+	// of naming variance (eg. "Liquid" vs "Team Liquid", "BetBoom Team" vs "BetBoom").
+	public static string? ResolveTeamName(IReadOnlyCollection<string> candidateNames, string targetName)
+	{
+		var exactMatches = candidateNames.Where(n => n.Equals(targetName, StringComparison.CurrentCultureIgnoreCase)).ToList();
 
 		if (exactMatches.Count == 1)
-			return $"{exactMatches[0].Logo}.png";
+			return exactMatches[0];
 
-		// PandaScore and Steam sometimes use slightly different variants of the same org's name
-		// (eg. "Liquid" vs "Team Liquid", "BetBoom Team" vs "BetBoom") — fall back to a
-		// normalized substring match, but only commit when it resolves to exactly one candidate.
-		string normalizedPandaScoreName = Normalize(pandaScoreTeamName);
+		string normalizedTarget = Normalize(targetName);
 
-		var fuzzyMatches = teams
-			.Where(x =>
+		var fuzzyMatches = candidateNames
+			.Where(n =>
 			{
-				string normalizedTeamName = Normalize(x.Name!);
+				string normalizedCandidate = Normalize(n);
 
-				if (normalizedTeamName == normalizedPandaScoreName
-					|| normalizedTeamName.Contains(normalizedPandaScoreName)
-					|| normalizedPandaScoreName.Contains(normalizedTeamName))
+				if (normalizedCandidate == normalizedTarget
+					|| normalizedCandidate.Contains(normalizedTarget)
+					|| normalizedTarget.Contains(normalizedCandidate))
 					return true;
 
 				// Some orgs are commonly referred to by an initialism of their full name
 				// (eg. "NiP" for "Ninjas in Pyjamas") — the initials aren't a contiguous
 				// substring of the space-stripped name, so the checks above miss it.
-				return GetInitials(x.Name!) == normalizedPandaScoreName
-					|| GetInitials(pandaScoreTeamName) == normalizedTeamName;
+				return GetInitials(n) == normalizedTarget || GetInitials(targetName) == normalizedCandidate;
 			})
 			.ToList();
 
-		return fuzzyMatches.Count == 1 ? $"{fuzzyMatches[0].Logo}.png" : null;
+		return fuzzyMatches.Count == 1 ? fuzzyMatches[0] : null;
 	}
 
 	private static string? ResolveScore(PandaScoreMatch match, int winnerId, int loserId)
