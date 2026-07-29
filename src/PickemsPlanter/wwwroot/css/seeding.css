@@ -61,7 +61,7 @@
 }
 
 .seeding-column {
-    flex: 1 1 420px;
+    flex: 1 1 300px;
     min-width: 0;
     overflow-x: auto;
     background: var(--glass-bg);
@@ -199,7 +199,7 @@
     cursor: not-allowed;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 620px) {
     .seeding-columns {
         flex-direction: column;
     }
