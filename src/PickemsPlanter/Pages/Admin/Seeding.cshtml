@@ -76,15 +76,18 @@
             </section>
 
             <section class="seeding-column seeding-new">
-                <h2>Upload HLTV ranking</h2>
-                <p class="seeding-hint">Save HLTV's Valve Ranking page (hltv.org/valve-ranking/teams) as an .html file from your browser, then choose it below — it parses automatically.</p>
+                @if (!Model.HasPreview)
+                {
+                    <h2>Upload HLTV ranking</h2>
+                    <p class="seeding-hint">Save HLTV's Valve Ranking page (hltv.org/valve-ranking/teams) as an .html file from your browser, then choose it below — it parses automatically.</p>
+                }
 
                 <form method="post" enctype="multipart/form-data" asp-page-handler="Upload" class="seeding-upload-form">
                     <input type="hidden" asp-for="EventId" />
                     <input type="hidden" asp-for="Stage" />
                     <label class="seeding-file-input">
                         <input type="file" name="file" accept=".html,.htm" required onchange="this.form.submit()" />
-                        <span>Choose HLTV ranking file…</span>
+                        <span>@(Model.HasPreview ? "Choose a different file…" : "Choose HLTV ranking file…")</span>
                     </label>
                 </form>
 
