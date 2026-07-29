@@ -127,7 +127,12 @@
                                                     @row.TeamName
                                                     <input type="hidden" name="PreviewRows[@i].TeamName" value="@row.TeamName" />
                                                     <input type="hidden" name="PreviewRows[@i].Rank" value="@row.Rank" />
-                                                    <input type="hidden" name="PreviewRows[@i].Matched" value="@row.Matched" />
+                                                    @* .ToString() is required here: a bare bool expression in an attribute value
+                                                       makes Razor render it as a minimized boolean attribute (present-with-no-value
+                                                       when true, omitted entirely when false) instead of the literal "True"/"False"
+                                                       text this hidden field needs for model binding on the Apply postback — every
+                                                       row round-tripped as Matched=false without this, regardless of its real value. *@
+                                                    <input type="hidden" name="PreviewRows[@i].Matched" value="@row.Matched.ToString()" />
                                                 </td>
                                                 <td>@(row.Matched ? "Yes" : "No match")</td>
                                             </tr>
