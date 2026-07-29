@@ -64,6 +64,33 @@
     min-width: 220px;
 }
 
+.seeding-upload {
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow-m);
+    padding: 20px 22px 24px;
+    margin-bottom: 28px;
+}
+
+.seeding-upload h2 {
+    margin-top: 0;
+    font-size: 1.15em;
+}
+
+/* One stage per section, stacked — each pairs its "Current" and "New" columns
+   side by side underneath a shared heading, so the two line up for comparison. */
+.seeding-stage {
+    margin-bottom: 32px;
+}
+
+.seeding-stage h2 {
+    font-size: 1.2em;
+    margin-bottom: 0.5em;
+}
+
 .seeding-columns {
     display: flex;
     align-items: stretch;
@@ -84,24 +111,11 @@
     padding: 20px 22px 24px;
 }
 
-.seeding-column h2 {
-    margin-top: 0;
-    font-size: 1.15em;
-}
-
 .seeding-column h3 {
-    margin-top: 1.4em;
+    margin-top: 0;
     margin-bottom: 0.4em;
-    font-size: 1em;
-    opacity: 0.85;
-}
-
-/* Each column now stacks a sub-section per stage — a light divider between them
-   (skipping the first, which already sits right under the column's own h2/upload
-   control) makes the stage boundaries clearer. */
-.seeding-column h3:not(:first-of-type) {
-    padding-top: 1.2em;
-    border-top: 1px solid var(--glass-border);
+    font-size: 0.9em;
+    opacity: 0.6;
 }
 
 .seeding-empty {

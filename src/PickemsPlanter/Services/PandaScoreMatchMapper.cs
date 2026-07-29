@@ -76,19 +76,21 @@ public static partial class PandaScoreMatchMapper
 			return exactMatches[0];
 
 		string normalizedTarget = Normalize(targetName);
+		string[] targetWords = NormalizeWords(targetName);
 
 		var fuzzyMatches = candidateNames
 			.Where(n =>
 			{
 				string normalizedCandidate = Normalize(n);
 
-				// A prefix/suffix relationship (eg. "liquid" is a suffix of "teamliquid") is a
-				// genuine name variant; a substring buried in the middle isn't — eg. a short
-				// team literally named "AM" would otherwise false-positive-match "TeamLiquid"
-				// since "am" sits inside "te-AM-liquid" with no real relationship between the two.
+				// A whole extra WORD (eg. "Liquid" vs "Team Liquid", "9z" vs "9z Team") is a
+				// genuine name variant. Comparing on character substrings of the space-stripped
+				// name instead of whole words was too loose — a short team literally named "AM"
+				// would false-positive-match any name ending in "...Team" (since "am" is the
+				// tail end of the letters in "team"), with no real relationship between the two.
 				if (normalizedCandidate == normalizedTarget
-					|| normalizedCandidate.StartsWith(normalizedTarget) || normalizedCandidate.EndsWith(normalizedTarget)
-					|| normalizedTarget.StartsWith(normalizedCandidate) || normalizedTarget.EndsWith(normalizedCandidate))
+					|| IsWholeWordPrefixOrSuffix(NormalizeWords(n), targetWords)
+					|| IsWholeWordPrefixOrSuffix(targetWords, NormalizeWords(n)))
 					return true;
 
 				// Some orgs are commonly referred to by an initialism of their full name
@@ -99,6 +101,19 @@ public static partial class PandaScoreMatchMapper
 			.ToList();
 
 		return fuzzyMatches.Count == 1 ? fuzzyMatches[0] : null;
+	}
+
+	// True when `shorter` (as a whole, contiguous, in-order run of words) matches either the
+	// start or the end of `longer` — eg. ["liquid"] is a suffix-word-match of ["team","liquid"],
+	// but ["am"] is neither a prefix nor suffix word of ["9z","team"] even though the letters
+	// "am" happen to appear at the tail of "team".
+	private static bool IsWholeWordPrefixOrSuffix(string[] shorter, string[] longer)
+	{
+		if (shorter.Length == 0 || shorter.Length > longer.Length)
+			return false;
+
+		return shorter.SequenceEqual(longer.Take(shorter.Length))
+			|| shorter.SequenceEqual(longer.Skip(longer.Length - shorter.Length));
 	}
 
 	private static string? ResolveScore(PandaScoreMatch match, int winnerId, int loserId)
@@ -113,6 +128,12 @@ public static partial class PandaScoreMatchMapper
 
 	private static string Normalize(string name) =>
 		string.Concat(name.Where(char.IsLetterOrDigit)).ToLowerInvariant();
+
+	private static string[] NormalizeWords(string name) =>
+		[.. name
+			.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+			.Select(word => new string([.. word.Where(char.IsLetterOrDigit)]).ToLowerInvariant())
+			.Where(word => word.Length > 0)];
 
 	private static string GetInitials(string name) =>
 		string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(word => word[0])).ToLowerInvariant();

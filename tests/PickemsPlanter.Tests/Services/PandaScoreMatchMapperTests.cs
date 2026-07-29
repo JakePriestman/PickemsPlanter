@@ -5,12 +5,12 @@ namespace PickemsPlanter.Services;
 public class PandaScoreMatchMapperTests
 {
 	[Fact]
-	public void ResolveTeamName_MatchesSuffixVariant_EvenWhenAShortUnrelatedNameIsBuriedInsideTheTarget()
+	public void ResolveTeamName_MatchesSuffixVariant_EvenWhenAShortUnrelatedNameSharesTrailingLetters()
 	{
 		// Regression: HLTV lists Team Liquid as "Liquid", and separately lists an unrelated
-		// team called "AM". A naive Contains() substring check treats "am" as a match for
-		// "TeamLiquid" too (it sits inside "te-AM-liquid" once normalized), which made this
-		// ambiguous (2 candidates) and blocked the otherwise-correct "Liquid" match.
+		// team called "AM". A character-substring/prefix/suffix check (rather than whole-word)
+		// treats "am" as a suffix match for "TeamLiquid" too, since "am" is the tail of the word
+		// "team" — which made this ambiguous (2 candidates) and blocked the correct "Liquid" match.
 		string[] candidates = ["Liquid", "AM", "AM"];
 
 		// Act
@@ -18,6 +18,21 @@ public class PandaScoreMatchMapperTests
 
 		// Assert
 		Assert.Equal("Liquid", result);
+	}
+
+	[Fact]
+	public void ResolveTeamName_MatchesPrefixVariant_EvenWhenAShortUnrelatedNameSharesTrailingLetters()
+	{
+		// Regression: same class of bug as above, but the extra word is a suffix on the Steam
+		// side instead of a prefix — HLTV lists "9z Team" as just "9z", and "AM" still collides
+		// on the trailing letters of "Team" ("9z-TE-AM").
+		string[] candidates = ["9z", "AM"];
+
+		// Act
+		string? result = PandaScoreMatchMapper.ResolveTeamName(candidates, "9z Team");
+
+		// Assert
+		Assert.Equal("9z", result);
 	}
 
 	[Fact]

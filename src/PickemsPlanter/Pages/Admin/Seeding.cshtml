@@ -33,121 +33,128 @@
 
     @if (Model.EventId is not null)
     {
-        <div class="seeding-columns">
-            <section class="seeding-column seeding-current">
-                <h2>Currently applied seeds</h2>
+        <section class="seeding-upload">
+            @if (!Model.HasPreview)
+            {
+                <h2>Upload HLTV ranking</h2>
+                <p class="seeding-hint">Save HLTV's Valve Ranking page (hltv.org/valve-ranking/teams) as an .html file from your browser, then choose it below — one upload fills in Stage 1 and both invite stages at once.</p>
+            }
 
-                @foreach (var stage in PickemsPlanter.Pages.Admin.SeedingModel.SeedableStages)
+            <form method="post" enctype="multipart/form-data" asp-page-handler="Upload" class="seeding-upload-form">
+                <input type="hidden" asp-for="EventId" />
+                <label class="seeding-file-input">
+                    <input type="file" name="file" accept=".html,.htm" required onchange="this.form.submit()" />
+                    <span>@(Model.HasPreview ? "Choose a different file…" : "Choose HLTV ranking file…")</span>
+                </label>
+            </form>
+        </section>
+
+        @foreach (var stage in PickemsPlanter.Pages.Admin.SeedingModel.SeedableStages)
+        {
+            var seeds = Model.CurrentSeedsByStage.TryGetValue(stage, out var s) ? s : [];
+            bool inviteOnly = PickemsPlanter.Pages.Admin.SeedingModel.IsInviteOnlyStage(stage);
+            Model.Previews.TryGetValue(stage, out var preview);
+
+            <section class="seeding-stage">
+                <h2>@PickemsPlanter.Pages.Admin.SeedingModel.StageLabel(stage)</h2>
+
+                @if (preview?.Message is not null)
                 {
-                    var seeds = Model.CurrentSeedsByStage.TryGetValue(stage, out var s) ? s : [];
-
-                    <h3>@PickemsPlanter.Pages.Admin.SeedingModel.StageLabel(stage)</h3>
-
-                    @if (seeds.Count == 0)
-                    {
-                        <p class="seeding-empty">No seeds entered for this stage yet.</p>
-                    }
-                    else
-                    {
-                        <table class="seeding-table">
-                            <thead>
-                                <tr><th>Seed</th><th>Team</th></tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var seed in seeds)
-                                {
-                                    <tr class="@(seed.Rank > 8 && PickemsPlanter.Pages.Admin.SeedingModel.IsInviteOnlyStage(stage) ? "seeding-advancer-row" : "")">
-                                        <td>@seed.Rank</td>
-                                        <td>@seed.RowKey</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-
-                        @if (PickemsPlanter.Pages.Admin.SeedingModel.IsInviteOnlyStage(stage))
-                        {
-                            <p class="seeding-note">Seeds 9-16 are derived automatically from the previous stage's results — this page never writes them.</p>
-                        }
-                    }
-                }
-            </section>
-
-            <section class="seeding-column seeding-new">
-                @if (!Model.HasPreview)
-                {
-                    <h2>Upload HLTV ranking</h2>
-                    <p class="seeding-hint">Save HLTV's Valve Ranking page (hltv.org/valve-ranking/teams) as an .html file from your browser, then choose it below — one upload fills in Stage 1 and both invite stages at once.</p>
+                    <p class="seeding-status @(preview.CanApply ? "seeding-status-success" : "seeding-status-warning")">@preview.Message</p>
                 }
 
-                <form method="post" enctype="multipart/form-data" asp-page-handler="Upload" class="seeding-upload-form">
-                    <input type="hidden" asp-for="EventId" />
-                    <label class="seeding-file-input">
-                        <input type="file" name="file" accept=".html,.htm" required onchange="this.form.submit()" />
-                        <span>@(Model.HasPreview ? "Choose a different file…" : "Choose HLTV ranking file…")</span>
-                    </label>
-                </form>
+                <div class="seeding-columns">
+                    <div class="seeding-column seeding-current">
+                        <h3>Current</h3>
 
-                @foreach (var stage in PickemsPlanter.Pages.Admin.SeedingModel.SeedableStages)
-                {
-                    @if (Model.Previews.TryGetValue(stage, out var preview))
-                    {
-                        <h3>@PickemsPlanter.Pages.Admin.SeedingModel.StageLabel(stage)</h3>
-
-                        @if (preview.Message is not null)
+                        @if (seeds.Count == 0)
                         {
-                            <p class="seeding-status @(preview.CanApply ? "seeding-status-success" : "seeding-status-warning")">@preview.Message</p>
+                            <p class="seeding-empty">No seeds entered for this stage yet.</p>
                         }
-
-                        <form method="post" asp-page-handler="Apply">
-                            <input type="hidden" name="EventId" value="@Model.EventId" />
-                            <input type="hidden" name="Stage" value="@stage" />
-
+                        else
+                        {
                             <table class="seeding-table">
                                 <thead>
-                                    <tr>
-                                        @if (PickemsPlanter.Pages.Admin.SeedingModel.IsInviteOnlyStage(stage))
-                                        {
-                                            <th>Invite?</th>
-                                        }
-                                        <th>HLTV rank</th>
-                                        <th>Team</th>
-                                        <th>Matched</th>
-                                    </tr>
+                                    <tr><th>Seed</th><th>Team</th></tr>
                                 </thead>
                                 <tbody>
-                                    @for (int i = 0; i < preview.Rows.Count; i++)
+                                    @foreach (var seed in seeds)
                                     {
-                                        var row = preview.Rows[i];
-
-                                        <tr class="@(row.Matched ? "" : "seeding-unmatched-row")">
-                                            @if (PickemsPlanter.Pages.Admin.SeedingModel.IsInviteOnlyStage(stage))
-                                            {
-                                                <td>
-                                                    <input type="checkbox" name="PreviewRows[@i].Selected" value="true" checked="@row.Selected" />
-                                                </td>
-                                            }
-                                            <td>@(row.Rank?.ToString() ?? "—")</td>
-                                            <td>
-                                                @row.TeamName
-                                                <input type="hidden" name="PreviewRows[@i].TeamName" value="@row.TeamName" />
-                                                <input type="hidden" name="PreviewRows[@i].Rank" value="@row.Rank" />
-                                                <input type="hidden" name="PreviewRows[@i].Matched" value="@row.Matched" />
-                                                @if (!PickemsPlanter.Pages.Admin.SeedingModel.IsInviteOnlyStage(stage))
-                                                {
-                                                    <input type="hidden" name="PreviewRows[@i].Selected" value="true" />
-                                                }
-                                            </td>
-                                            <td>@(row.Matched ? "Yes" : "No match")</td>
+                                        <tr class="@(seed.Rank > 8 && inviteOnly ? "seeding-advancer-row" : "")">
+                                            <td>@seed.Rank</td>
+                                            <td>@seed.RowKey</td>
                                         </tr>
                                     }
                                 </tbody>
                             </table>
+                        }
 
-                            <button type="submit" class="seeding-apply-button" disabled="@(!preview.CanApply)">Apply @PickemsPlanter.Pages.Admin.SeedingModel.StageLabel(stage)</button>
-                        </form>
-                    }
-                }
+                        @if (inviteOnly)
+                        {
+                            <p class="seeding-note">Seeds 9-16 are derived automatically from the previous stage's results — this page never writes them.</p>
+                        }
+                    </div>
+
+                    <div class="seeding-column seeding-new">
+                        <h3>New</h3>
+
+                        @if (preview is null)
+                        {
+                            <p class="seeding-empty">Upload a ranking file above to see a preview.</p>
+                        }
+                        else
+                        {
+                            <form method="post" asp-page-handler="Apply">
+                                <input type="hidden" name="EventId" value="@Model.EventId" />
+                                <input type="hidden" name="Stage" value="@stage" />
+
+                                <table class="seeding-table">
+                                    <thead>
+                                        <tr>
+                                            @if (inviteOnly)
+                                            {
+                                                <th>Invite?</th>
+                                            }
+                                            <th>HLTV rank</th>
+                                            <th>Team</th>
+                                            <th>Matched</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < preview.Rows.Count; i++)
+                                        {
+                                            var row = preview.Rows[i];
+
+                                            <tr class="@(row.Matched ? "" : "seeding-unmatched-row")">
+                                                @if (inviteOnly)
+                                                {
+                                                    <td>
+                                                        <input type="checkbox" name="PreviewRows[@i].Selected" value="true" checked="@row.Selected" />
+                                                    </td>
+                                                }
+                                                <td>@(row.Rank?.ToString() ?? "—")</td>
+                                                <td>
+                                                    @row.TeamName
+                                                    <input type="hidden" name="PreviewRows[@i].TeamName" value="@row.TeamName" />
+                                                    <input type="hidden" name="PreviewRows[@i].Rank" value="@row.Rank" />
+                                                    <input type="hidden" name="PreviewRows[@i].Matched" value="@row.Matched" />
+                                                    @if (!inviteOnly)
+                                                    {
+                                                        <input type="hidden" name="PreviewRows[@i].Selected" value="true" />
+                                                    }
+                                                </td>
+                                                <td>@(row.Matched ? "Yes" : "No match")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                                <button type="submit" class="seeding-apply-button" disabled="@(!preview.CanApply)">Apply @PickemsPlanter.Pages.Admin.SeedingModel.StageLabel(stage)</button>
+                            </form>
+                        }
+                    </div>
+                </div>
             </section>
-        </div>
+        }
     }
 </div>
