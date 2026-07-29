@@ -1,7 +1,18 @@
 .seeding-page {
+    /* .container (Pages/Shared/_Layout.cshtml, site.css) is a column-direction flex
+       container with align-items:center, which does NOT stretch children to fill
+       available width — it shrink-wraps each child to its own content and centers it.
+       Every other top-level page (.login-page, .pickem-container) explicitly claims its
+       own width for this reason; without it here, the two-column layout below was sizing
+       itself against an ambiguous shrink-to-fit width instead of the real viewport width,
+       which could flip between wrapped/unwrapped as unrelated inner content changed. */
+    width: 100%;
+    height: inherit;
+    box-sizing: border-box;
     max-width: 1100px;
     margin: 0 auto;
     padding: 24px 16px 64px;
+    overflow-y: auto;
 }
 
 .seeding-page h1 {
