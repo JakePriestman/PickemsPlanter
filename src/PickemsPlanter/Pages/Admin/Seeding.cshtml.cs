@@ -39,6 +39,7 @@ public class SeedingModel(
 	public IReadOnlyCollection<TournamentEvent> Events { get; private set; } = [];
 	public IReadOnlyCollection<Seed> CurrentSeeds { get; private set; } = [];
 	public string? StatusMessage { get; private set; }
+	public bool StatusIsSuccess { get; private set; }
 	public bool HasPreview { get; private set; }
 	public bool CanApply { get; private set; }
 
@@ -52,7 +53,10 @@ public class SeedingModel(
 		await LoadEventsAndSeedsAsync();
 
 		if (Applied)
+		{
 			StatusMessage = "Seeds applied.";
+			StatusIsSuccess = true;
+		}
 	}
 
 	public async Task<IActionResult> OnPostUploadAsync(IFormFile? file)

@@ -82,9 +82,13 @@ public static partial class PandaScoreMatchMapper
 			{
 				string normalizedCandidate = Normalize(n);
 
+				// A prefix/suffix relationship (eg. "liquid" is a suffix of "teamliquid") is a
+				// genuine name variant; a substring buried in the middle isn't — eg. a short
+				// team literally named "AM" would otherwise false-positive-match "TeamLiquid"
+				// since "am" sits inside "te-AM-liquid" with no real relationship between the two.
 				if (normalizedCandidate == normalizedTarget
-					|| normalizedCandidate.Contains(normalizedTarget)
-					|| normalizedTarget.Contains(normalizedCandidate))
+					|| normalizedCandidate.StartsWith(normalizedTarget) || normalizedCandidate.EndsWith(normalizedTarget)
+					|| normalizedTarget.StartsWith(normalizedCandidate) || normalizedTarget.EndsWith(normalizedCandidate))
 					return true;
 
 				// Some orgs are commonly referred to by an initialism of their full name
