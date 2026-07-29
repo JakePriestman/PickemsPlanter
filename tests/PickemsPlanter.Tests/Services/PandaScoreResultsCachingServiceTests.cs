@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NSubstitute;
 using PickemsPlanter.APIs;
@@ -14,14 +15,18 @@ public class PandaScoreResultsCachingServiceTests
 	private readonly PandaScoreResultsCachingService _service;
 	private readonly IPandaScoreApi _pandaScoreApi = Substitute.For<IPandaScoreApi>();
 	private readonly IEventTableService _eventTableService = Substitute.For<IEventTableService>();
+	private readonly ITournamentCachingService _tournamentCachingService = Substitute.For<ITournamentCachingService>();
+	private readonly IAdvancingSeedAutomationService _advancingSeedAutomationService = Substitute.For<IAdvancingSeedAutomationService>();
 	private readonly IMemoryCache _cache = new MemoryCache(new MemoryCacheOptions());
 	private readonly IOptionsMonitor<PandaScoreConfig> _config = Substitute.For<IOptionsMonitor<PandaScoreConfig>>();
+	private readonly ILogger<PandaScoreResultsCachingService> _logger = Substitute.For<ILogger<PandaScoreResultsCachingService>>();
 
 	public PandaScoreResultsCachingServiceTests()
 	{
 		_config.CurrentValue.Returns(new PandaScoreConfig { ApiToken = "token", Enabled = true, PollingIntervalMinutes = 10 });
+		_tournamentCachingService.GetTournamentTeamsAsync(Arg.Any<string>()).Returns([]);
 
-		_service = new(_pandaScoreApi, _eventTableService, _cache, _config);
+		_service = new(_pandaScoreApi, _eventTableService, _tournamentCachingService, _advancingSeedAutomationService, _cache, _config, _logger);
 	}
 
 	private static PandaScoreMatch FinishedMatch(int id, int winnerId) => new()

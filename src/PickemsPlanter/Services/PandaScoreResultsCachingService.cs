@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Configurations;
@@ -16,8 +17,11 @@ public interface IPandaScoreResultsCachingService
 public class PandaScoreResultsCachingService(
 	IPandaScoreApi pandaScoreApi,
 	IEventTableService eventTableService,
+	ITournamentCachingService tournamentCachingService,
+	IAdvancingSeedAutomationService advancingSeedAutomationService,
 	IMemoryCache cache,
-	IOptionsMonitor<PandaScoreConfig> config) : IHostedService, IPandaScoreResultsCachingService
+	IOptionsMonitor<PandaScoreConfig> config,
+	ILogger<PandaScoreResultsCachingService> logger) : IHostedService, IPandaScoreResultsCachingService
 {
 	private readonly PandaScoreConfig _config = config.CurrentValue;
 	private CancellationTokenSource? _cts;
@@ -117,6 +121,25 @@ public class PandaScoreResultsCachingService(
 
 		cache.Set(CacheKey(eventId, stage), (IReadOnlyCollection<PandaScoreMatch>)completed);
 		cache.Set(LiveCacheKey(eventId, stage), (IReadOnlyCollection<PandaScoreMatch>)live);
+
+		// Stage3/Playoffs have no "next stage" advancing-seed automation (see AdvancingSeedAutomationService);
+		// skip the extra team lookup entirely rather than let it no-op deeper in the call.
+		if (stage is not (Stages.Stage1 or Stages.Stage2))
+			return;
+
+		try
+		{
+			var teams = await tournamentCachingService.GetTournamentTeamsAsync(eventId);
+			var results = PandaScoreMatchMapper.ToCompletedMatchResults(completed, teams);
+
+			await advancingSeedAutomationService.ApplyAdvancingSeedsAsync(eventId, stage, results);
+		}
+		catch (Exception ex)
+		{
+			// Advancing-seed automation must never break the poll loop or the match cache it just wrote —
+			// same fail-soft principle as the rest of the PandaScore integration.
+			logger.LogWarning(ex, "Advancing-seed automation failed for event {EventId} stage {Stage}", eventId, stage);
+		}
 	}
 
 	private static string CacheKey(string eventId, Stages stage) => $"PANDASCORE_{eventId}_{stage}";
