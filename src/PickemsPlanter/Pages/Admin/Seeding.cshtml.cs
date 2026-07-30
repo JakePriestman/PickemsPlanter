@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using PickemsPlanter.Models.Admin;
 using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
@@ -32,7 +33,10 @@ public class SeedingModel(
 	ISeedsTableService seedsTableService,
 	IStageRosterService stageRosterService,
 	IHltvRankingParser hltvRankingParser,
-	IHttpContextAccessor httpContextAccessor) : PageModel
+	IHttpContextAccessor httpContextAccessor,
+	IAdvancingSeedAutomationService advancingSeedAutomationService,
+	IPandaScoreResultsService pandaScoreResultsService,
+	ILogger<SeedingModel> logger) : PageModel
 {
 	public static readonly IReadOnlyList<Stages> SeedableStages = [Stages.Stage1, Stages.Stage2, Stages.Stage3];
 
@@ -169,6 +173,24 @@ public class SeedingModel(
 				teamNameToRank[ordered[i].TeamName] = i + 1;
 
 			await seedsTableService.UpsertSeedsAsync(selection.Stage, EventId, teamNameToRank);
+		}
+
+		// A stage's own seeds are the Buchholz tiebreak input for computing the NEXT stage's
+		// 9-16 (AdvancingSeedAutomationService) — without this, that recompute would only
+		// happen on PandaScoreResultsCachingService's next poll tick, so the next stage's
+		// advancer order would still reflect the seeds just replaced until then. Re-trigger it
+		// immediately using whatever's already cached, so Save reflects the update right away.
+		foreach (var selection in toApply)
+		{
+			try
+			{
+				var completedMatches = await pandaScoreResultsService.GetCompletedMatchesAsync(EventId, selection.Stage);
+				await advancingSeedAutomationService.ApplyAdvancingSeedsAsync(EventId, selection.Stage, completedMatches);
+			}
+			catch (Exception ex)
+			{
+				logger.LogWarning(ex, "Advancing-seed re-trigger after Seeding Apply failed for event {EventId} stage {Stage}", EventId, selection.Stage);
+			}
 		}
 
 		return RedirectToPage(new { EventId, Applied = true, AppliedStages = toApply.Select(s => s.Stage).ToList() });

@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
+using NSubstitute.ExceptionExtensions;
 using PickemsPlanter.Models.Admin;
 using PickemsPlanter.Models.Event;
+using PickemsPlanter.Models.Simulator;
 using PickemsPlanter.Models.Steam;
 using PickemsPlanter.Models.StorageAccount;
 using PickemsPlanter.Services;
@@ -21,6 +24,8 @@ public class SeedingModelTests
 	private readonly IStageRosterService _stageRosterService = Substitute.For<IStageRosterService>();
 	private readonly IHltvRankingParser _hltvRankingParser = Substitute.For<IHltvRankingParser>();
 	private readonly IHttpContextAccessor _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
+	private readonly IAdvancingSeedAutomationService _advancingSeedAutomationService = Substitute.For<IAdvancingSeedAutomationService>();
+	private readonly IPandaScoreResultsService _pandaScoreResultsService = Substitute.For<IPandaScoreResultsService>();
 
 	private const string EventId = "25";
 
@@ -36,7 +41,8 @@ public class SeedingModelTests
 		};
 		_httpContextAccessor.HttpContext.Returns(httpContext);
 
-		_model = new(_eventTableService, _seedsTableService, _stageRosterService, _hltvRankingParser, _httpContextAccessor)
+		_model = new(_eventTableService, _seedsTableService, _stageRosterService, _hltvRankingParser, _httpContextAccessor,
+			_advancingSeedAutomationService, _pandaScoreResultsService, NullLogger<SeedingModel>.Instance)
 		{
 			EventId = EventId
 		};
@@ -427,6 +433,48 @@ public class SeedingModelTests
 		await _seedsTableService.Received(1).UpsertSeedsAsync(Stages.Stage1, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
 		await _seedsTableService.Received(1).UpsertSeedsAsync(Stages.Stage2, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
 		await _seedsTableService.DidNotReceive().UpsertSeedsAsync(Stages.Stage3, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
+	}
+
+	[Fact]
+	public async Task OnPostApplyAsync_ReTriggersAdvancingSeedAutomation_ForEveryAppliedStage()
+	{
+		// Arrange — a stage's own seeds are the Buchholz tiebreak input for the NEXT stage's
+		// 9-16 (AdvancingSeedAutomationService), which otherwise only recomputes on
+		// PandaScoreResultsCachingService's next poll tick. Apply should re-trigger it
+		// immediately so the next stage's advancer order doesn't stay stale in the meantime.
+		_model.Selections =
+		[
+			Selection(Stages.Stage1, selected: true, [.. Enumerable.Range(1, 16).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })]),
+			Selection(Stages.Stage2, selected: false, [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })])
+		];
+
+		// Act
+		await _model.OnPostApplyAsync();
+
+		// Assert
+		await _pandaScoreResultsService.Received(1).GetCompletedMatchesAsync(EventId, Stages.Stage1);
+		await _advancingSeedAutomationService.Received(1).ApplyAdvancingSeedsAsync(EventId, Stages.Stage1, Arg.Any<IReadOnlyCollection<SimulatorMatchResult>>());
+		await _advancingSeedAutomationService.DidNotReceive().ApplyAdvancingSeedsAsync(EventId, Stages.Stage2, Arg.Any<IReadOnlyCollection<SimulatorMatchResult>>());
+	}
+
+	[Fact]
+	public async Task OnPostApplyAsync_StillSavesAndRedirects_WhenTheAdvancingSeedReTriggerThrows()
+	{
+		// Arrange — the re-trigger is a best-effort freshness improvement, not core to Apply's
+		// success: the seeds are already durably written by this point, so a failure here must
+		// never turn a successful save into an error.
+		_advancingSeedAutomationService.ApplyAdvancingSeedsAsync(Arg.Any<string>(), Arg.Any<Stages>(), Arg.Any<IReadOnlyCollection<SimulatorMatchResult>>())
+			.ThrowsAsync(new InvalidOperationException("boom"));
+
+		_model.Selections = [Selection(Stages.Stage1, selected: true,
+			[.. Enumerable.Range(1, 16).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })])];
+
+		// Act
+		var result = await _model.OnPostApplyAsync();
+
+		// Assert
+		Assert.IsType<RedirectToPageResult>(result);
+		await _seedsTableService.Received(1).UpsertSeedsAsync(Stages.Stage1, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
 	}
 
 	[Fact]
