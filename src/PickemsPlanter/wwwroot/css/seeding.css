@@ -1,12 +1,37 @@
 .seeding-page {
-    /* .pickem-container (site.css) is the shared scroll owner for every top-level page using
-       it (Profile/Overview, this page) — it's a stretching flex column, so this only needs to
-       claim its own max-width/centering, not its own scrolling or height. */
+    /* Mirrors .event-list (overview.css): the actual scroll container, separate from the
+       .navbar above it in .pickem-container, so only this content scrolls and the navbar stays
+       fixed in place. flex: 1 + min-height: 0 is required for a flex child to shrink and scroll
+       instead of growing past its parent. */
     width: 100%;
     box-sizing: border-box;
     max-width: 1100px;
     margin: 0 auto;
     padding: 24px 16px 64px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+.seeding-page::-webkit-scrollbar {
+    width: 10px;
+}
+
+.seeding-page::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.seeding-page::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.seeding-page::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.32);
 }
 
 .seeding-page h1 {
