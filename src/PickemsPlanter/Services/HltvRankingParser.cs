@@ -30,9 +30,7 @@ public class HltvRankingParser : IHltvRankingParser
 		if (teamNodes is null)
 			return [];
 
-		// (team href, rank, name) — the href (HLTV's own stable /team/{id}/{slug} link, present
-		// on every card via the "HLTV Team profile" link) is the dedupe key below, not the name.
-		List<(string Key, int Rank, string Name)> teams = [];
+		List<HltvRankedTeam> teams = [];
 
 		foreach (var node in teamNodes)
 		{
@@ -53,24 +51,16 @@ public class HltvRankingParser : IHltvRankingParser
 			if (teamName.Length == 0)
 				continue;
 
-			// A saved page can carry a team's position twice: once from a regional-ranking tab
-			// panel left in the DOM (HLTV's ranking page keeps previously-viewed tabs mounted
-			// rather than removing them) and once from the actual Global tab — same team, two
-			// different position numbers, since a regional pool is always smaller than the
-			// global one. Confirmed against a real saved file: every duplicate pair shares the
-			// same team profile href but a different #rank, and the Global (true) rank is
-			// always the larger of the two. Fall back to the name itself when a card is missing
-			// its profile link, so a single malformed entry doesn't get silently dropped.
-			string href = node.SelectSingleNode(".//a[contains(concat(' ', normalize-space(@class), ' '), ' moreLink ')]")?.GetAttributeValue("href", "") ?? "";
-			string key = href.Length > 0 ? href : teamName;
-
-			teams.Add((key, rank, teamName));
+			teams.Add(new HltvRankedTeam(rank, teamName));
 		}
 
+		// A saved page can carry the same team twice under two different positions (eg. a
+		// regional-ranking tab panel left mounted in the DOM alongside the real Global tab).
+		// When a name repeats, keep its best (lowest/highest-seed) rank rather than trying to
+		// tell which entry is the "real" one.
 		return [.. teams
-			.GroupBy(t => t.Key)
-			.Select(g => g.OrderByDescending(t => t.Rank).First())
-			.Select(t => new HltvRankedTeam(t.Rank, t.Name))
+			.GroupBy(t => t.TeamName)
+			.Select(g => g.OrderBy(t => t.GlobalRank).First())
 			.OrderBy(t => t.GlobalRank)];
 	}
 }
