@@ -14,6 +14,10 @@
     <nav class="navbar">
         <a class="profile-image" asp-page="/Profile/Overview"><img src="@Model.Avatar" /></a>
         <h1>@Model.PersonaName</h1>
+        @if (Model.IsAdmin)
+        {
+            <a class="admin-link" asp-page="/Admin/Seeding">Seeding</a>
+        }
         <a class="logout" onclick="toggleLogoutConfirmation()">Logout</a>
     </nav>
 

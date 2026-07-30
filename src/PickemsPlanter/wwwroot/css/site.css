@@ -95,6 +95,32 @@ body {
     overflow-y: auto;
 }
 
+/* Firefox */
+.pickem-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+}
+
+/* Chrome/Safari/Edge */
+.pickem-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.pickem-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.pickem-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.18);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.pickem-container::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.32);
+}
+
 img {
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -272,6 +298,61 @@ img {
     flex-shrink: 0;
 }
 
+/* Shared across every page using the .navbar/.profile-image/.logout/.admin-link markup
+   (Profile/Overview, Admin/Seeding) — page-specific stylesheets used to duplicate these. */
+.navbar h1 {
+    margin-right: auto;
+    padding-left: 0.5em;
+    font-size: clamp(16px, 2vw, 26px);
+}
+
+.logout,
+.admin-link {
+    font-family: inherit;
+    text-decoration: none;
+    color: rgba(232, 234, 240, 0.6);
+    margin-right: 0.5em;
+    padding: 0.6em 1.1em;
+    font-size: 15px;
+    border-radius: 50px;
+    transition: color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+}
+
+.logout:hover,
+.admin-link:hover {
+    color: var(--text-colour);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: none;
+    transition: color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+}
+
+.profile-image {
+    font-size: 16px;
+    border: none;
+    border-radius: 50%;
+    outline: none;
+    color: white;
+    padding: 0.6em 0.6em 0.6em 1em;
+    background-color: transparent;
+    font-family: inherit;
+    margin: 0;
+}
+
+.profile-image img {
+    width: auto;
+    height: 3em;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+.profile-image img:hover {
+    border-color: var(--accent-colour);
+    outline: none;
+}
+
 
 /*GITHUB LOGO*/
 .github {
@@ -334,6 +415,24 @@ footer p a:hover {
 
     .github img {
         width: 28px;
+    }
+
+    .navbar h1 {
+        font-size: 18px;
+    }
+
+    .profile-image {
+        padding: 0.4em 0.4em 0.4em 0.6em;
+    }
+
+    .profile-image img {
+        height: 2.2em;
+    }
+
+    .logout,
+    .admin-link {
+        padding: 0.5em 0.75em;
+        font-size: 12px;
     }
 }
 
