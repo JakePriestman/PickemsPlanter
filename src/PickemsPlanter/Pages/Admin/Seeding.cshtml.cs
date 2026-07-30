@@ -6,6 +6,7 @@ using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
 using PickemsPlanter.Models.StorageAccount;
 using PickemsPlanter.Services;
+using System.Security.Claims;
 using TournamentEvent = PickemsPlanter.Models.Event.Event;
 
 namespace PickemsPlanter.Pages.Admin;
@@ -20,20 +21,24 @@ public record StagePreview(List<SeedPreviewRow> Rows, bool CanApply, string? Mes
 //
 // The same HLTV ranking snapshot seeds Stage 1's 16 teams and Stage 2/3's 8 invite teams each
 // (all three are pre-tournament data, fixed before a single match is played) — so the admin
-// picks an event, uploads that one file once, and gets a preview + independent Apply action for
-// all three stages at once, instead of re-uploading the same file per stage.
-//
-// Upload always previews the parsed/matched result and requires an explicit Apply per stage —
-// this is a deliberate, manual, per-tournament action, not a background job, and a wrong match
-// should be visible before it's written rather than silently applied.
+// picks an event, uploads that one file once, and gets a preview for all three stages at once.
+// Each stage has its own checkbox rather than its own Apply button — the admin checks whichever
+// stages they're ready to commit and hits one Save at the bottom, which writes all of them in
+// one pass (all-or-nothing across the checked set: if any checked stage fails validation,
+// nothing is written, so a bad match in one stage can't silently leave another half-applied).
 [Authorize(Policy = "AdminOnly")]
 public class SeedingModel(
 	IEventTableService eventTableService,
 	ISeedsTableService seedsTableService,
 	IStageRosterService stageRosterService,
-	IHltvRankingParser hltvRankingParser) : PageModel
+	IHltvRankingParser hltvRankingParser,
+	IHttpContextAccessor httpContextAccessor) : PageModel
 {
 	public static readonly IReadOnlyList<Stages> SeedableStages = [Stages.Stage1, Stages.Stage2, Stages.Stage3];
+
+	public string? PersonaName => httpContextAccessor.HttpContext?.User.FindFirst("PersonaName")?.Value;
+
+	public string? Avatar => httpContextAccessor.HttpContext?.User.FindFirst("Avatar")?.Value;
 
 	[BindProperty(SupportsGet = true)]
 	public string? EventId { get; set; }
@@ -42,15 +47,13 @@ public class SeedingModel(
 	public bool Applied { get; set; }
 
 	[BindProperty(SupportsGet = true)]
-	public Stages? AppliedStage { get; set; }
+	public List<Stages> AppliedStages { get; set; } = [];
 
-	// Only bound on an Apply postback — each stage's Apply form is independent, so this (and
-	// PreviewRows below) only ever carries the one stage that was actually submitted.
+	// Only bound on an Apply postback — one entry per stage, always all three regardless of
+	// which are checked, since Apply re-validates and re-displays every stage's preview in one
+	// pass (see OnPostApplyAsync).
 	[BindProperty]
-	public Stages Stage { get; set; }
-
-	[BindProperty]
-	public List<SeedPreviewRow> PreviewRows { get; set; } = [];
+	public List<StageSelection> Selections { get; set; } = [];
 
 	public IReadOnlyCollection<TournamentEvent> Events { get; private set; } = [];
 	public Dictionary<Stages, IReadOnlyCollection<Seed>> CurrentSeedsByStage { get; private set; } = [];
@@ -80,7 +83,9 @@ public class SeedingModel(
 
 		if (Applied)
 		{
-			StatusMessage = AppliedStage is null ? "Seeds applied." : $"{StageLabel(AppliedStage.Value)} seeds applied.";
+			StatusMessage = AppliedStages.Count == 0
+				? "Seeds applied."
+				: $"{string.Join(", ", AppliedStages.Select(StageLabel))} seeds saved.";
 			StatusIsSuccess = true;
 		}
 	}
@@ -129,25 +134,44 @@ public class SeedingModel(
 
 		HasPreview = true;
 
-		if (!ValidateRows(Stage, PreviewRows, out string? message))
+		// Re-validate and re-populate every stage's preview from what was actually posted back
+		// (rather than trusting the client), so a resubmit after a validation failure re-renders
+		// exactly the same view the initial upload preview would have.
+		foreach (var selection in Selections)
+			Previews[selection.Stage] = new StagePreview(selection.Rows, ValidateRows(selection.Stage, selection.Rows, out string? message), message);
+
+		var toApply = Selections.Where(s => s.Selected).ToList();
+
+		if (toApply.Count == 0)
 		{
-			Previews[Stage] = new StagePreview(PreviewRows, false, message);
+			StatusMessage = "Select at least one stage to save.";
+			StatusIsSuccess = false;
 			return Page();
 		}
 
-		// Re-index by relative HLTV order within the written set — a global HLTV position
-		// (eg. "#47") isn't a bracket seed, but the Nth-lowest among exactly the teams being
-		// written is.
-		var ordered = PreviewRows.OrderBy(r => r.Rank).ToList();
+		if (toApply.Any(s => !Previews[s.Stage].CanApply))
+		{
+			StatusMessage = "Some selected stages couldn't be saved — see details below. Nothing was written.";
+			StatusIsSuccess = false;
+			return Page();
+		}
 
-		Dictionary<string, int> teamNameToRank = [];
+		foreach (var selection in toApply)
+		{
+			// Re-index by relative HLTV order within the written set — a global HLTV position
+			// (eg. "#47") isn't a bracket seed, but the Nth-lowest among exactly the teams being
+			// written is.
+			var ordered = selection.Rows.OrderBy(r => r.Rank).ToList();
 
-		for (int i = 0; i < ordered.Count; i++)
-			teamNameToRank[ordered[i].TeamName] = i + 1;
+			Dictionary<string, int> teamNameToRank = [];
 
-		await seedsTableService.UpsertSeedsAsync(Stage, EventId, teamNameToRank);
+			for (int i = 0; i < ordered.Count; i++)
+				teamNameToRank[ordered[i].TeamName] = i + 1;
 
-		return RedirectToPage(new { EventId, Applied = true, AppliedStage = Stage });
+			await seedsTableService.UpsertSeedsAsync(selection.Stage, EventId, teamNameToRank);
+		}
+
+		return RedirectToPage(new { EventId, Applied = true, AppliedStages = toApply.Select(s => s.Stage).ToList() });
 	}
 
 	private async Task<StagePreview> BuildPreviewAsync(string eventId, Stages stage, IReadOnlyList<HltvRankedTeam> hltvTeams)
@@ -242,4 +266,14 @@ public class SeedingModel(
 		foreach (var stage in SeedableStages)
 			CurrentSeedsByStage[stage] = await seedsTableService.GetSeedsInStageAsync(stage, EventId);
 	}
+}
+
+// One stage's checked state + round-tripped preview rows on an Apply postback (see
+// SeedingModel.Selections) — always carries the stage explicitly rather than relying on list
+// order, so the Apply handler doesn't depend on the form rendering stages in a fixed sequence.
+public class StageSelection
+{
+	public Stages Stage { get; set; }
+	public bool Selected { get; set; }
+	public List<SeedPreviewRow> Rows { get; set; } = [];
 }

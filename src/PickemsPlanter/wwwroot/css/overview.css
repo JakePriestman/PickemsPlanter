@@ -1,58 +1,3 @@
-/*NAVBAR*/
-.navbar h1 {
-    margin-right: auto;
-    padding-left: 0.5em;
-    font-size: clamp(16px, 2vw, 26px);
-}
-
-.logout,
-.admin-link {
-    font-family: inherit;
-    text-decoration: none;
-    color: rgba(232, 234, 240, 0.6);
-    margin-right: 0.5em;
-    padding: 0.6em 1.1em;
-    font-size: 15px;
-    border-radius: 50px;
-    transition: color 0.2s ease, background 0.2s ease;
-    cursor: pointer;
-}
-
-.logout:hover,
-.admin-link:hover {
-    color: var(--text-colour);
-    background: rgba(255, 255, 255, 0.07);
-    box-shadow: none;
-    transition: color 0.2s ease, background 0.2s ease;
-    cursor: pointer;
-}
-
-.profile-image {
-    font-size: 16px;
-    border: none;
-    border-radius: 50%;
-    outline: none;
-    color: white;
-    padding: 0.6em 0.6em 0.6em 1em;
-    background-color: transparent;
-    font-family: inherit;
-    margin: 0;
-}
-
-.profile-image img {
-    width: auto;
-    height: 3em;
-    border-radius: 50%;
-    border: 2px solid transparent;
-    transition: border-color 0.2s ease;
-}
-
-.profile-image img:hover {
-    border-color: var(--accent-colour);
-    outline: none;
-}
-
-
 /*EVENT FORM*/
 .event-form {
     position: relative;
@@ -332,10 +277,6 @@
         padding: 1em 1em 4em;
     }
 
-    .navbar h1 {
-        font-size: 18px;
-    }
-
     .extra-information {
         top: 4em;
         right: 1em;
@@ -344,14 +285,6 @@
 
     .extra-information p {
         font-size: 11px;
-    }
-
-    .profile-image {
-        padding: 0.4em 0.4em 0.4em 0.6em;
-    }
-
-    .profile-image img {
-        height: 2.2em;
     }
 
     .event h2 {
@@ -368,11 +301,5 @@
     .auth-code {
         font-size: 10px;
         width: 15ch;
-    }
-
-    .logout,
-    .admin-link {
-        padding: 0.5em 0.75em;
-        font-size: 12px;
     }
 }

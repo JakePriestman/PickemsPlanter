@@ -7,6 +7,7 @@ using PickemsPlanter.Models.Event;
 using PickemsPlanter.Models.Steam;
 using PickemsPlanter.Models.StorageAccount;
 using PickemsPlanter.Services;
+using System.Security.Claims;
 using Xunit;
 using TournamentEvent = PickemsPlanter.Models.Event.Event;
 
@@ -19,12 +20,23 @@ public class SeedingModelTests
 	private readonly ISeedsTableService _seedsTableService = Substitute.For<ISeedsTableService>();
 	private readonly IStageRosterService _stageRosterService = Substitute.For<IStageRosterService>();
 	private readonly IHltvRankingParser _hltvRankingParser = Substitute.For<IHltvRankingParser>();
+	private readonly IHttpContextAccessor _httpContextAccessor = Substitute.For<IHttpContextAccessor>();
 
 	private const string EventId = "25";
 
 	public SeedingModelTests()
 	{
-		_model = new(_eventTableService, _seedsTableService, _stageRosterService, _hltvRankingParser)
+		var httpContext = new DefaultHttpContext
+		{
+			User = new ClaimsPrincipal(new ClaimsIdentity(
+			[
+				new Claim("PersonaName", "TestAdmin"),
+				new Claim("Avatar", "avatar.png")
+			]))
+		};
+		_httpContextAccessor.HttpContext.Returns(httpContext);
+
+		_model = new(_eventTableService, _seedsTableService, _stageRosterService, _hltvRankingParser, _httpContextAccessor)
 		{
 			EventId = EventId
 		};
@@ -107,13 +119,28 @@ public class SeedingModelTests
 	{
 		// Arrange
 		_model.Applied = true;
-		_model.AppliedStage = Stages.Stage2;
+		_model.AppliedStages = [Stages.Stage2];
 
 		// Act
 		await _model.OnGetAsync();
 
 		// Assert
-		Assert.Equal("Stage 2 invites seeds applied.", _model.StatusMessage);
+		Assert.Equal("Stage 2 invites seeds saved.", _model.StatusMessage);
+		Assert.True(_model.StatusIsSuccess);
+	}
+
+	[Fact]
+	public async Task OnGetAsync_ShowsCombinedAppliedMessage_WhenMultipleStagesWereSaved()
+	{
+		// Arrange
+		_model.Applied = true;
+		_model.AppliedStages = [Stages.Stage1, Stages.Stage2];
+
+		// Act
+		await _model.OnGetAsync();
+
+		// Assert
+		Assert.Equal("Stage 1, Stage 2 invites seeds saved.", _model.StatusMessage);
 		Assert.True(_model.StatusIsSuccess);
 	}
 
@@ -315,21 +342,26 @@ public class SeedingModelTests
 		Assert.DoesNotContain(stage2.Rows, r => r.TeamName == TeamName(1)); // an advancer, not an invite
 	}
 
+	private static StageSelection Selection(Stages stage, bool selected, List<SeedPreviewRow> rows) =>
+		new() { Stage = stage, Selected = selected, Rows = rows };
+
 	[Fact]
 	public async Task OnPostApplyAsync_Stage1_WritesAllSixteenSeeds_ReIndexedByRelativeOrder()
 	{
 		// Arrange — global HLTV ranks (not 1-16) must be re-indexed to seeds 1-16 by relative order.
-		_model.Stage = Stages.Stage1;
-		_model.PreviewRows =
+		_model.Selections =
 		[
-			new() { TeamName = "Team A", Rank = 200, Matched = true },
-			new() { TeamName = "Team B", Rank = 50, Matched = true },
-			.. Enumerable.Range(1, 14).Select(i => new SeedPreviewRow
-			{
-				TeamName = $"Filler {i}",
-				Rank = 1000 + i,
-				Matched = true
-			})
+			Selection(Stages.Stage1, selected: true,
+			[
+				new() { TeamName = "Team A", Rank = 200, Matched = true },
+				new() { TeamName = "Team B", Rank = 50, Matched = true },
+				.. Enumerable.Range(1, 14).Select(i => new SeedPreviewRow
+				{
+					TeamName = $"Filler {i}",
+					Rank = 1000 + i,
+					Matched = true
+				})
+			])
 		];
 
 		// Act
@@ -347,8 +379,8 @@ public class SeedingModelTests
 	public async Task OnPostApplyAsync_Stage2_WritesTheEightInviteSeeds()
 	{
 		// Arrange
-		_model.Stage = Stages.Stage2;
-		_model.PreviewRows = [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })];
+		_model.Selections = [Selection(Stages.Stage2, selected: true,
+			[.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })])];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
@@ -362,26 +394,81 @@ public class SeedingModelTests
 	}
 
 	[Fact]
-	public async Task OnPostApplyAsync_RedirectsWithTheAppliedStage()
+	public async Task OnPostApplyAsync_RedirectsWithTheAppliedStages()
 	{
 		// Arrange
-		_model.Stage = Stages.Stage3;
-		_model.PreviewRows = [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })];
+		_model.Selections = [Selection(Stages.Stage3, selected: true,
+			[.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })])];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
 
 		// Assert
 		var redirect = Assert.IsType<RedirectToPageResult>(result);
-		Assert.Equal(Stages.Stage3, redirect.RouteValues!["AppliedStage"]);
+		Assert.Equal(new List<Stages> { Stages.Stage3 }, redirect.RouteValues!["AppliedStages"]);
+	}
+
+	[Fact]
+	public async Task OnPostApplyAsync_SavesEveryCheckedStage_InOneSubmit()
+	{
+		// Arrange — checking multiple stages at once should write all of them in a single Apply.
+		_model.Selections =
+		[
+			Selection(Stages.Stage1, selected: true, [.. Enumerable.Range(1, 16).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })]),
+			Selection(Stages.Stage2, selected: true, [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })]),
+			Selection(Stages.Stage3, selected: false, [.. Enumerable.Range(1, 8).Select(i => new SeedPreviewRow { TeamName = $"Invite {i}", Rank = i, Matched = true })])
+		];
+
+		// Act
+		var result = await _model.OnPostApplyAsync();
+
+		// Assert
+		Assert.IsType<RedirectToPageResult>(result);
+		await _seedsTableService.Received(1).UpsertSeedsAsync(Stages.Stage1, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
+		await _seedsTableService.Received(1).UpsertSeedsAsync(Stages.Stage2, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
+		await _seedsTableService.DidNotReceive().UpsertSeedsAsync(Stages.Stage3, EventId, Arg.Any<IReadOnlyDictionary<string, int>>());
+	}
+
+	[Fact]
+	public async Task OnPostApplyAsync_WritesNothing_WhenNoStageIsChecked()
+	{
+		// Arrange
+		_model.Selections = [Selection(Stages.Stage1, selected: false,
+			[.. Enumerable.Range(1, 16).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })])];
+
+		// Act
+		var result = await _model.OnPostApplyAsync();
+
+		// Assert
+		Assert.IsType<PageResult>(result);
+		Assert.NotNull(_model.StatusMessage);
+		await _seedsTableService.DidNotReceiveWithAnyArgs().UpsertSeedsAsync(default, default!, default!);
+	}
+
+	[Fact]
+	public async Task OnPostApplyAsync_WritesNothing_WhenOneCheckedStageIsInvalid_EvenIfAnotherCheckedStageIsValid()
+	{
+		// Arrange — atomic across the checked set: one bad stage blocks the whole submit.
+		_model.Selections =
+		[
+			Selection(Stages.Stage1, selected: true, [.. Enumerable.Range(1, 16).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })]),
+			Selection(Stages.Stage2, selected: true, [.. Enumerable.Range(1, 9).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })])
+		];
+
+		// Act
+		var result = await _model.OnPostApplyAsync();
+
+		// Assert
+		Assert.IsType<PageResult>(result);
+		await _seedsTableService.DidNotReceiveWithAnyArgs().UpsertSeedsAsync(default, default!, default!);
 	}
 
 	[Fact]
 	public async Task OnPostApplyAsync_DoesNotApply_WhenRowCountIsWrong()
 	{
 		// Arrange — Stage 2/3 must always be exactly 8 rows.
-		_model.Stage = Stages.Stage2;
-		_model.PreviewRows = [.. Enumerable.Range(1, 9).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })];
+		_model.Selections = [Selection(Stages.Stage2, selected: true,
+			[.. Enumerable.Range(1, 9).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })])];
 
 		// Act
 		var result = await _model.OnPostApplyAsync();
@@ -396,11 +483,13 @@ public class SeedingModelTests
 	public async Task OnPostApplyAsync_DoesNotApply_WhenAnyRowIsUnmatched()
 	{
 		// Arrange
-		_model.Stage = Stages.Stage1;
-		_model.PreviewRows =
+		_model.Selections =
 		[
-			new() { TeamName = "Team A", Rank = null, Matched = false },
-			.. Enumerable.Range(1, 15).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })
+			Selection(Stages.Stage1, selected: true,
+			[
+				new() { TeamName = "Team A", Rank = null, Matched = false },
+				.. Enumerable.Range(1, 15).Select(i => new SeedPreviewRow { TeamName = $"Team {i}", Rank = i, Matched = true })
+			])
 		];
 
 		// Act
