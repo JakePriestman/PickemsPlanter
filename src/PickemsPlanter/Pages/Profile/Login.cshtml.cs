@@ -2,9 +2,11 @@ using PickemsPlanter.APIs;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace PickemsPlanter.Pages;
 
+[EnableRateLimiting("Auth")]
 public class LoginModel(ILoginAPI loginAPI) : PageModel
 {
         private readonly ILoginAPI _loginAPI = loginAPI;

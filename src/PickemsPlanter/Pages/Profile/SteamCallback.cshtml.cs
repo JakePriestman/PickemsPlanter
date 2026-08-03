@@ -3,11 +3,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 
 namespace PickemsPlanter.Pages;
 
+[EnableRateLimiting("Auth")]
 public class SteamCallbackModel(ILoginAPI loginAPI, ISteamAPI steamAPI) : PageModel
 {
 	private readonly ILoginAPI _loginAPI = loginAPI;
