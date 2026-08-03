@@ -8,6 +8,7 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/overview.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/coinProgress.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/leaderboard.css" asp-append-version="true" />
 }
 
 <div class="pickem-container">
@@ -52,6 +53,7 @@
                         <button class="event-button-delete" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="Delete">Delete Auth Code</button>
                         <button class="event-button-select" type="submit" name="SelectedEvent" value="@eventOption.Value" asp-page-handler="ChooseEvent">Choose Event</button>
                         <button class="event-button-coin" type="button" onclick="toggleCoinProgress('@eventOption.Value')">Coin Progress</button>
+                        <button class="event-button-leaderboard" type="button" onclick="toggleLeaderboard('@eventOption.Value')">Leaderboard</button>
                     </div>
                 </div>
             }

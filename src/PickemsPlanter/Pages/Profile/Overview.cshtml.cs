@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using PickemsPlanter.Models.Configurations;
@@ -14,17 +15,18 @@ using System.Text.Json.Serialization;
 
 namespace PickemsPlanter.Pages.Profile;
 
+[EnableRateLimiting("SteamApi")]
 public class OverviewModel(IUserEventsTableService tableStorageService, IUserPredictionsCachingService cachingService, ITournamentCachingService tournamentCachingService, IMemoryCache memoryCache, IHttpContextAccessor httpContextAccessor,
-	IEventTableService eventTableService, ICoinProgressService coinProgressService, IOptionsMonitor<AdminConfig> adminConfig) : PageModel
+	IEventTableService eventTableService, ICoinProgressService coinProgressService, ILeaderboardService leaderboardService, IOptionsMonitor<AdminConfig> adminConfig) : PageModel
 {
 	[BindProperty]
 	public string SelectedEvent { get; set; } = string.Empty;
 
-	public required string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
+	public string? PersonaName = httpContextAccessor?.HttpContext?.User.FindFirst("PersonaName")?.Value;
 
-	public required string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
+	public string? Avatar = httpContextAccessor?.HttpContext?.User.FindFirst("Avatar")?.Value;
 
-	public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
+	public string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
 	// Drives the Admin/Seeding nav link — same comparison the AdminOnly authorization
 	// policy makes (Extensions/ServiceCollectionExtensions.AddAuth), just surfaced here so
@@ -123,7 +125,8 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 	// The app's default JsonResult serialization (camelCase, no enum converter) sends
 	// CoinTier as its underlying int (0-3) rather than the name — fine for numeric fields,
 	// but the frontend needs the tier by name ("Bronze"/"Silver"/...), not an ordinal that'd
-	// silently break if the enum's declaration order ever changed.
+	// silently break if the enum's declaration order ever changed. Shared with the
+	// leaderboard's per-entry Tier, same requirement.
 	private static readonly JsonSerializerOptions CoinProgressJsonOptions = new()
 	{
 		PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -135,6 +138,13 @@ public class OverviewModel(IUserEventsTableService tableStorageService, IUserPre
 		var progress = await coinProgressService.GetCoinProgressAsync(SteamId, eventId);
 
 		return new JsonResult(progress, CoinProgressJsonOptions);
+	}
+
+	public async Task<JsonResult> OnGetLeaderboard(string eventId)
+	{
+		var leaderboard = await leaderboardService.GetFriendsLeaderboardAsync(SteamId, eventId);
+
+		return new JsonResult(leaderboard, CoinProgressJsonOptions);
 	}
 
 	private async Task CacheOnChooseEvent(string authCode)

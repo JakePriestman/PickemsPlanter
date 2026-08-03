@@ -42,6 +42,7 @@ function toggleEventButtons(input) {
     const selectButton = eventContainer.querySelector(".event-button-select");
     const showButton = eventContainer.querySelector(".show-auth-code");
     const coinButton = eventContainer.querySelector(".event-button-coin");
+    const leaderboardButton = eventContainer.querySelector(".event-button-leaderboard");
 
     const toggleButtons = () => {
         const hasText = input.value.trim() !== "";
@@ -49,6 +50,7 @@ function toggleEventButtons(input) {
         selectButton.disabled = !hasText;
         showButton.disabled = !hasText;
         coinButton.disabled = !hasText;
+        leaderboardButton.disabled = !hasText;
     };
 
     toggleButtons();
@@ -156,6 +158,72 @@ function renderCoinProgress(progress, eventName) {
                 <div class="coin-progress-bar-fill coin-tier-${tierClass}" style="width: ${percent}%;"></div>
             </div>
             <ul class="coin-challenge-list">${challengesHtml}</ul>
+        </div>
+    `;
+}
+
+async function toggleLeaderboard(eventId) {
+    const existingPanel = document.querySelector(".leaderboard-panel");
+    const wasThisEventOpen = existingPanel?.dataset.eventId === eventId;
+
+    existingPanel?.remove();
+
+    if (wasThisEventOpen) return;
+
+    const eventContainer = document.querySelector(`.event[data-event-id="${eventId}"]`);
+    if (!eventContainer) return;
+
+    const panel = document.createElement("div");
+    panel.className = "leaderboard-panel";
+    panel.dataset.eventId = eventId;
+    panel.innerHTML = '<div class="leaderboard-container"><p class="leaderboard-status">Loading leaderboard...</p></div>';
+
+    eventContainer.insertAdjacentElement("afterend", panel);
+
+    const response = await fetch(`?handler=Leaderboard&eventId=${eventId}`);
+
+    if (!response.ok) {
+        panel.innerHTML = '<div class="leaderboard-container"><p class="leaderboard-status">Could not load the leaderboard.</p></div>';
+        return;
+    }
+
+    const leaderboard = await response.json();
+
+    panel.innerHTML = renderLeaderboard(leaderboard);
+}
+
+function renderLeaderboard(leaderboard) {
+    if (leaderboard.friendsListIsPrivate) {
+        return `
+            <div class="leaderboard-container">
+                <p class="leaderboard-status">Your Steam friends list is private, so a leaderboard can't be built.
+                    Set "My Friends List" to Public in your
+                    <a href="https://steamcommunity.com/my/edit/settings" target="_blank">Steam privacy settings</a> to see one.</p>
+            </div>
+        `;
+    }
+
+    if (leaderboard.entries.length === 0) {
+        return `
+            <div class="leaderboard-container">
+                <p class="leaderboard-status">None of your Steam friends have used PickemsPlanter for this event yet.</p>
+            </div>
+        `;
+    }
+
+    const rowsHtml = leaderboard.entries.map((entry, index) => `
+        <li class="leaderboard-row">
+            <span class="leaderboard-rank">${index + 1}</span>
+            <img class="leaderboard-avatar" src="${entry.avatar ?? ""}" alt="" />
+            <span class="leaderboard-name">${entry.personaName}</span>
+            <span class="leaderboard-tier coin-tier-${entry.tier.toLowerCase()}">${entry.tier}</span>
+            <span class="leaderboard-progress">${entry.completedChallenges} / ${entry.totalChallenges}</span>
+        </li>
+    `).join("");
+
+    return `
+        <div class="leaderboard-container">
+            <ul class="leaderboard-list">${rowsHtml}</ul>
         </div>
     `;
 }

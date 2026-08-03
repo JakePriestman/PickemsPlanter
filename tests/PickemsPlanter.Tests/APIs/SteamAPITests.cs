@@ -41,6 +41,42 @@ public class SteamAPITests
 	}
 
 	[Fact]
+	public async Task GetPlayerSummariesAsync_JoinsSteamIdsWithACommaInOneRequest()
+	{
+		string json = """{"response":{"players":[]}}""";
+		var (api, handler) = MakeApi(_ => JsonResponse(json));
+
+		await api.GetPlayerSummariesAsync(["1", "2", "3"]);
+
+		Assert.Contains("steamids=1,2,3", handler.LastRequest!.RequestUri!.Query);
+	}
+
+	[Fact]
+	public async Task GetFriendListAsync_ReturnsNull_WhenSteamRespondsUnauthorized()
+	{
+		// Steam requires the target user's "My Friends List" privacy setting to be Public;
+		// if it isn't, GetFriendList returns 401 rather than an empty list.
+		var (api, _) = MakeApi(_ => new HttpResponseMessage(HttpStatusCode.Unauthorized));
+
+		var result = await api.GetFriendListAsync("76500000000000001");
+
+		Assert.Null(result);
+	}
+
+	[Fact]
+	public async Task GetFriendListAsync_ParsesFriendSteamIds_WhenTheListIsPublic()
+	{
+		string json = """{"friendslist":{"friends":[{"steamid":"76500000000000002","relationship":"friend","friend_since":123},{"steamid":"76500000000000003","relationship":"friend","friend_since":456}]}}""";
+		var (api, handler) = MakeApi(_ => JsonResponse(json));
+
+		var result = await api.GetFriendListAsync("76500000000000001");
+
+		Assert.Contains("steamid=76500000000000001", handler.LastRequest!.RequestUri!.Query);
+		Assert.Contains("relationship=friend", handler.LastRequest.RequestUri.Query);
+		Assert.Equal(["76500000000000002", "76500000000000003"], result!.FriendsList.Friends.Select(f => f.SteamId));
+	}
+
+	[Fact]
 	public async Task GetTournamentItemsAsync_SendsEventSteamIdAndAuthCode()
 	{
 		string json = """{"result":{"items":[]}}""";

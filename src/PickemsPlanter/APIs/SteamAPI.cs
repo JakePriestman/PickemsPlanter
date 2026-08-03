@@ -9,6 +9,8 @@ namespace PickemsPlanter.APIs;
 public interface ISteamAPI
 {
 	Task<GetResponse<PlayerList>> GetPlayerSummeries(string steamId);
+	Task<GetResponse<PlayerList>> GetPlayerSummariesAsync(IEnumerable<string> steamIds);
+	Task<FriendsListResult?> GetFriendListAsync(string steamId);
 	Task<GetResult<TournamentItems>> GetTournamentItemsAsync(string steamId, string eventId, string authCode);
 	Task<GetResult<TournamentLayout>> GetTournamentLayoutAsync(string eventId);
 	Task<GetResult<UserPredictions>> GetUserPredictionsAsync(string steamId, string eventId, string authCode);
@@ -32,6 +34,40 @@ public class SteamAPI(HttpClient httpClient, JsonSerializerOptions serializerOpt
 
 		return JsonSerializer.Deserialize<GetResponse<PlayerList>>(json, serializerOptions)!;
 	}
+
+	public async Task<GetResponse<PlayerList>> GetPlayerSummariesAsync(IEnumerable<string> steamIds)
+	{
+		HttpRequestMessage request = new(HttpMethod.Get, $"/ISteamUser/GetPlayerSummaries/v2/?key={_config.WebApiKey}&steamids={string.Join(',', steamIds)}");
+
+		var response = await httpClient.SendAsync(request);
+
+		response.EnsureSuccessStatusCode();
+
+		var json = await response.Content.ReadAsStringAsync();
+
+		return JsonSerializer.Deserialize<GetResponse<PlayerList>>(json, serializerOptions)!;
+	}
+
+	// Steam requires the target user's "My Friends List" privacy setting to be Public — a
+	// separate toggle from overall profile visibility. If it's private, this returns 401 and
+	// there's no way to enumerate that user's friends at all, so null distinguishes "private"
+	// from "public but empty" rather than throwing for an entirely expected condition.
+	public async Task<FriendsListResult?> GetFriendListAsync(string steamId)
+	{
+		HttpRequestMessage request = new(HttpMethod.Get, $"/ISteamUser/GetFriendList/v0001/?key={_config.WebApiKey}&steamid={steamId}&relationship=friend");
+
+		var response = await httpClient.SendAsync(request);
+
+		if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+			return null;
+
+		response.EnsureSuccessStatusCode();
+
+		var json = await response.Content.ReadAsStringAsync();
+
+		return JsonSerializer.Deserialize<FriendsListResult>(json, serializerOptions)!;
+	}
+
 	public async Task<GetResult<TournamentItems>> GetTournamentItemsAsync(string steamId, string eventId, string authCode)
 	{
 		HttpRequestMessage request = new(HttpMethod.Get, $"/ICSGOTournaments_730/GetTournamentItems/v1?key={_config.WebApiKey}&event={eventId}&steamid={steamId}&steamidkey={authCode}");
