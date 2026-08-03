@@ -29,6 +29,7 @@ public static class ServiceCollectionExtensions
 			services.AddSingleton<ISeedsService, SeedsService>();
 			services.AddSingleton<IPandaScoreResultsService, PandaScoreResultsService>();
 			services.AddSingleton<ICoinProgressService, CoinProgressService>();
+			services.AddSingleton<ILeaderboardService, LeaderboardService>();
 			services.AddSingleton<ISwissStandingsCalculator, SwissStandingsCalculator>();
 			services.AddSingleton<IAdvancingSeedAutomationService, AdvancingSeedAutomationService>();
 			services.AddSingleton<IHltvRankingParser, HltvRankingParser>();

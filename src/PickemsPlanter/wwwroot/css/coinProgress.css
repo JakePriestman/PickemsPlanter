@@ -4,7 +4,7 @@
    of that specific card rather than just another item in the event list. */
 .coin-progress-panel {
     width: 100%;
-    max-width: 700px;
+    max-width: 860px;
     margin-top: -0.75em;
 }
 

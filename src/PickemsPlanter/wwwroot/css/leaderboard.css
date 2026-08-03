@@ -1,0 +1,75 @@
+/* Same inline-sibling placement as .coin-progress-panel (see toggleLeaderboard in
+   overview.js) — reads as an extension of the .event card it belongs to. */
+.leaderboard-panel {
+    width: 100%;
+    max-width: 860px;
+    margin-top: -0.75em;
+}
+
+.leaderboard-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-m);
+}
+
+.leaderboard-status {
+    text-align: center;
+    margin: 0;
+}
+
+.leaderboard-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.leaderboard-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0.5em 0.75em;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.leaderboard-rank {
+    width: 1.5em;
+    text-align: right;
+    font-weight: 600;
+    opacity: 0.75;
+}
+
+.leaderboard-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+}
+
+.leaderboard-name {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Reuses the .coin-tier-* custom properties (--coin-base etc.) already defined in
+   coinProgress.css, loaded on the same page, rather than redefining the same palette. */
+.leaderboard-tier {
+    font-weight: 600;
+    color: var(--coin-base);
+}
+
+.leaderboard-progress {
+    opacity: 0.75;
+    font-variant-numeric: tabular-nums;
+}

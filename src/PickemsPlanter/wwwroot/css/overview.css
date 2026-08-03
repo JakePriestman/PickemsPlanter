@@ -19,7 +19,7 @@
     align-items: center;
     gap: 1.25em;
     width: 100%;
-    max-width: 760px;
+    max-width: 900px;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -124,7 +124,7 @@
     align-items: center;
     box-sizing: border-box;
     width: 100%;
-    max-width: 700px;
+    max-width: 860px;
     background: var(--glass-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -159,7 +159,8 @@
 
 .event-button-delete,
 .event-button-select,
-.event-button-coin {
+.event-button-coin,
+.event-button-leaderboard {
     padding: 0.55em 1.1em;
     border-radius: 50px;
     font-size: 0.85em;
@@ -187,6 +188,12 @@
     color: rgba(150, 200, 240, 0.9);
 }
 
+.event-button-leaderboard {
+    background: rgba(226, 178, 75, 0.15);
+    border: 1px solid rgba(226, 178, 75, 0.4);
+    color: rgba(240, 210, 150, 0.9);
+}
+
 .event-button-select:hover:enabled {
     background: rgba(61, 110, 57, 0.28);
     border-color: rgba(94, 139, 75, 0.65);
@@ -208,9 +215,17 @@
     transform: translateY(-1px);
 }
 
+.event-button-leaderboard:hover:enabled {
+    background: rgba(226, 178, 75, 0.3);
+    border-color: rgba(226, 178, 75, 0.7);
+    color: rgb(250, 225, 190);
+    transform: translateY(-1px);
+}
+
 .event-button-delete:disabled,
 .event-button-select:disabled,
 .event-button-coin:disabled,
+.event-button-leaderboard:disabled,
 .show-auth-code:disabled {
     opacity: 0.25;
     cursor: not-allowed;
@@ -293,7 +308,8 @@
 
     .event-button-select,
     .event-button-delete,
-    .event-button-coin {
+    .event-button-coin,
+    .event-button-leaderboard {
         font-size: 12px;
         padding: 0.5em 0.9em;
     }
