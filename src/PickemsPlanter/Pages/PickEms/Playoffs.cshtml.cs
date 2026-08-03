@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PickemsPlanter.Services;
+using System.Security.Claims;
 
 namespace PickemsPlanter.Pages.PickEms;
 
@@ -13,8 +14,10 @@ public class PlayoffsModel(IPickemsService pickemsService, IHttpContextAccessor 
 	[BindProperty(SupportsGet = true)]
 	public required string EventName { get; init; }
 
-	[BindProperty(SupportsGet = true)]
-	public required string SteamId { get; init; }
+	// Always the authenticated user's own Steam ID, never a client-supplied value —
+	// binding this from the query string let anyone view/overwrite another user's
+	// picks by editing the URL (see #151).
+	public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
 	[BindProperty(SupportsGet = true)]
 	public string? SelectedEvent { get; init; }
@@ -60,8 +63,7 @@ public class PlayoffsModel(IPickemsService pickemsService, IHttpContextAccessor 
 		return RedirectToPage("/PickEms/Playoffs", new
 		{
 			EventId,
-			EventName,
-			SteamId
+			EventName
 		});
 	}
 }

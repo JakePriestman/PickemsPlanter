@@ -2,6 +2,7 @@ using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PickemsPlanter.Models.Event;
+using System.Security.Claims;
 
 namespace PickemsPlanter.Pages.PickEms;
 
@@ -13,8 +14,10 @@ public class StageModel(IPickemsService pickemsService, IHttpContextAccessor htt
 	[BindProperty(SupportsGet = true)]
 	public required string EventName { get; init; }
 
-	[BindProperty(SupportsGet = true)]
-	public required string SteamId { get; init; }
+	// Always the authenticated user's own Steam ID, never a client-supplied value —
+	// binding this from the query string let anyone view/overwrite another user's
+	// picks by editing the URL (see #151).
+	public required string SteamId = httpContextAccessor?.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value!;
 
     [BindProperty(SupportsGet = true)]
     public required Stages Stage { get; init; }
@@ -65,7 +68,6 @@ public class StageModel(IPickemsService pickemsService, IHttpContextAccessor htt
 		{
 			EventId,
 			EventName,
-			SteamId,
 			stage = Stage
 		});
 	}
