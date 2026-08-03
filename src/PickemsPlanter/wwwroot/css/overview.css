@@ -19,7 +19,7 @@
     align-items: center;
     gap: 1.25em;
     width: 100%;
-    max-width: 760px;
+    max-width: 900px;
     flex: 1;
     min-height: 0;
     overflow-y: auto;
@@ -124,7 +124,7 @@
     align-items: center;
     box-sizing: border-box;
     width: 100%;
-    max-width: 700px;
+    max-width: 860px;
     background: var(--glass-bg);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
