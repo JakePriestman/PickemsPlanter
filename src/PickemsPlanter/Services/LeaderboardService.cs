@@ -26,38 +26,44 @@ public class LeaderboardService(ISteamAPI steamAPI, IUserEventsTableService user
 		// The viewer isn't their own Steam friend, but belongs on their own leaderboard too.
 		List<string> candidateSteamIds = [viewerSteamId, .. friendsList.FriendsList.Friends.Select(f => f.SteamId)];
 
-		List<string> participantSteamIds = [];
+		// Run every candidate's existence check concurrently rather than one round-trip at a
+		// time — with a large friends list, awaiting them sequentially made load time scale
+		// with friend count instead of the single slowest lookup.
+		bool[] existsResults = await Task.WhenAll(candidateSteamIds.Select(steamId => userEventsTableService.ExistsAsync(steamId, eventId)));
 
-		foreach (var steamId in candidateSteamIds)
-		{
-			if (await userEventsTableService.ExistsAsync(steamId, eventId))
-				participantSteamIds.Add(steamId);
-		}
+		List<string> participantSteamIds = [.. candidateSteamIds.Where((_, index) => existsResults[index])];
 
 		if (participantSteamIds.Count == 0)
 			return new FriendsLeaderboardResult { FriendsListIsPrivate = false, Entries = [] };
 
-		GetResponse<PlayerList> playerSummaries = await steamAPI.GetPlayerSummariesAsync(participantSteamIds);
+		// The batched player-summary lookup and every participant's coin-progress scoring are
+		// all independent of each other, so they run concurrently too — the latter still keeps
+		// its own per-participant fail-soft handling (a stale auth code shouldn't break
+		// everyone else's leaderboard), just inside the parallel task instead of a loop body.
+		Task<GetResponse<PlayerList>> playerSummariesTask = steamAPI.GetPlayerSummariesAsync(participantSteamIds);
+
+		Task<(string SteamId, CoinProgressResult? Progress)>[] progressTasks = [.. participantSteamIds.Select(async steamId =>
+		{
+			try
+			{
+				return (steamId, (CoinProgressResult?)await coinProgressService.GetCoinProgressAsync(steamId, eventId));
+			}
+			catch (Exception)
+			{
+				return (steamId, (CoinProgressResult?)null);
+			}
+		})];
+
+		var progressResults = await Task.WhenAll(progressTasks);
+		GetResponse<PlayerList> playerSummaries = await playerSummariesTask;
 
 		Dictionary<string, PlayerSummery> playerLookup = playerSummaries.Response.Players.ToDictionary(p => p.SteamId);
 
 		List<LeaderboardEntry> entries = [];
 
-		foreach (var steamId in participantSteamIds)
+		foreach (var (steamId, progress) in progressResults)
 		{
-			CoinProgressResult progress;
-
-			try
-			{
-				progress = await coinProgressService.GetCoinProgressAsync(steamId, eventId);
-			}
-			catch (Exception)
-			{
-				// One participant's stored auth code going stale (eg. revoked in Steam since
-				// they last used the app) must not take the whole leaderboard down for
-				// everyone else viewing it — same fail-soft principle as PandaScoreResultsCachingService.
-				continue;
-			}
+			if (progress is null) continue;
 
 			playerLookup.TryGetValue(steamId, out var player);
 
