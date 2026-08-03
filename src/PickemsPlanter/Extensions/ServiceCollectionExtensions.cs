@@ -22,7 +22,7 @@ public static class ServiceCollectionExtensions
 			services.AddJsonSerialization();
 			services.AddHttpClients(config);
 			services.AddTableStorage(config);
-			services.AddRateLimiting();
+			services.AddRateLimiting(config);
 
 			services.AddRazorPages();
 			services.AddSingleton<IPickemsService, PickemsService>();
@@ -97,8 +97,12 @@ public static class ServiceCollectionExtensions
 		// everyone, not just the caller responsible. "SteamApi" covers the PickEms
 		// read/write handlers; "Auth" is tighter since the OpenID callback is
 		// unauthenticated and only needs to fire once per real login.
-		public void AddRateLimiting()
+		public void AddRateLimiting(IConfiguration config)
 		{
+			services.AddOptions<RateLimitingConfig>().Bind(config.GetSection(nameof(RateLimitingConfig)));
+
+			RateLimitingConfig rateLimiting = config.GetSection(nameof(RateLimitingConfig)).Get<RateLimitingConfig>() ?? new();
+
 			services.AddRateLimiter(options =>
 			{
 				options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -107,8 +111,8 @@ public static class ServiceCollectionExtensions
 					partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
 					factory: _ => new FixedWindowRateLimiterOptions
 					{
-						PermitLimit = 60,
-						Window = TimeSpan.FromMinutes(1),
+						PermitLimit = rateLimiting.SteamApiPermitLimit,
+						Window = TimeSpan.FromMinutes(rateLimiting.SteamApiWindowMinutes),
 						QueueLimit = 0
 					}));
 
@@ -116,8 +120,8 @@ public static class ServiceCollectionExtensions
 					partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
 					factory: _ => new FixedWindowRateLimiterOptions
 					{
-						PermitLimit = 10,
-						Window = TimeSpan.FromMinutes(1),
+						PermitLimit = rateLimiting.AuthPermitLimit,
+						Window = TimeSpan.FromMinutes(rateLimiting.AuthWindowMinutes),
 						QueueLimit = 0
 					}));
 			});
