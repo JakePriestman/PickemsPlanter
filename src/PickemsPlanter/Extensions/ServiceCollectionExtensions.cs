@@ -1,11 +1,13 @@
 ﻿using Azure.Data.Tables;
 using Azure.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using PickemsPlanter.APIs;
 using PickemsPlanter.Models.Configurations;
 using PickemsPlanter.Services;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 
 namespace PickemsPlanter.Extensions;
 
@@ -20,6 +22,7 @@ public static class ServiceCollectionExtensions
 			services.AddJsonSerialization();
 			services.AddHttpClients(config);
 			services.AddTableStorage(config);
+			services.AddRateLimiting(config);
 
 			services.AddRazorPages();
 			services.AddSingleton<IPickemsService, PickemsService>();
@@ -87,6 +90,41 @@ public static class ServiceCollectionExtensions
 			string? pandaScoreAPIURL = config["PandaScore:ApiUrl"];
 
 			services.AddHttpClient<IPandaScoreApi, PandaScoreAPI>(opt => opt.BaseAddress = new Uri(pandaScoreAPIURL!));
+		}
+
+		// Bounds how hard a traffic spike can hammer the Steam Web API key, which is
+		// shared across every user — a burned/rate-limited key breaks the app for
+		// everyone, not just the caller responsible. "SteamApi" covers the PickEms
+		// read/write handlers; "Auth" is tighter since the OpenID callback is
+		// unauthenticated and only needs to fire once per real login.
+		public void AddRateLimiting(IConfiguration config)
+		{
+			services.AddOptions<RateLimitingConfig>().Bind(config.GetSection(nameof(RateLimitingConfig)));
+
+			RateLimitingConfig rateLimiting = config.GetSection(nameof(RateLimitingConfig)).Get<RateLimitingConfig>() ?? new();
+
+			services.AddRateLimiter(options =>
+			{
+				options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+				options.AddPolicy("SteamApi", httpContext => RateLimitPartition.GetFixedWindowLimiter(
+					partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+					factory: _ => new FixedWindowRateLimiterOptions
+					{
+						PermitLimit = rateLimiting.SteamApiPermitLimit,
+						Window = TimeSpan.FromMinutes(rateLimiting.SteamApiWindowMinutes),
+						QueueLimit = 0
+					}));
+
+				options.AddPolicy("Auth", httpContext => RateLimitPartition.GetFixedWindowLimiter(
+					partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+					factory: _ => new FixedWindowRateLimiterOptions
+					{
+						PermitLimit = rateLimiting.AuthPermitLimit,
+						Window = TimeSpan.FromMinutes(rateLimiting.AuthWindowMinutes),
+						QueueLimit = 0
+					}));
+			});
 		}
 
 		public void AddTableStorage(IConfiguration config)

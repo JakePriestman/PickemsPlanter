@@ -1,11 +1,13 @@
 using PickemsPlanter.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.RateLimiting;
 using PickemsPlanter.Models.Event;
 using System.Security.Claims;
 
 namespace PickemsPlanter.Pages.PickEms;
 
+[EnableRateLimiting("SteamApi")]
 public class StageModel(IPickemsService pickemsService, IHttpContextAccessor httpContextAccessor, IUserPredictionsCachingService cachingService) : PageModel
 {
 	[BindProperty(SupportsGet = true)]
